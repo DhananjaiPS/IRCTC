@@ -165,7 +165,7 @@ export default function ProfilePage() {
         }
     }
 
-    const inputClasses = "p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150";
+    const inputClasses = "p-3 border border-gray-300 text-sm rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150";
     const buttonBaseClasses = "p-3 rounded-lg text-white font-semibold transition duration-300";
 
     return (
@@ -173,6 +173,7 @@ export default function ProfilePage() {
             <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-2 w-full ">
                 <div className="flex justify-between items-center  w-full">
                     <Image src="/irctc_logo_2.png" alt="govt logo" width={1980} height={230} className="w-[6vh] relative  sm:static  sm:w-[8vh] sm:h-[8vh]" />
+                    { }
                     <Image src="/logo3.png" alt="govt logo" width={1980} height={230} className="w-[4vh] h-[6vh] bg-amber-300" />
                 </div>
                 <span className="text-[3.2vh] sm:text-3xl">Complete Your Profile Setup</span>
@@ -230,7 +231,18 @@ export default function ProfilePage() {
                         <Image src="/aadhaar-logo.png" alt="govt logo" width={1980} height={230} className="w-[8vh] h-[6vh] sm:w-[10vh] sm:h-[7vh] " />
                     </div>
 
-                    <h3 className="text-xl font-bold text-indigo-700 border-b-2 border-indigo-500 pb-2 mb-4 flex items-center gap-3">
+                    <div>
+                        <Image
+                            src="https://contents.irctc.co.in/en/Web_alerts_700x90.jpeg"
+                            alt="alert"
+                            width={700}
+                            height={90}
+                            className="w-full h-auto object-contain"
+                        />
+
+                    </div>
+
+                    <h3 className="text-xl mt-3 font-bold text-indigo-700 border-b-2 border-indigo-500 pb-2 mb-4 flex items-center gap-3">
                         Identity Verification (KYC)
 
                         {/* Verified Status Badge */}

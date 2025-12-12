@@ -1,8 +1,7 @@
 "use client"
 import { BadgeCheck, CheckCheck } from "lucide-react";
-import toast from "react-hot-toast";
 import { CheckCircle } from "lucide-react";
-
+import toast from "react-hot-toast";
 import React, { useState } from 'react';
 import { Train, Calendar, MapPin, ArrowDownUp, Search, Menu, X, User, Bell, ChevronDown } from 'lucide-react';
 import {
@@ -15,6 +14,7 @@ import { CustomUserButtonFallback } from '../clerk/CustomUserButton'; // Assumin
 
 import { useUser } from "@clerk/nextjs";
 import Link from 'next/link';
+import Navbar from "./Navbar";
 
 const IRCTCHomepage = () => {
 
@@ -24,7 +24,6 @@ const IRCTCHomepage = () => {
   const [journeyDate, setJourneyDate] = useState('2025-11-09');
   const [selectedClass, setSelectedClass] = useState('All Classes');
   const [quota, setQuota] = useState('GENERAL');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [disabilityConcession, setDisabilityConcession] = useState(false);
   const [flexibleDate, setFlexibleDate] = useState(false);
   const [availableBerth, setAvailableBerth] = useState(false);
@@ -37,7 +36,12 @@ const IRCTCHomepage = () => {
 
 
 
-
+  const today = new Date().toISOString().split("T")[0];
+  const maxDate = (() => {
+    const date = new Date();
+    date.setDate(date.getDate() + 120);
+    return date.toISOString().split("T")[0];
+  })();
   const swapStations = () => {
     const temp = fromStation;
     setFromStation(toStation);
@@ -45,7 +49,10 @@ const IRCTCHomepage = () => {
   };
 
   const handleSearch = () => {
-    alert('Searching trains from ' + fromStation + ' to ' + toStation);
+    toast.success('Searching trains from ' + fromStation + ' to ' + toStation);
+  };
+  const handleSearchViaDisksha = () => {
+    toast.success('Feature is Under Alpha Phase');
   };
 
   return (
@@ -75,41 +82,41 @@ const IRCTCHomepage = () => {
             <SignedIn>
               {/* Custom User Button with Name/Avatar */}
               <CustomUserButtonFallback /> <div className="flex items-center gap-1">
-  <span className="hidden md:block text-gray-700 hover:text-blue-900 text-xs sm:text-sm font-bold">
-    {user?.fullName}
-  </span>
+                <span className="hidden md:block text-gray-700 hover:text-blue-900 text-xs sm:text-sm font-bold">
+                  {user?.fullName}
+                </span>
 
-  {/* VERIFIED BADGE */}
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="15"
-    height="15"
-    viewBox="0 0 24 24"
-    fill="#1da1f2"
-    stroke="white"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="drop-shadow-sm"
-    style={{ borderRadius: "9999px" }}
-  >
-    <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" />
-    <path d="m9 12 2 2 4-4" />
-  </svg>
-</div>
+                {/* VERIFIED BADGE */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="#1da1f2"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="drop-shadow-sm"
+                  style={{ borderRadius: "9999px" }}
+                >
+                  <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" />
+                  <path d="m9 12 2 2 4-4" />
+                </svg>
+              </div>
 
             </SignedIn>
 
             {/* Hiding less critical links on mobile */}
-            <button className="hidden md:block px-3 py-1.5 text-gray-700 hover:text-blue-900 text-xs sm:text-sm">AGENT LOGIN</button>
-            <button className="hidden sm:block px-3 py-1.5 text-gray-700 hover:text-blue-900 text-xs sm:text-sm">CONTACT US</button>
-            <button className="hidden sm:block px-3 py-1.5 text-gray-700 hover:text-blue-900 text-xs sm:text-sm">HELP & SUPPORT</button>
+            <button className="hidden md:block px-3 py-1.5 text-gray-700 hover:text-blue-900 text-xs sm:text-sm cursor-pointer">AGENT LOGIN</button>
+            <button className="hidden sm:block px-3 py-1.5 text-gray-700 hover:text-blue-900 text-xs sm:text-sm cursor-pointer">CONTACT US</button>
+            <button className="hidden sm:block px-3 py-1.5 text-gray-700 hover:text-blue-900 text-xs sm:text-sm cursor-pointer">HELP & SUPPORT</button>
           </div>
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <span className="text-red-600 font-semibold hidden md:inline text-xs sm:text-sm">DAILY DEALS</span> {/* Visible on tablet+ */}
+            <span className="text-red-600 font-semibold hidden md:inline text-xs sm:text-sm cursor-pointer">DAILY DEALS</span> {/* Visible on tablet+ */}
             <button className="px-3 py-1.5 text-gray-700 hover:text-blue-900 flex items-center text-xs sm:text-sm">
               <Bell className="w-4 h-4 mr-1" />
-              <span className='hidden sm:inline'>ALERTS</span>
+              <span className='hidden sm:inline cursor-pointer'>ALERTS</span>
             </button>
             <span className="text-gray-600 text-xs hidden lg:inline">
               {new Date().toLocaleString("en-IN", {
@@ -128,84 +135,10 @@ const IRCTCHomepage = () => {
       </div>
 
       {/* 🧭 Main Navigation */}
-      <nav className="bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between items-center py-3">
-            {/* Logo/Home Button */}
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center">
-                <img
-                  src="/irctc_logo_2.png"
-                  alt="Indian Railways Logo"
-                  className='w-full h-full object-contain'
-                  onError={(e) => (e.currentTarget.style.display = 'none')}
-                />
-              </div>
-              {/* Home Icon/Button (Hidden on smallest mobile, visible on sm+) */}
-              <button className="p-2 hover:bg-gray-100 rounded hidden sm:block">
-                <Link href="/">
+      <Navbar />
 
-                  <svg className="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-                  </svg>
-                </Link>
-              </button>
-            </div>
 
-            {/* Desktop/Tablet Menu - Uses 'lg:flex' for desktop, 'hidden' for mobile/tablet by default */}
-            <div className="hidden lg:flex items-center space-x-4">
-              <button className="w-auto px-3 py-2 bg-blue-900 text-xs text-white font-semibold rounded hover:bg-blue-800 shrink-0">IRCTC EXCLUSIVE</button>
-              <button className="px-2 py-2 text-xs text-orange-600 font-semibold border-b-2 border-orange-600 shrink-0">TRAINS</button>
-              <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">LOYALTY</button>
-              <button className="w-auto bg-yellow-100 px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">eWallet</button>
-              <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">BUSES</button>
-              <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">FLIGHTS</button>
-              <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">HOTELS</button>
-              <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">HOLIDAYS</button>
-              <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">MEALS</button>
-              <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">PROMOTIONS</button>
-              <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">MORE</button>
-            </div>
 
-            {/* IRCTC Logo - Smaller on mobile */}
-            <div className="w-32 sm:w-48 lg:w-60 h-12 sm:h-16 flex justify-center items-center shrink-0">
-              <img
-                src="/logo3.png"
-                alt="IRCTC Logo"
-                className='object-contain h-full'
-                onError={(e) => (e.currentTarget.style.display = 'none')}
-              />
-            </div>
-
-            {/* Mobile Menu Button - Visible on mobile/tablet, hidden on large screens */}
-            <button
-              className="lg:hidden p-2"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      {/* Mobile Menu Dropdown (Visible only when open and on small/medium screens) */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-white shadow-lg absolute w-full z-20">
-          <div className="px-4 py-2 space-y-1">
-            <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">IRCTC EXCLUSIVE</button>
-            <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-orange-600 text-sm">TRAINS</button>
-            <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">LOYALTY</button>
-            <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">IRCTC eWallet</button>
-            <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">BUSES</button>
-            <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">FLIGHTS</button>
-            <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">HOTELS</button>
-            <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">HOLIDAYS</button>
-            <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">MEALS</button>
-            <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">PROMOTIONS</button>
-            <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">MORE</button>
-          </div>
-        </div>
-      )}
 
       {/* 🌟 Hero Section with Booking Form (RESPONSIVE & FIXED WIDTH) */}
       <div className="relative min-h-[500px] md:min-h-[700px] flex items-center">
@@ -291,9 +224,12 @@ const IRCTCHomepage = () => {
                       </label>
                       <div className="relative">
                         <Calendar className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
+
                         <input
                           type="date"
                           value={journeyDate}
+                          min={today}
+                           max={maxDate}
                           onChange={(e) => setJourneyDate(e.target.value)}
                           className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
                         />
@@ -390,7 +326,9 @@ const IRCTCHomepage = () => {
                       <Search className="w-5 h-5 mr-2" />
                       Search
                     </button>
-                    <button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 md:py-4 rounded-lg transition shadow-lg text-base">
+                    <button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 md:py-4 rounded-lg transition shadow-lg text-base"
+                      onClick={handleSearchViaDisksha}
+                    >
                       Easy Booking on AskDISHA
                     </button>
                   </div>
@@ -415,7 +353,10 @@ const IRCTCHomepage = () => {
                 <img
                   src="/chatbot.png"
                   alt="AskDISHA Chatbot"
-                  className='w-56 h-56 xl:w-64 xl:h-64 object-contain'
+                  className='w-56 h-56 xl:w-64 xl:h-64 object-contain cursor-pointer'
+                  onClick={() => {
+                    toast.success("Feature is Under Aplha Phase")
+                  }}
                   onError={(e) => (e.currentTarget.style.display = 'none')}
                 />
               </div>
