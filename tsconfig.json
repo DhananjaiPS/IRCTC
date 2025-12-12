@@ -13,13 +13,22 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
+    
+    // --------------------------------------------------
+    // ✅ ADDED FIX HERE: Setting the root for path resolution
+    "baseUrl": ".", 
+    // --------------------------------------------------
+    
     "plugins": [
       {
         "name": "next"
       }
     ],
+ 
     "paths": {
-      "@/*": ["./*"]
+      // These aliases now work correctly relative to "baseUrl": "."
+      "@/*": ["./*"],
+      "@/lib/*": ["lib/*"] 
     }
   },
   "include": [

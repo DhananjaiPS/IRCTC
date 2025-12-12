@@ -1,0 +1,241 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+     engineType = "binary"
+}
+
+datasource db {
+    provider = "postgresql"
+    //   url      = env("DATABASE_URL")
+    // directUrl = env("DIRECT_URL")
+
+}
+
+model User {
+    // CLERK INTEGRATION FIELD
+    clerkId String @unique // Unique ID provided by Cleßrk (user_xxxxxxxxxx)
+
+    // PRIMARY KEY (Internal)
+    id String @id @default(uuid())
+
+    fullName String
+    email    String @unique
+    phone    String @unique
+
+    // PASSWORD FIELD (Made optional as Clerk manages this for Clerk-signed-up users)
+    passwordHash String?
+
+    gender      Sex? // Male/Female/Other
+    dateOfBirth DateTime?
+
+    // Address
+    addressLine1 String?
+    addressLine2 String?
+    city         String?
+    state        String?
+    pincode      String?
+
+    // Identity Verification
+    idType      IdCard? // Aadhar / PAN / Passport
+    idNumber    String? @unique
+    kycVerified Boolean @default(false)
+
+    // IRCTC-specific fields
+    walletBalance Float    @default(0.0)
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+
+    // Relations
+    bookings Booking[]
+    reviews  Review[]
+}
+
+model Station {
+    id             String             @id @unique
+    name           String
+    fromBookings   Booking[]          @relation("FromStation")
+    toBookings     Booking[]          @relation("ToStation")
+    fromAvail      SeatAvailability[] @relation("FromStationAvail")
+    toAvail        SeatAvailability[] @relation("ToStationAvail")
+    routes         Route[]
+    trainsAsSource Train[]            @relation("SourceStation")
+    trainsAsDest   Train[]            @relation("DestinationStation")
+    reviews        Review[]
+}
+
+model Route {
+    id                BigInt    @id @default(autoincrement())
+    trainId           BigInt
+    stationId         String
+    sequence          Int
+    arrivalTime       DateTime? @db.Time
+    departureTime     DateTime? @db.Time
+    distanceFromStart Int
+    train             Train     @relation(fields: [trainId], references: [id])
+    station           Station   @relation(fields: [stationId], references: [id])
+}
+
+model Train {
+    id                   BigInt          @id @default(autoincrement())
+    trainNo              String          @unique
+    name                 String
+    type                 String
+    sourceStationId      String
+    destinationStationId String
+    schedules            TrainSchedule[]
+    routes               Route[]
+    reviews              Review[]
+    sourceStation        Station         @relation("SourceStation", fields: [sourceStationId], references: [id])
+    destinationStation   Station         @relation("DestinationStation", fields: [destinationStationId], references: [id])
+}
+
+model TrainSchedule {
+    id                 BigInt             @id @default(autoincrement())
+    trainId            BigInt
+    runDate            DateTime           @db.Date
+    status             ScheduleStatus     @default(RUNNING)
+    train              Train              @relation(fields: [trainId], references: [id])
+    coaches            Coach[]
+    seatAvailabilities SeatAvailability[]
+    bookings           Booking[]
+}
+
+model Coach {
+    id                 BigInt             @id @default(autoincrement())
+    scheduleId         BigInt
+    coachType          String
+    coachNumber        String
+    totalSeats         Int
+    schedule           TrainSchedule      @relation(fields: [scheduleId], references: [id])
+    seats              Seat[]
+    seatAvailabilities SeatAvailability[]
+}
+
+model Seat {
+    id                 BigInt             @id @default(autoincrement())
+    coachId            BigInt
+    seatNo             String
+    berthType          String
+    coach              Coach              @relation(fields: [coachId], references: [id])
+    passengers         Passenger[]
+    seatAvailabilities SeatAvailability[]
+}
+
+model SeatAvailability {
+    id            BigInt        @id @default(autoincrement())
+    scheduleId    BigInt
+    coachId       BigInt
+    seatId        BigInt
+    fromStationId String
+    toStationId   String
+    status        SeatStatus    @default(AVAILABLE)
+    bookingId     BigInt?
+    schedule      TrainSchedule @relation(fields: [scheduleId], references: [id])
+    coach         Coach         @relation(fields: [coachId], references: [id])
+    seat          Seat          @relation(fields: [seatId], references: [id])
+    fromStation   Station       @relation("FromStationAvail", fields: [fromStationId], references: [id])
+    toStation     Station       @relation("ToStationAvail", fields: [toStationId], references: [id])
+    booking       Booking?      @relation(fields: [bookingId], references: [id])
+}
+
+model Booking {
+    id                 BigInt             @id @default(autoincrement())
+    pnr                String             @unique
+    userId             String
+    scheduleId         BigInt
+    fromStationId      String
+    toStationId        String
+    status             BookingStatus      @default(BOOKED)
+    bookedAt           DateTime           @default(now())
+    user               User               @relation(fields: [userId], references: [id])
+    schedule           TrainSchedule      @relation(fields: [scheduleId], references: [id])
+    fromStation        Station            @relation("FromStation", fields: [fromStationId], references: [id])
+    toStation          Station            @relation("ToStation", fields: [toStationId], references: [id])
+    passengers         Passenger[]
+    payment            Payment?
+    seatAvailabilities SeatAvailability[]
+}
+
+model Passenger {
+    id        BigInt          @id @default(autoincrement())
+    bookingId BigInt
+    name      String
+    age       Int
+    gender    String
+    seatId    BigInt?
+    status    PassengerStatus @default(WAITLISTED)
+    booking   Booking         @relation(fields: [bookingId], references: [id])
+    seat      Seat?           @relation(fields: [seatId], references: [id])
+}
+
+model Payment {
+    id                   BigInt        @id @default(autoincrement())
+    bookingId            BigInt        @unique
+    amount               Float
+    paymentMode          String
+    gatewayTransactionId String
+    status               PaymentStatus @default(PENDING)
+    paymentTime          DateTime      @default(now())
+    retryNumber          Int           @default(0)
+    booking              Booking       @relation(fields: [bookingId], references: [id])
+}
+
+model Review {
+    id        BigInt   @id @default(autoincrement())
+    userId    String
+    trainId   BigInt?
+    stationId String?
+    rating    Int
+    title     String
+    comment   String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    user      User     @relation(fields: [userId], references: [id])
+    train     Train?   @relation(fields: [trainId], references: [id])
+    station   Station? @relation(fields: [stationId], references: [id])
+}
+
+enum ScheduleStatus {
+    RUNNING
+    CANCELLED
+}
+
+enum SeatStatus {
+    AVAILABLE
+    BOOKED
+    RAC
+    WAITLISTED
+}
+
+enum BookingStatus {
+    BOOKED
+    CANCELLED
+}
+
+enum PassengerStatus {
+    CONFIRMED
+    RAC
+    WAITLISTED
+}
+
+enum PaymentStatus {
+    PENDING
+    SUCCESS
+    FAILED
+    REFUND_INITIATED
+    REFUND_SUCCESS
+}
+
+enum Sex {
+    MALE
+    FEMALE
+    OTHER
+}
+
+enum IdCard {
+    AADHAR
+    PAN
+    PASSPORT
+}
