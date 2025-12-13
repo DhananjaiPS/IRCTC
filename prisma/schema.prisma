@@ -4,6 +4,7 @@
 generator client {
     provider = "prisma-client-js"
      engineType = "binary"
+     output   = "./generated/client"
 }
 
 datasource db {
@@ -93,7 +94,7 @@ model Train {
 
 model TrainSchedule {
     id                 BigInt             @id @default(autoincrement())
-    trainId            BigInt
+    trainId             BigInt
     runDate            DateTime           @db.Date
     status             ScheduleStatus     @default(RUNNING)
     train              Train              @relation(fields: [trainId], references: [id])

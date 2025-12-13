@@ -1,8 +1,7 @@
 "use client"
-import { BadgeCheck, CheckCheck } from "lucide-react";
-import { CheckCircle } from "lucide-react";
+
 import toast from "react-hot-toast";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Train, Calendar, MapPin, ArrowDownUp, Search, Menu, X, User, Bell, ChevronDown } from 'lucide-react';
 import {
   SignInButton,
@@ -13,11 +12,11 @@ import {
 import { CustomUserButtonFallback } from '../clerk/CustomUserButton'; // Assuming correct path
 
 import { useUser } from "@clerk/nextjs";
-import Link from 'next/link';
 import Navbar from "./Navbar";
 
-const IRCTCHomepage = () => {
 
+const IRCTCHomepage = () => {
+  
 
   const [fromStation, setFromStation] = useState('LUCKNOW NR - LKO (LUCKNOW)');
   const [toStation, setToStation] = useState('MORADABAD - MB');
@@ -229,7 +228,7 @@ const IRCTCHomepage = () => {
                           type="date"
                           value={journeyDate}
                           min={today}
-                           max={maxDate}
+                          max={maxDate}
                           onChange={(e) => setJourneyDate(e.target.value)}
                           className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
                         />

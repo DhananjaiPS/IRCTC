@@ -3,23 +3,151 @@
 import Link from "next/link";
 import Image from "next/image";
 import React, { useState, useRef } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown, ChevronUp } from "lucide-react";
+
+// --- Link Data (Completed from desktop menus) ---
+const TRAINS_LINKS = [
+    { label: "Book Ticket", href: "/" },
+    { label: "Foreign Tourist Booking", href: "/foreign-tourist-booking" },
+    { label: "Connecting Journey Booking", href: "/connecting-journey-booking" },
+    { label: "Search TRAINS", href: "/train-search" },
+    { label: "Cancel Ticket", href: "/cancel-ticket" },
+    { label: "PNR Enquiry", href: "/pnr-enquiry" },
+    { label: "Train Schedule", href: "/train-schedule" },
+    { label: "Track Your Train", href: "/track-your-train" },
+    { label: "FTR Coach/Train Booking", href: "/ftr-coach-train-booking" },
+    { label: "Dogs/Cats Booking", href: "/dogs-cats-booking" },
+];
+
+const LOYALTY_LINKS = [
+    { label: "About Loyalty Program", href: "https://contents.irctc.co.in/en/AboutLoyalty.html" },
+    { label: "IRCTC SBI Credit Card", href: "https://contents.irctc.co.in/en/AboutSBICobrandCard.html" },
+    { label: "IRCTC BOB Credit Card", href: "https://contents.irctc.co.in/en/AboutBOBCobrandCard.html" },
+    { label: "IRCTC HDFC Credit Card", href: "https://contents.irctc.co.in/en/About_IRCTC_HDFC_CobrandCard.html" },
+    { label: "IRCTC RBL Credit Card", href: "https://contents.irctc.co.in/en/aboutrbl.html" },
+    { label: "Add Loyalty Account", href: "/" },
+];
+
+const MORE_LINKS = [
+    { label: "ChatBot as a Service (CaaS)", href: "/caas" },
+    { label: "Link Your Aadhaar", href: "/link-aadhaar" },
+    { label: "Counter Ticket Cancellation", href: "/counter-ticket-cancellation" },
+    { label: "Counter Ticket Boarding Point Change", href: "/counter-ticket-boarding-change" },
+    { label: "FORGOT ACCOUNT DETAILS?", href: "/forgot-account-details" },
+    { label: "AT STATIONS", href: "/at-stations" },
+    { label: "WI-Fi Railway Stations", href: "/wi-fi-railway-stations" },
+    { label: "Battery Operated Cars", href: "/battery-operated-cars" },
+];
+
+// --- Component Props Definitions ---
+type MobileMenuItemProps = {
+    label: string;
+    href: string;
+    onClick: () => void;
+    accent?: boolean;
+};
+
+type AccordionItemProps = {
+    menuKey: string;
+    label: string;
+    links: { label: string; href: string }[];
+    accent?: boolean;
+    // State props passed from parent
+    submenuOpen: string | null;
+    setSubmenuOpen: React.Dispatch<React.SetStateAction<string | null>>;
+    closeMobileMenu: () => void;
+};
+
 
 function Navbar() {
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [open, setOpen] = useState(false);
-    const [submenuOpen, setSubmenuOpen] = useState<string | null>(null);
+    // State management:
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // Controls mobile menu container visibility
+    const [open, setOpen] = useState(false); // Controls Desktop IRCTC EXCLUSIVE dropdown
+    const [submenuOpen, setSubmenuOpen] = useState<string | null>(null); // Controls Desktop HOVER menu or Mobile ACCORDION
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    // Functions to handle hover delay
+    // --- Helper Functions ---
+
+    const closeMobileMenu = () => {
+        setMobileMenuOpen(false);
+        setSubmenuOpen(null); // Close any open accordion/submenu
+    };
+
+    // Desktop Hover Logic
     const handleMouseEnter = (menu: string) => {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        // This variable is used for both desktop hover AND mobile accordion, as per your structure
         setSubmenuOpen(menu);
     };
 
     const handleMouseLeave = () => {
-        timeoutRef.current = setTimeout(() => setSubmenuOpen(null), 300); // 300ms delay
+        timeoutRef.current = setTimeout(() => {
+            // Only close if we are not in the mobile view
+            if (!mobileMenuOpen) {
+                setSubmenuOpen(null);
+            }
+        }, 300);
     };
+
+    // --- Sub-Components (Defined inside Navbar to use state functions) ---
+
+    const MobileMenuItem: React.FC<MobileMenuItemProps> = ({
+        label,
+        href,
+        onClick,
+        accent = false,
+    }) => (
+        <Link href={href} onClick={onClick}>
+            <div
+                className={`w-full text-left px-4 py-3 hover:bg-gray-100 text-sm ${accent ? "text-orange-600 font-semibold" : "text-gray-700"
+                    }`}
+            >
+                {label}
+            </div>
+        </Link>
+    );
+
+    const AccordionItem: React.FC<AccordionItemProps> = ({
+        menuKey,
+        label,
+        links,
+        accent = false,
+        submenuOpen,
+        setSubmenuOpen,
+        closeMobileMenu,
+    }) => {
+        const isOpen = submenuOpen === menuKey;
+
+        const toggleAccordion = () => {
+            setSubmenuOpen(isOpen ? null : menuKey);
+        };
+
+        return (
+            <div className="border-b border-gray-100">
+                <button
+                    onClick={toggleAccordion}
+                    className={`w-full flex justify-between items-center px-4 py-3 text-sm ${accent ? "text-orange-600 font-semibold" : "text-gray-700 font-semibold"
+                        }`}
+                >
+                    {label}
+                    {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+
+                {isOpen && (
+                    <div className="pl-6 pr-2 pb-2 bg-gray-50 space-y-1 transition-all duration-300">
+                        {links.map((link) => (
+                            <Link key={link.label} href={link.href} onClick={closeMobileMenu}>
+                                <div className="w-full text-left px-4 py-2 hover:bg-white rounded text-xs text-gray-600">
+                                    {link.label}
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
+    };
+
 
     return (
         <div>
@@ -41,7 +169,7 @@ function Navbar() {
                             <button className="p-2 hover:bg-gray-100 rounded hidden sm:block">
                                 <Link href="/">
                                     <svg
-                                        className="w-6 h-6 text-gray-600"
+                                        className="w-7 h-7 text-gray-600"
                                         fill="currentColor"
                                         viewBox="0 0 20 20"
                                     >
@@ -54,7 +182,7 @@ function Navbar() {
                         {/* Desktop Menu */}
                         <div className="hidden lg:flex items-center space-x-4">
 
-                            {/* IRCTC EXCLUSIVE Dropdown */}
+                            {/* IRCTC EXCLUSIVE Dropdown (Uses 'open' state) */}
                             <div
                                 className="relative"
                                 onMouseEnter={() => setOpen(true)}
@@ -98,13 +226,14 @@ function Navbar() {
                                             {/* eWallet with submenu */}
                                             <li
                                                 className="relative px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                                onMouseEnter={() => handleMouseEnter("ewallet")}
+                                                onMouseEnter={() => handleMouseEnter("ewallet-desktop-sub")}
                                                 onMouseLeave={handleMouseLeave}
                                             >
                                                 IRCTC eWallet
-                                                {submenuOpen === "ewallet" && (
+                                                {/* Note: Using a unique key for the nested submenu to avoid conflict */}
+                                                {submenuOpen === "ewallet-desktop-sub" && (
                                                     <ul className="absolute left-full top-0 mt-0 ml-1 w-60 bg-white border border-gray-200 rounded shadow-lg z-50">
-                                                        <Link href={"https://www.irctc.co.in/ewallet-user-guide"}>
+                                                        <Link href={"/ewallet-user-guide"}>
                                                             <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                                                                 IRCTC eWallet User Guide
                                                             </li>
@@ -118,7 +247,7 @@ function Navbar() {
                                 )}
                             </div>
 
-                            {/* Other navbar buttons */}
+                            {/* TRAINS (Uses 'submenuOpen' state) */}
                             <div
                                 className="relative px-2 py-2 text-xs text-orange-600 font-semibold border-b-2 border-orange-600 shrink-0 cursor-pointer"
                                 onMouseEnter={() => handleMouseEnter("trains")}
@@ -127,40 +256,16 @@ function Navbar() {
                                 TRAINS
                                 {submenuOpen === "trains" && (
                                     <ul className="absolute left-0 top-full mt-1 w-60 bg-white border border-gray-200 text-gray-600 rounded shadow-lg z-50">
-                                        <Link href={"https://www.irctc.co.in/nget/train-search"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Book Ticket</li>
-                                        </Link>
-                                        <Link href={"https://www.irctc.co.in/foreign-tourist-booking"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Foreign Tourist Booking</li>
-                                        </Link>
-                                        <Link href={"https://www.irctc.co.in/connecting-journey-booking"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Connecting Journey Booking</li>
-                                        </Link>
-                                        <Link href={"https://www.irctc.co.in/trains"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">IRCTC TRAINS</li>
-                                        </Link>
-                                        <Link href={"https://www.irctc.co.in/cancel-ticket"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Cancel Ticket</li>
-                                        </Link>
-                                        <Link href={"https://www.irctc.co.in/pnr-enquiry"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">PNR Enquiry</li>
-                                        </Link>
-                                        <Link href={"https://www.irctc.co.in/train-schedule"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Train Schedule</li>
-                                        </Link>
-                                        <Link href={"https://www.irctc.co.in/track-your-train"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Track Your Train</li>
-                                        </Link>
-                                        <Link href={"https://www.irctc.co.in/ftr-coach-train-booking"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">FTR Coach/Train Booking</li>
-                                        </Link>
-                                        <Link href={"https://www.irctc.co.in/dogs-cats-booking"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Dogs/Cats Booking</li>
-                                        </Link>
+                                        {TRAINS_LINKS.map(link => (
+                                            <Link key={link.label} href={link.href}>
+                                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">{link.label}</li>
+                                            </Link>
+                                        ))}
                                     </ul>
                                 )}
                             </div>
 
+                            {/* LOYALTY (Uses 'submenuOpen' state) */}
                             <div
                                 className="relative px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0 cursor-pointer"
                                 onMouseEnter={() => handleMouseEnter("loyalty")}
@@ -169,35 +274,23 @@ function Navbar() {
                                 LOYALTY
                                 {submenuOpen === "loyalty" && (
                                     <ul className="absolute left-0 top-full mt-1 w-60 bg-white border border-gray-200 text-gray-600 rounded shadow-lg z-50">
-                                        <Link href={"https://contents.irctc.co.in/en/AboutLoyalty.html"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">About IRCTC Loyalty program</li>
-                                        </Link>
-                                        <Link href={"https://contents.irctc.co.in/en/AboutSBICobrandCard.html"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">IRCTC SBI Credit Card</li>
-                                        </Link>
-                                        <Link href={"https://contents.irctc.co.in/en/AboutBOBCobrandCard.html"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">IRCTC BOB Credit Card</li>
-                                        </Link>
-                                        <Link href={"https://contents.irctc.co.in/en/About_IRCTC_HDFC_CobrandCard.html"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">IRCTC HDFC Credit Card</li>
-                                        </Link>
-                                        <Link href={"https://contents.irctc.co.in/en/aboutrbl.html"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">IRCTC RBL Credit Card</li>
-                                        </Link>
-                                        <Link href={"/"}>
-                                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Add Loyalty Account</li>
-                                        </Link>
+                                        {LOYALTY_LINKS.map(link => (
+                                            <Link key={link.label} href={link.href}>
+                                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">{link.label}</li>
+                                            </Link>
+                                        ))}
                                     </ul>
                                 )}
                             </div>
-
+                            
+                            {/* eWallet (Uses 'submenuOpen' state) */}
                             <div
                                 className="relative w-auto bg-yellow-100 px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0 cursor-pointer"
-                                onMouseEnter={() => handleMouseEnter("ewallet")}
+                                onMouseEnter={() => handleMouseEnter("ewallet-desktop")}
                                 onMouseLeave={handleMouseLeave}
                             >
                                 eWallet
-                                {submenuOpen === "ewallet" && (
+                                {submenuOpen === "ewallet-desktop" && (
                                     <ul className="absolute left-0 top-full mt-1 w-60 bg-white border border-gray-200 rounded shadow-lg z-50">
                                         <Link href={"https://contents.irctc.co.in/en/AboutEwallet.pdf"}>
                                             <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
@@ -231,6 +324,8 @@ function Navbar() {
                             <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
                                 PROMOTIONS
                             </button>
+                            
+                            {/* MORE (Uses 'submenuOpen' state) */}
                             <button
                                 className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0 relative"
                                 onMouseEnter={() => handleMouseEnter("more")}
@@ -239,46 +334,11 @@ function Navbar() {
                                 MORE
                                 {submenuOpen === "more" && (
                                     <ul className="absolute left-0 top-full mt-1 w-60 bg-white border border-gray-200 rounded shadow-lg z-50 text-left">
-                                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                            <a href="/caas" target="_blank" rel="noopener noreferrer">
-                                                ChatBot as a Service (CaaS)
-                                            </a>
-                                        </li>
-                                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                            <a href="/link-aadhaar" target="_blank" rel="noopener noreferrer">
-                                                Link Your Aadhaar
-                                            </a>
-                                        </li>
-                                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                            <a href="/counter-ticket-cancellation" target="_blank" rel="noopener noreferrer">
-                                                Counter Ticket Cancellation
-                                            </a>
-                                        </li>
-                                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                            <a href="/counter-ticket-boarding-change" target="_blank" rel="noopener noreferrer">
-                                                Counter Ticket Boarding Point Change
-                                            </a>
-                                        </li>
-                                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                            <a href="/forgot-account-details" target="_blank" rel="noopener noreferrer">
-                                                FORGOT ACCOUNT DETAILS?
-                                            </a>
-                                        </li>
-                                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                            <a href="/at-stations" target="_blank" rel="noopener noreferrer">
-                                                AT STATIONS
-                                            </a>
-                                        </li>
-                                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                            <a href="/wi-fi-railway-stations" target="_blank" rel="noopener noreferrer">
-                                                WI-Fi Railway Stations
-                                            </a>
-                                        </li>
-                                        <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                            <a href="/battery-operated-cars" target="_blank" rel="noopener noreferrer">
-                                                Battery Operated Cars
-                                            </a>
-                                        </li>
+                                        {MORE_LINKS.map(link => (
+                                            <li key={link.label} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                                                <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
+                                            </li>
+                                        ))}
                                     </ul>
                                 )}
                             </button>
@@ -286,11 +346,11 @@ function Navbar() {
                         </div>
 
                         {/* Right Logo */}
-                        <div className="w-32 sm:w-48 lg:w-60 h-12 sm:h-16 flex justify-center items-center shrink-0">
+                        <div className="w-32 md:w-48 lg:w-60 h-12 sm:h-16 flex justify-center items-center shrink-0">
                             <img
                                 src="/logo3.png"
                                 alt="IRCTC Logo"
-                                className="object-contain h-full hidden sm:block"
+                                className="object-contain h-full hidden lg:block"
                                 onError={(e) => (e.currentTarget.style.display = "none")}
                             />
                         </div>
@@ -306,43 +366,97 @@ function Navbar() {
                 </div>
             </nav>
 
-            {/* Mobile dropdown */}
+            {/* ===================== MOBILE MENU (Fixed Accordion Logic) ===================== */}
             {mobileMenuOpen && (
-                <div className="lg:hidden bg-white shadow-lg absolute w-full z-20">
-                    <div className="px-4 py-2 space-y-1">
-                        <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">
-                            IRCTC EXCLUSIVE
+                <div className="fixed inset-0 bg-white z-50 lg:hidden overflow-y-auto">
+                    
+                    {/* Header and Close Button */}
+                    <div className="bg-blue-900 text-white flex justify-between items-center px-4 py-3 shadow-md">
+                        <span className="font-semibold">IRCTC Services</span>
+                        <button onClick={closeMobileMenu} className="p-1 rounded-full hover:bg-blue-800">
+                            <X className="w-6 h-6" />
                         </button>
-                        <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-orange-600 text-sm">
-                            TRAINS
-                        </button>
-                        <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">
-                            LOYALTY
-                        </button>
-                        <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">
-                            IRCTC eWallet
-                        </button>
-                        <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">
-                            BUSES
-                        </button>
-                        <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">
-                            FLIGHTS
-                        </button>
-                        <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">
-                            HOTELS
-                        </button>
-                        <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">
-                            HOLIDAYS
-                        </button>
-                        <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">
-                            MEALS
-                        </button>
-                        <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">
-                            PROMOTIONS
-                        </button>
-                        <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded text-sm">
-                            MORE
-                        </button>
+                    </div>
+
+                    <div className="py-2">
+
+                        {/* 1. TRAINS (Accordion) - Uses 'submenuOpen' for state management */}
+                        <AccordionItem
+                            menuKey="trains"
+                            label="TRAINS"
+                            links={TRAINS_LINKS}
+                            accent={true}
+                            submenuOpen={submenuOpen}
+                            setSubmenuOpen={setSubmenuOpen}
+                            closeMobileMenu={closeMobileMenu}
+                        />
+
+                        {/* 2. LOYALTY (Accordion) */}
+                        <AccordionItem
+                            menuKey="loyalty"
+                            label="LOYALTY"
+                            links={LOYALTY_LINKS}
+                            submenuOpen={submenuOpen}
+                            setSubmenuOpen={setSubmenuOpen}
+                            closeMobileMenu={closeMobileMenu}
+                        />
+
+                        {/* 3. MORE (Accordion) */}
+                        <AccordionItem
+                            menuKey="more"
+                            label="MORE"
+                            links={MORE_LINKS}
+                            submenuOpen={submenuOpen}
+                            setSubmenuOpen={setSubmenuOpen}
+                            closeMobileMenu={closeMobileMenu}
+                        />
+                        
+                        {/* 4. IRCTC EXCLUSIVE (Direct Link) */}
+                        <MobileMenuItem 
+                            label="IRCTC EXCLUSIVE" 
+                            href={"/exclusive-home-or-redirect"} 
+                            onClick={closeMobileMenu} 
+                        />
+                        
+                        {/* 5. IRCTC eWallet (Direct Link - using the main desktop link) */}
+                        <MobileMenuItem 
+                            label="IRCTC eWallet" 
+                            href={"https://contents.irctc.co.in/en/AboutEwallet.pdf"} 
+                            onClick={closeMobileMenu}
+                        />
+
+                        {/* --- Direct Links (No Submenu) --- */}
+                        <MobileMenuItem 
+                            label="BUSES" 
+                            href={"/buses"} 
+                            onClick={closeMobileMenu} 
+                        />
+                        <MobileMenuItem 
+                            label="FLIGHTS" 
+                            href={"/flights"} 
+                            onClick={closeMobileMenu} 
+                        />
+                        <MobileMenuItem 
+                            label="HOTELS" 
+                            href={"/hotels"} 
+                            onClick={closeMobileMenu} 
+                        />
+                        <MobileMenuItem 
+                            label="HOLIDAYS" 
+                            href={"/holidays"} 
+                            onClick={closeMobileMenu} 
+                        />
+                        <MobileMenuItem 
+                            label="MEALS" 
+                            href={"/meals"} 
+                            onClick={closeMobileMenu} 
+                        />
+                        <MobileMenuItem 
+                            label="PROMOTIONS" 
+                            href={"/promotions"} 
+                            onClick={closeMobileMenu} 
+                        />
+
                     </div>
                 </div>
             )}
