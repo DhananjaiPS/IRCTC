@@ -1,11 +1,14 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import { withAccelerate } from "@prisma/extension-accelerate";
+// import { PrismaClient } from "@prisma/client";
+// import { PrismaClient } from './generated/client';
 
-const prisma = new PrismaClient({
-  accelerateUrl: process.env.DATABASE_URL,
-}).$extends(withAccelerate());
+import { withAccelerate } from "@prisma/extension-accelerate";
+import prisma from "@/lib/prisma";
+
+// const prisma = new PrismaClient({
+//   accelerateUrl: process.env.DATABASE_URL,
+// }).$extends(withAccelerate());
 
 // === Include kycVerified ===
 interface ProfileData {

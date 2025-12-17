@@ -8,15 +8,15 @@ import { Menu, X, ChevronDown, ChevronUp } from "lucide-react";
 // --- Link Data (Completed from desktop menus) ---
 const TRAINS_LINKS = [
     { label: "Book Ticket", href: "/" },
-    { label: "Foreign Tourist Booking", href: "/foreign-tourist-booking" },
-    { label: "Connecting Journey Booking", href: "/connecting-journey-booking" },
-    { label: "Search TRAINS", href: "/train-search" },
-    { label: "Cancel Ticket", href: "/cancel-ticket" },
-    { label: "PNR Enquiry", href: "/pnr-enquiry" },
-    { label: "Train Schedule", href: "/train-schedule" },
-    { label: "Track Your Train", href: "/track-your-train" },
-    { label: "FTR Coach/Train Booking", href: "/ftr-coach-train-booking" },
-    { label: "Dogs/Cats Booking", href: "/dogs-cats-booking" },
+    { label: "Foreign Tourist Booking", href: "train/foreign-tourist-booking" },
+    { label: "Connecting Journey Booking", href: "/train/connecting-journey-booking" },
+    { label: "Search TRAINS", href: "train/train-search" },
+    { label: "Cancel Ticket", href: "/train/cancel-ticket" },
+    { label: "PNR Enquiry", href: "/train/pnr-enquiry" },
+    { label: "Train Schedule", href: "/train/train-schedule" },
+    { label: "Track Your Train", href: "/train/track-your-train" },
+    { label: "FTR Coach/Train Booking", href: "/train/ftr-coach-train-booking" },
+    { label: "Dogs/Cats Booking", href: "/train/dogs-cats-booking" },
 ];
 
 const LOYALTY_LINKS = [
@@ -212,7 +212,7 @@ function Navbar() {
                                             {/* Gift Card */}
                                             <Link href={'https://irctcgiftcards.razorpay.com/?utm_source=irctc&utm_medium=web&utm_campaign=irctc_rewards'}>
                                                 <li className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-900">
                                                         <rect x="3" y="8" width="18" height="4" rx="1" />
                                                         <path d="M12 8v13" />
                                                         <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
@@ -225,10 +225,10 @@ function Navbar() {
 
                                             {/* eWallet with submenu */}
                                             <li
-                                                className="relative px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                                className="relative px-4 py-2 hover:bg-gray-100 cursor-pointer flex justify-start gap-2 items-center "
                                                 onMouseEnter={() => handleMouseEnter("ewallet-desktop-sub")}
                                                 onMouseLeave={handleMouseLeave}
-                                            >
+                                            ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-hand-coins-icon lucide-hand-coins text-blue-900"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17"/><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"/><path d="m2 16 6 6"/><circle cx="16" cy="9" r="2.9"/><circle cx="6" cy="5" r="3"/></svg>
                                                 IRCTC eWallet
                                                 {/* Note: Using a unique key for the nested submenu to avoid conflict */}
                                                 {submenuOpen === "ewallet-desktop-sub" && (
@@ -282,7 +282,7 @@ function Navbar() {
                                     </ul>
                                 )}
                             </div>
-                            
+
                             {/* eWallet (Uses 'submenuOpen' state) */}
                             <div
                                 className="relative w-auto bg-yellow-100 px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0 cursor-pointer"
@@ -324,7 +324,7 @@ function Navbar() {
                             <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
                                 PROMOTIONS
                             </button>
-                            
+
                             {/* MORE (Uses 'submenuOpen' state) */}
                             <button
                                 className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0 relative"
@@ -369,7 +369,7 @@ function Navbar() {
             {/* ===================== MOBILE MENU (Fixed Accordion Logic) ===================== */}
             {mobileMenuOpen && (
                 <div className="fixed inset-0 bg-white z-50 lg:hidden overflow-y-auto">
-                    
+
                     {/* Header and Close Button */}
                     <div className="bg-blue-900 text-white flex justify-between items-center px-4 py-3 shadow-md">
                         <span className="font-semibold">IRCTC Services</span>
@@ -410,51 +410,51 @@ function Navbar() {
                             setSubmenuOpen={setSubmenuOpen}
                             closeMobileMenu={closeMobileMenu}
                         />
-                        
+
                         {/* 4. IRCTC EXCLUSIVE (Direct Link) */}
-                        <MobileMenuItem 
-                            label="IRCTC EXCLUSIVE" 
-                            href={"/exclusive-home-or-redirect"} 
-                            onClick={closeMobileMenu} 
+                        <MobileMenuItem
+                            label="IRCTC EXCLUSIVE"
+                            href={"/exclusive-home-or-redirect"}
+                            onClick={closeMobileMenu}
                         />
-                        
+
                         {/* 5. IRCTC eWallet (Direct Link - using the main desktop link) */}
-                        <MobileMenuItem 
-                            label="IRCTC eWallet" 
-                            href={"https://contents.irctc.co.in/en/AboutEwallet.pdf"} 
+                        <MobileMenuItem
+                            label="IRCTC eWallet"
+                            href={"https://contents.irctc.co.in/en/AboutEwallet.pdf"}
                             onClick={closeMobileMenu}
                         />
 
                         {/* --- Direct Links (No Submenu) --- */}
-                        <MobileMenuItem 
-                            label="BUSES" 
-                            href={"/buses"} 
-                            onClick={closeMobileMenu} 
+                        <MobileMenuItem
+                            label="BUSES"
+                            href={"/buses"}
+                            onClick={closeMobileMenu}
                         />
-                        <MobileMenuItem 
-                            label="FLIGHTS" 
-                            href={"/flights"} 
-                            onClick={closeMobileMenu} 
+                        <MobileMenuItem
+                            label="FLIGHTS"
+                            href={"/flights"}
+                            onClick={closeMobileMenu}
                         />
-                        <MobileMenuItem 
-                            label="HOTELS" 
-                            href={"/hotels"} 
-                            onClick={closeMobileMenu} 
+                        <MobileMenuItem
+                            label="HOTELS"
+                            href={"/hotels"}
+                            onClick={closeMobileMenu}
                         />
-                        <MobileMenuItem 
-                            label="HOLIDAYS" 
-                            href={"/holidays"} 
-                            onClick={closeMobileMenu} 
+                        <MobileMenuItem
+                            label="HOLIDAYS"
+                            href={"/holidays"}
+                            onClick={closeMobileMenu}
                         />
-                        <MobileMenuItem 
-                            label="MEALS" 
-                            href={"/meals"} 
-                            onClick={closeMobileMenu} 
+                        <MobileMenuItem
+                            label="MEALS"
+                            href={"/meals"}
+                            onClick={closeMobileMenu}
                         />
-                        <MobileMenuItem 
-                            label="PROMOTIONS" 
-                            href={"/promotions"} 
-                            onClick={closeMobileMenu} 
+                        <MobileMenuItem
+                            label="PROMOTIONS"
+                            href={"/promotions"}
+                            onClick={closeMobileMenu}
                         />
 
                     </div>

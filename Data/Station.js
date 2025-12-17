@@ -184,7 +184,8 @@ export const stations = [
   { id: "BYPL", name: "Baiyappanahalli" },
   { id: "LD", name: "Londa Junction" },
   { id: "HSRA", name: "Hosur" },
-  { id: "KJM", name: "Krishnarajapuram" }
+  { id: "KJM", name: "Krishnarajapuram" },
+  { id: "CSMT", name: "Chhatrapati Shivaji Maharaj Terminus"},
 ];
 
 

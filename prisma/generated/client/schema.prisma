@@ -1,55 +1,35 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider   = "prisma-client-js"
-  engineType = "binary"
   output     = "./generated/client"
+  engineType = "binary"
 }
 
 datasource db {
   provider = "postgresql"
-  //   url      = env("DATABASE_URL")
-  // directUrl = env("DIRECT_URL")
 }
 
 model User {
-  // CLERK INTEGRATION FIELD
-  clerkId String @unique // Unique ID provided by Cleßrk (user_xxxxxxxxxx)
-
-  // PRIMARY KEY (Internal)
-  id String @id @default(uuid())
-
-  fullName String
-  email    String @unique
-  phone    String @unique
-
-  // PASSWORD FIELD (Made optional as Clerk manages this for Clerk-signed-up users)
-  passwordHash String?
-
-  gender      Sex? // Male/Female/Other
-  dateOfBirth DateTime?
-
-  // Address
-  addressLine1 String?
-  addressLine2 String?
-  city         String?
-  state        String?
-  pincode      String?
-
-  // Identity Verification
-  idType      IdCard? // Aadhar / PAN / Passport
-  idNumber    String? @unique
-  kycVerified Boolean @default(false)
-
-  // IRCTC-specific fields
-  walletBalance Float    @default(0.0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  // Relations
-  bookings Booking[]
-  reviews  Review[]
+  clerkId       String    @unique
+  id            String    @id @default(uuid())
+  fullName      String
+  email         String    @unique
+  phone         String    @unique
+  passwordHash  String?
+  gender        Sex?
+  dateOfBirth   DateTime?
+  addressLine1  String?
+  addressLine2  String?
+  city          String?
+  state         String?
+  pincode       String?
+  idType        IdCard?
+  idNumber      String?   @unique
+  kycVerified   Boolean   @default(false)
+  walletBalance Float     @default(0.0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  bookings      Booking[]
+  reviews       Review[]
 }
 
 model Station {
@@ -57,12 +37,12 @@ model Station {
   name           String
   fromBookings   Booking[]          @relation("FromStation")
   toBookings     Booking[]          @relation("ToStation")
+  reviews        Review[]
+  routes         Route[]
   fromAvail      SeatAvailability[] @relation("FromStationAvail")
   toAvail        SeatAvailability[] @relation("ToStationAvail")
-  routes         Route[]
-  trainsAsSource Train[]            @relation("SourceStation")
   trainsAsDest   Train[]            @relation("DestinationStation")
-  reviews        Review[]
+  trainsAsSource Train[]            @relation("SourceStation")
 }
 
 model Route {
@@ -70,36 +50,50 @@ model Route {
   trainId           BigInt
   stationId         String
   sequence          Int
-  arrivalTime       DateTime? @db.Time
-  departureTime     DateTime? @db.Time
+  arrivalTime       DateTime? @db.Time(6)
+  departureTime     DateTime? @db.Time(6)
   distanceFromStart Int
-  train             Train     @relation(fields: [trainId], references: [id])
   station           Station   @relation(fields: [stationId], references: [id])
+  train             Train     @relation(fields: [trainId], references: [id])
 }
 
 model Train {
-  id                   BigInt          @id @default(autoincrement())
-  trainNo              String          @unique
+  id                   BigInt  @id @default(autoincrement())
+  trainNo              String  @unique
   name                 String
   type                 String
   sourceStationId      String
   destinationStationId String
-  schedules            TrainSchedule[]
-  routes               Route[]
-  reviews              Review[]
-  sourceStation        Station         @relation("SourceStation", fields: [sourceStationId], references: [id])
-  destinationStation   Station         @relation("DestinationStation", fields: [destinationStationId], references: [id])
+  departureTime        String?
+  arrivalTime          String?
+
+  reviews            Review[]
+  routes             Route[]
+  destinationStation Station         @relation("DestinationStation", fields: [destinationStationId], references: [id])
+  sourceStation      Station         @relation("SourceStation", fields: [sourceStationId], references: [id])
+  schedules          TrainSchedule[]
 }
 
 model TrainSchedule {
-  id                 BigInt             @id @default(autoincrement())
+  id                 BigInt              @id @default(autoincrement())
   trainId            BigInt
-  runDate            DateTime           @db.Date
-  status             ScheduleStatus     @default(RUNNING)
-  train              Train              @relation(fields: [trainId], references: [id])
-  coaches            Coach[]
-  seatAvailabilities SeatAvailability[]
+  status             ScheduleStatus      @default(RUNNING)
+  daysOfWeek         Int[]
+  endDate            DateTime?           @db.Date
+  startDate          DateTime            @db.Date
   bookings           Booking[]
+  coaches            Coach[]
+  exceptions         ScheduleException[]
+  seatAvailabilities SeatAvailability[]
+  train              Train               @relation(fields: [trainId], references: [id])
+}
+
+model ScheduleException {
+  id         BigInt        @id @default(autoincrement())
+  scheduleId BigInt
+  date       DateTime      @db.Date
+  type       ExceptionType
+  schedule   TrainSchedule @relation(fields: [scheduleId], references: [id])
 }
 
 model Coach {
@@ -118,8 +112,8 @@ model Seat {
   coachId            BigInt
   seatNo             String
   berthType          String
-  coach              Coach              @relation(fields: [coachId], references: [id])
   passengers         Passenger[]
+  coach              Coach              @relation(fields: [coachId], references: [id])
   seatAvailabilities SeatAvailability[]
 }
 
@@ -132,12 +126,12 @@ model SeatAvailability {
   toStationId   String
   status        SeatStatus    @default(AVAILABLE)
   bookingId     BigInt?
-  schedule      TrainSchedule @relation(fields: [scheduleId], references: [id])
-  coach         Coach         @relation(fields: [coachId], references: [id])
-  seat          Seat          @relation(fields: [seatId], references: [id])
-  fromStation   Station       @relation("FromStationAvail", fields: [fromStationId], references: [id])
-  toStation     Station       @relation("ToStationAvail", fields: [toStationId], references: [id])
   booking       Booking?      @relation(fields: [bookingId], references: [id])
+  coach         Coach         @relation(fields: [coachId], references: [id])
+  fromStation   Station       @relation("FromStationAvail", fields: [fromStationId], references: [id])
+  schedule      TrainSchedule @relation(fields: [scheduleId], references: [id])
+  seat          Seat          @relation(fields: [seatId], references: [id])
+  toStation     Station       @relation("ToStationAvail", fields: [toStationId], references: [id])
 }
 
 model Booking {
@@ -149,10 +143,10 @@ model Booking {
   toStationId        String
   status             BookingStatus      @default(BOOKED)
   bookedAt           DateTime           @default(now())
-  user               User               @relation(fields: [userId], references: [id])
-  schedule           TrainSchedule      @relation(fields: [scheduleId], references: [id])
   fromStation        Station            @relation("FromStation", fields: [fromStationId], references: [id])
+  schedule           TrainSchedule      @relation(fields: [scheduleId], references: [id])
   toStation          Station            @relation("ToStation", fields: [toStationId], references: [id])
+  user               User               @relation(fields: [userId], references: [id])
   passengers         Passenger[]
   payment            Payment?
   seatAvailabilities SeatAvailability[]
@@ -192,9 +186,9 @@ model Review {
   comment   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
-  train     Train?   @relation(fields: [trainId], references: [id])
   station   Station? @relation(fields: [stationId], references: [id])
+  train     Train?   @relation(fields: [trainId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 enum ScheduleStatus {
@@ -238,4 +232,9 @@ enum IdCard {
   AADHAR
   PAN
   PASSPORT
+}
+
+enum ExceptionType {
+  CANCEL
+  ADD
 }

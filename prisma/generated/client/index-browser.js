@@ -163,14 +163,25 @@ exports.Prisma.TrainScalarFieldEnum = {
   name: 'name',
   type: 'type',
   sourceStationId: 'sourceStationId',
-  destinationStationId: 'destinationStationId'
+  destinationStationId: 'destinationStationId',
+  departureTime: 'departureTime',
+  arrivalTime: 'arrivalTime'
 };
 
 exports.Prisma.TrainScheduleScalarFieldEnum = {
   id: 'id',
   trainId: 'trainId',
-  runDate: 'runDate',
-  status: 'status'
+  status: 'status',
+  daysOfWeek: 'daysOfWeek',
+  endDate: 'endDate',
+  startDate: 'startDate'
+};
+
+exports.Prisma.ScheduleExceptionScalarFieldEnum = {
+  id: 'id',
+  scheduleId: 'scheduleId',
+  date: 'date',
+  type: 'type'
 };
 
 exports.Prisma.CoachScalarFieldEnum = {
@@ -274,6 +285,11 @@ exports.ScheduleStatus = exports.$Enums.ScheduleStatus = {
   CANCELLED: 'CANCELLED'
 };
 
+exports.ExceptionType = exports.$Enums.ExceptionType = {
+  CANCEL: 'CANCEL',
+  ADD: 'ADD'
+};
+
 exports.SeatStatus = exports.$Enums.SeatStatus = {
   AVAILABLE: 'AVAILABLE',
   BOOKED: 'BOOKED',
@@ -306,6 +322,7 @@ exports.Prisma.ModelName = {
   Route: 'Route',
   Train: 'Train',
   TrainSchedule: 'TrainSchedule',
+  ScheduleException: 'ScheduleException',
   Coach: 'Coach',
   Seat: 'Seat',
   SeatAvailability: 'SeatAvailability',
