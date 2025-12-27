@@ -89,7 +89,7 @@ export default function Page() {
       });
 
       const data = await res.json();
-      
+
       if (data.success) {
         setResults(data.data.trains || []);
       } else {
@@ -147,9 +147,8 @@ export default function Page() {
                   setSearchMode(m as any);
                   setHasSearched(false); // Reset search state when switching modes
                 }}
-                className={`flex-1 text-sm md:text-base px-3 w-[15vh] h-[6vh] py-1 md:px-4 md:py-2 rounded-md transition-all ${
-                  searchMode === m ? "bg-white shadow font-semibold text-blue-800" : "text-gray-600"
-                }`}
+                className={`flex-1 text-sm md:text-base px-3 w-[15vh] h-[6vh] py-1 md:px-4 md:py-2 rounded-md transition-all ${searchMode === m ? "bg-white shadow font-semibold text-blue-800" : "text-gray-600"
+                  }`}
               >
                 {m === "route" ? "By Stations" : "By Train No"}
               </button>
@@ -220,7 +219,7 @@ export default function Page() {
             {paginatedResults.map((train) => (
               <TrainCard key={train.trainNo} train={train} />
             ))}
-            
+
             {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex justify-center mt-6 gap-1 md:gap-2 items-center flex-wrap">
@@ -231,9 +230,8 @@ export default function Page() {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-1 rounded-md text-sm font-medium ${
-                          page === currentPage ? "bg-orange-500 text-white shadow-md" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                        }`}
+                        className={`px-3 py-1 rounded-md text-sm font-medium ${page === currentPage ? "bg-orange-500 text-white shadow-md" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                          }`}
                       >
                         {page}
                       </button>
@@ -249,14 +247,35 @@ export default function Page() {
           </div>
         ) : hasSearched ? (
           /* Empty State: Only shows if search was performed and no results found */
-          <div className="bg-white rounded-xl p-12 shadow-md text-center border border-gray-100">
-            <div className="text-5xl mb-4">🚂</div>
-            <h3 className="text-xl font-bold text-gray-800">No Direct Trains Found</h3>
-            <p className="text-gray-500 mt-2">
-              We couldn't find any direct trains for this criteria. <br />
-              Please check the station names or train number and try again.
+
+          <div className=" rounded-2xl shadow-xl p-12 text-center flex flex-col items-center bg-white">
+
+            <div className="mb-6 bg-white shadow-lg rounded-xl p-2 border border-red-200 flex items-center gap-3">
+              <span className="text-red-600 text-2xl font-black"></span>
+              <p className="text-red-700 font-bold sm:text-lg text-sm">
+                No Direct Trains Found on the Searched route
+              </p>
+            </div>
+
+            <Image
+              src="/loader2.gif"
+              alt="No trains"
+              width={600}
+              height={600}
+              className="mx-auto mb-4"
+            />
+
+            <p className="text-gray-600 sm:text-lg text-xs">
+              Sorry, there are no trains matching your search. Please try different dates or stations.
             </p>
           </div>
+
+
+
+
+
+
+
         ) : null}
       </div>
     </div>

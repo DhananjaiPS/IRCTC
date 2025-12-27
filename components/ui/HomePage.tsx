@@ -1,27 +1,55 @@
-"use client"
+'use client'
 
+import React, { useContext, useEffect, createContext, useState } from "react";
 import toast from "react-hot-toast";
 import {
   SignInButton,
   SignUpButton,
   SignedIn,
   SignedOut,
-} from '@clerk/nextjs'
-import { CustomUserButtonFallback } from '../clerk/CustomUserButton'; // Assuming correct path
-
-import { useUser } from "@clerk/nextjs";
+  useUser,
+} from "@clerk/nextjs";
+import { CustomUserButtonFallback } from "../clerk/CustomUserButton";
 import Navbar from "./Navbar";
 import TrainSearchForm from "./TrainSearchForm";
 import { Bell } from "lucide-react";
+import LogoutButton from "./LogoutButton";
+import Link from "next/link";
 
+// ---- User Context Type ----
+export type UserType = {
+  id: string;
+  fullName: string;
+  email: string;
+  // Add more fields from your User model if needed
+};
 
+export type UserContextType = {
+  user: UserType | null;
+  setUser: (user: UserType | null) => void;
+};
 
+// ---- User Context ----
+export const UserContext = createContext<UserContextType>({
+  user: null,
+  setUser: () => { },
+});
+
+// ---- IRCTC Homepage Component ----
 const IRCTCHomepage = () => {
-
+  // const { user, setUser } = useContext(UserContext);
   const { user, isLoaded } = useUser();
+  console.log(user)
+  // Fetch user from backend after Clerk login
+
+
   const handleSearchViaDisksha = () => {
-    toast.success('Feature is Under Alpha Phase');
+    toast.success("Feature is Under Alpha Phase");
   };
+
+  
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
@@ -32,7 +60,7 @@ const IRCTCHomepage = () => {
           <div className="flex items-center space-x-2 sm:space-x-4">
 
             {/* --- AUTHENTICATION BUTTONS --- */}
-            <SignedOut>
+            <SignedOut >
               {/* Login Button - Adjusted padding for better mobile fit */}
               <SignInButton mode="modal">
                 <button className="px-3 py-1.5 text-xs sm:px-4 sm:py-1.5 bg-blue-900 sm:text-sm text-white font-semibold rounded hover:bg-orange-500 transition">
@@ -48,11 +76,14 @@ const IRCTCHomepage = () => {
             </SignedOut>
 
             <SignedIn>
+              <LogoutButton />
               {/* Custom User Button with Name/Avatar */}
               <CustomUserButtonFallback /> <div className="flex items-center gap-1">
-                <span className="md:block text-gray-700 hover:text-blue-900 text-xs sm:text-sm font-bold">
-                  {user?.fullName}
+                <span className="sm:hidden text-gray-700 hover:text-blue-900 text-xs sm:text-sm font-bold ">
+                  {user?.firstName
+                  }
                 </span>
+                <span className="hidden sm:block text-gray-700 hover:text-blue-900 text-xs sm:text-sm font-bold">{user?.fullName}</span>
 
                 {/* VERIFIED BADGE */}
                 <svg
@@ -77,7 +108,8 @@ const IRCTCHomepage = () => {
 
             {/* Hiding less critical links on mobile */}
             <button className="hidden md:block px-3 py-1.5 text-gray-700 hover:text-blue-900 text-xs sm:text-sm cursor-pointer">AGENT LOGIN</button>
-            <button className="hidden sm:block px-3 py-1.5 text-gray-700 hover:text-blue-900 text-xs sm:text-sm cursor-pointer">CONTACT US</button>
+            <Link href={"/complain"}>
+            <button className="hidden sm:block px-3 py-1.5 text-gray-700 hover:text-blue-900 text-xs sm:text-sm cursor-pointer">CONTACT US</button></Link>
             <button className="hidden sm:block px-3 py-1.5 text-gray-700 hover:text-blue-900 text-xs sm:text-sm cursor-pointer">HELP & SUPPORT</button>
           </div>
           <div className="flex items-center space-x-2 sm:space-x-4">
@@ -133,9 +165,14 @@ const IRCTCHomepage = () => {
             <div className="z-10 mx-auto w-full lg:max-w-full">
               {/* Action Buttons: Stack on mobile, side-by-side on tablet/desktop */}
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-4">
-                <button className="flex-1 bg-blue-900 text-white px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base font-semibold hover:bg-blue-800 transition flex items-center justify-center rounded">
-                  <span className="mr-2">📋</span> PNR STATUS
-                </button>
+                <Link
+                  href="/train/pnr-enquiry"
+                  className="flex-1 flex items-center justify-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl text-sm sm:text-base font-bold transition-all active:scale-[0.98] shadow-md shadow-blue-100"
+                >
+                  <span className="text-lg">📋</span>
+                  <span className="tracking-wide uppercase">PNR Status</span>
+                </Link>
+
                 <button className="flex-1 bg-blue-900 text-white px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base font-semibold hover:bg-blue-800 transition flex items-center justify-center rounded">
                   <span className="mr-2">📊</span> CHARTS / VACANCY
                 </button>
@@ -174,7 +211,7 @@ const IRCTCHomepage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
@@ -190,40 +227,40 @@ export default IRCTCHomepage;
 // import { Train, Calendar, MapPin, ArrowDownUp, Search, Menu, X, User, Bell, ChevronDown } from 'lucide-react';
 
 
-  // const [fromStation, setFromStation] = useState('LUCKNOW NR - LKO (LUCKNOW)');
-  // const [toStation, setToStation] = useState('MORADABAD - MB');
+// const [fromStation, setFromStation] = useState('LUCKNOW NR - LKO (LUCKNOW)');
+// const [toStation, setToStation] = useState('MORADABAD - MB');
 
-  // Move to TrainSearch_Form
+// Move to TrainSearch_Form
 
-  // const [journeyDate, setJourneyDate] = useState('2025-11-09');
-  // const [selectedClass, setSelectedClass] = useState('All Classes');
-  // const [quota, setQuota] = useState('GENERAL');
-  // const [disabilityConcession, setDisabilityConcession] = useState(false);
-  // const [flexibleDate, setFlexibleDate] = useState(false);
-  // const [availableBerth, setAvailableBerth] = useState(false);
-  // const [railwayPass, setRailwayPass] = useState(false);
-
-
-
-  // console.log(user?.fullName) 
+// const [journeyDate, setJourneyDate] = useState('2025-11-09');
+// const [selectedClass, setSelectedClass] = useState('All Classes');
+// const [quota, setQuota] = useState('GENERAL');
+// const [disabilityConcession, setDisabilityConcession] = useState(false);
+// const [flexibleDate, setFlexibleDate] = useState(false);
+// const [availableBerth, setAvailableBerth] = useState(false);
+// const [railwayPass, setRailwayPass] = useState(false);
 
 
 
-  // const today = new Date().toISOString().split("T")[0];
-  // const maxDate = (() => {
-  //   const date = new Date();
-  //   date.setDate(date.getDate() + 120);
-  //   return date.toISOString().split("T")[0];
-  // })();
-  // const swapStations = () => {
-  //   const temp = fromStation;
-  //   setFromStation(toStation);
-  //   setToStation(temp);
-  // };
+// console.log(user?.fullName)
 
-  // const handleSearch = () => {
-  //   toast.success('Searching trains from ' + fromStation + ' to ' + toStation);
-  // };
+
+
+// const today = new Date().toISOString().split("T")[0];
+// const maxDate = (() => {
+//   const date = new Date();
+//   date.setDate(date.getDate() + 120);
+//   return date.toISOString().split("T")[0];
+// })();
+// const swapStations = () => {
+//   const temp = fromStation;
+//   setFromStation(toStation);
+//   setToStation(temp);
+// };
+
+// const handleSearch = () => {
+//   toast.success('Searching trains from ' + fromStation + ' to ' + toStation);
+// };
 
 
 // <div className="relative max-w-7xl mx-auto px-4 py-8 w-full">

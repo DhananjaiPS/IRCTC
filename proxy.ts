@@ -65,10 +65,7 @@ export default clerkMiddleware((auth, req: NextRequest) => {
 
 export const config = {
   matcher: [
-    /**
-     * Run only on application routes
-     * Exclude static assets & _next internals
-     */
-    "/((?!_next|.*\\..*).*)",
+    "/((?!_next|.*\\..*|api/sign-in).*)",
   ],
 };
+
