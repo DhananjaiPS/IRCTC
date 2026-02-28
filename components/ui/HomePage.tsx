@@ -164,19 +164,36 @@ const IRCTCHomepage = () => {
             {/* Left Side - Booking Form (50% width on Large Screens) */}
             <div className="z-10 mx-auto w-full lg:max-w-full">
               {/* Action Buttons: Stack on mobile, side-by-side on tablet/desktop */}
-              <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-4">
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 mb-4">
+                {/* PNR Status Button */}
                 <Link
                   href="/train/pnr-enquiry"
-                  className="flex-1 flex items-center justify-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 sm:px-6 sm:py-3  text-sm sm:text-base font-bold h-12 w-full"
+                  className="flex-1 flex items-center justify-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-4 py-3 text-sm sm:text-base font-bold h-12 w-full rounded shadow-md active:scale-95 transition-all tracking-wide uppercase"
                 >
-                  {/* 📋 */}
-                  <span className="text-lg "><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-book-search-icon lucide-book-search"><path d="M11 22H5.5a1 1 0 0 1 0-5h4.501" /><path d="m21 22-1.879-1.878" /><path d="M3 19.5v-15A2.5 2.5 0 0 1 5.5 2H18a1 1 0 0 1 1 1v8" /><circle cx="17" cy="18" r="3" /></svg></span>
-                  <span className="tracking-wide uppercase">PNR Status</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-book-search"
+                  >
+                    <path d="M11 22H5.5a1 1 0 0 1 0-5h4.501" />
+                    <path d="m21 22-1.879-1.878" />
+                    <path d="M3 19.5v-15A2.5 2.5 0 0 1 5.5 2H18a1 1 0 0 1 1 1v8" />
+                    <circle cx="17" cy="18" r="3" />
+                  </svg>
+                  <span>PNR Status</span>
                 </Link>
+
+                {/* Live Train Status Button */}
                 <Link
                   href="/train/track-your-train"
-                  // Saari button wali classes ab seedha Link par hain
-                  className="flex-1 bg-blue-900 text-white px-4 py-3 sm:px-6 text-sm sm:text-base hover:bg-blue-800 transition flex items-center justify-center rounded cursor-pointer tracking-wide uppercase gap-2 h-12 w-full font-bold shadow-md active:scale-95 transition-all"
+                  className="flex-1 flex items-center justify-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-4 py-3 text-sm sm:text-base font-bold h-12 w-full rounded shadow-md active:scale-95 transition-all tracking-wide uppercase"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -197,7 +214,7 @@ const IRCTCHomepage = () => {
                     <path d="m8 19-2 3" />
                     <path d="m16 19 2 3" />
                   </svg>
-                  <span className="tracking-wide uppercase">LIVE TRAIN STATUS</span>
+                  <span>Live Train Status</span>
                 </Link>
               </div>
 
