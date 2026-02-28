@@ -461,7 +461,7 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
                             >
                                 <span className="block font-bold">{cls}</span>
 
-                                <span className={`text-xs flex items-center justify-center gap-1 ${textColor}`}>
+                                <span className={`text-xs flex items-center  text-white justify-center gap-1 ${textColor}`}>
                                     {data.loading ? (
                                         <Loader2 className="w-3 h-3 animate-spin" />
                                     ) : (
@@ -479,7 +479,7 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
                 </div>
                 <button
                     disabled={isDeparted()}
-                    className={`px-6 py-2 rounded-lg ${isDeparted() ? 'bg-gray-400' : 'bg-blue-600 text-white'}`}
+                    className={`px-6 py-2 rounded-lg ${isDeparted() ? 'bg-red-600 text-white' : 'bg-blue-600 text-white'}`}
                     onClick={handleBooking}
                 >
                     {isDeparted() ? "Already Departed" : "Book Now"}
