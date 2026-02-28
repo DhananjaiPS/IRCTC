@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 
 export default function Page() {
   const router = useRouter();
-  const [pnr, setPnr] = useState("2144719334");
+  const [pnr, setPnr] = useState("7402649677");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
 
@@ -50,12 +50,22 @@ export default function Page() {
 
   {
     !loading && !result && (
-      <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 rounded-xl p-4 text-sm">
-        <p className="font-semibold">PNR Status Unavailable</p>
-        <p>
-          The entered PNR is either invalid, cancelled, or the service is temporarily blocked.
-          Please recheck the PNR number and try again later.
-        </p>
+      <div className="max-w-md mx-auto mt-20 text-center space-y-6">
+        <div className="bg-white p-10 rounded-[40px] shadow-xl">
+          <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Image src="/no-results.png" width={60} height={60} alt="Error" />
+          </div>
+          <h3 className="text-2xl font-black text-slate-800">Invalid PNR</h3>
+          <p className="text-slate-500 text-sm mt-2">
+            The PNR <b>{pnr}</b> does not exist in our database or has been flushed from the system.
+          </p>
+          <button
+            onClick={() => router.push("/")}
+            className="mt-8 w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all"
+          >
+            Back to Dashboard
+          </button>
+        </div>
       </div>
     )
   }
@@ -117,107 +127,125 @@ export default function Page() {
           </button>
         </div>
 
-        {/* ================= RESULT ================= */}
+      {/* ================= SYNCED IRCTC STYLE RESULT ================= */}
         {result && (
-          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-            <h2 className="font-bold text-lg text-blue-900">
-              PNR: {result.pnr}
-            </h2>
-
-            <p className="font-semibold text-red-600">
-              {result.status}
-            </p>
-
-            {/* Train */}
-            {result?.train && (
-              <div className="border-t pt-4">
-                <p>
-                  <b>Train:</b> {result.train.number} – {result.train.name}
-                </p>
-                <p>
-                  <b>Class:</b> {result.train.class}
+          <div className="max-w-3xl mx-auto space-y-4 pb-20 animate-in fade-in duration-500 px-0">
+            
+            {/* Train Header Card - Matches Form Width */}
+            <div className="bg-[#003366] rounded-t-xl p-3 flex justify-between items-center text-white shadow-md border-b-2 border-orange-500">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold opacity-80 uppercase leading-none mb-1">Train Details</span>
+                <span className="text-sm font-black uppercase tracking-tight">
+                  {result.train.no} / {result.train.name}
+                </span>
+              </div>
+              <div className="text-right">
+                <span className="text-[10px] font-bold opacity-80 uppercase leading-none mb-1">Class</span>
+                <p className="text-xs font-black bg-white text-[#003366] px-2 py-0.5 rounded-sm mt-1 shadow-sm">
+                  {result.train.class}
                 </p>
               </div>
-            )}
+            </div>
 
+            {/* Journey Info Block - End Date set to Blue */}
+            <div className="bg-white border-x border-b border-gray-200 p-5 flex justify-between items-center text-slate-800 shadow-sm rounded-b-xl">
+              {/* Departure */}
+              <div className="text-center w-28">
+                <p className="text-[10px] font-black text-blue-600 uppercase mb-1 tracking-tighter">
+                  {new Date(result.journey.departure).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                </p>
+                <p className="text-2xl font-black text-[#003366] leading-none tracking-tighter">{result.journey.from.id}</p>
+                <p className="text-[9px] font-bold text-gray-400 uppercase truncate mt-1">{result.journey.from.name}</p>
+                <p className="mt-2 text-xs font-bold text-gray-700 bg-gray-100 py-1 rounded">
+                  {new Date(result.journey.departure).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </p>
+              </div>
 
-            {/* Journey */}
-            {result.journey && (
-              <div className="border-t pt-4">
-                <p>
-                  <b>From:</b> {result.journey.from?.name} ({result.journey.from?.code})
+              {/* Center Logic */}
+              <div className="flex-1 px-4 flex flex-col items-center">
+                <p className="text-[14px] sm:text-[15px] font-bold text-gray-400 italic mb-1 uppercase tracking-tighter">
+                  {result.journey.duration}
                 </p>
-                <p>
-                  <b>To:</b> {result.journey.to?.name} ({result.journey.to?.code})
-                </p>
-                {/* Replace your Departure/Arrival lines with this */}
-                <div className="border-t pt-4 grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase">Departure</p>
-                    <p className="text-sm font-semibold">
-                      {new Date(result.journey.departure).toLocaleDateString('en-IN', {
-                        weekday: 'short',
-                        month: 'short',
-                        day: 'numeric',
-                      })}, {new Date(result.journey.departure).toLocaleTimeString('en-IN', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true
-                      })}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase">Arrival</p>
-                    <p className="text-sm font-semibold">
-                      {new Date(result.journey.arrival).toLocaleDateString('en-IN', {
-                        weekday: 'short',
-                        month: 'short',
-                        day: 'numeric',
-                      })}, {new Date(result.journey.arrival).toLocaleTimeString('en-IN', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true
-                      })}
-                    </p>
-                  </div>
+                <div className="w-full h-[1px] bg-gray-300 relative">
+                  <div className="absolute -top-1 left-0 w-2 h-2 rounded-full bg-gray-400"></div>
+                  <div className="absolute -top-1 right-0 w-2 h-2 rounded-full bg-gray-400"></div>
                 </div>
-                <p>
-                  <b>Duration:</b> {result.journey.duration}
+                <div className="mt-2 flex items-center gap-1 text-[8px] font-black text-green-600 uppercase">
+                   {/* <span className="w-1 h-1 bg-green-500 rounded-full animate-pulse"></span> */}
+                   <span className="text-sm sm:text-[20px]">Confirmed</span>
+                </div>
+              </div>
+
+              {/* Arrival - Changed Date to Blue */}
+              <div className="text-center w-28">
+                <p className="text-[10px] font-black text-blue-600 uppercase mb-1 tracking-tighter">
+                  {new Date(result.journey.arrival).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                </p>
+                <p className="text-2xl font-black text-[#003366] leading-none tracking-tighter">{result.journey.to.id}</p>
+                <p className="text-[9px] font-bold text-gray-400 uppercase truncate mt-1">{result.journey.to.name}</p>
+                <p className="mt-2 text-xs font-bold text-gray-700 bg-gray-100 py-1 rounded">
+                  {new Date(result.journey.arrival).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
-            )}
+            </div>
 
-            {/* Chart */}
-            {result.chart && (
-              <div className="border-t pt-4">
-                <p><b>Chart Status:</b> {result.chart.status}</p>
-                <p className="text-sm text-gray-600">
-                  {result.chart.message}
-                </p>
+            {/* Passenger Table - Perfect Alignment */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="bg-gray-100 px-4 py-2 border-b border-gray-200 flex justify-between items-center">
+                <span className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Passenger List</span>
+                <span className="text-[13px] font-mono font-bold text-blue-800 uppercase tracking-tighter">PNR: {result.pnr}</span>
               </div>
-            )}
-
-            {/* Passengers */}
-            {Array.isArray(result.passengers) && (
-              <div className="border-t pt-4">
-                <h3 className="font-semibold mb-2">Passengers</h3>
-                {result.passengers.map((p: any, i: number) => (
-                  <div
-                    key={i}
-                    className="flex justify-between text-sm border-b py-2"
-                  >
-                    <span>{p.name}</span>
-                    <span className="font-semibold text-red-600">
-                      {p.status} ({p.seat})
-                    </span>
-                  </div>
-                ))}
+              
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-gray-50 text-[9px] font-bold text-gray-400 uppercase border-b">
+                    <tr>
+                      <th className="p-4">Name / Age / Sex</th>
+                      <th className="p-4 text-center">Booking</th>
+                      <th className="p-4 text-right">Current Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {result.passengers.map((p: any, idx: number) => (
+                      <tr key={idx} className="text-xs hover:bg-slate-50 transition-colors">
+                        <td className="p-4">
+                          <p className="font-bold text-slate-800 uppercase tracking-tight">{idx + 1}. {p.name}</p>
+                          <p className="text-[9px] text-gray-400 font-medium">{p.age} Yrs | {p.gender}</p>
+                        </td>
+                        <td className="p-4 text-center text-[10px] font-bold text-gray-400">CNF</td>
+                        <td className="p-4 text-right">
+                          <p className={`font-black uppercase tracking-tighter ${p.status === 'CONFIRMED' ? 'text-green-600' : 'text-orange-600'}`}>
+                            {p.status}
+                          </p>
+                          <p className="text-[10px] font-mono font-bold text-blue-900 bg-blue-50 border border-blue-100 inline-block px-1 mt-1 rounded leading-none py-1">
+                            {p.coach}, {p.seat} ({p.berth})
+                          </p>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            )}
+            </div>
 
-            <p className="text-xs text-gray-500 text-right">
-              {result.lastUpdated}
-            </p>
+            {/* Syncing Fare with Form Footer Style */}
+            {/* <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex justify-between items-center">
+              <div>
+                <p className="text-[9px] font-bold text-gray-400 uppercase mb-1 leading-none">Total Fare Amount</p>
+                <p className="text-xl font-black text-[#003366]">₹{result.totalFare}.00</p>
+              </div>
+              <div className="text-right">
+                <p className="text-[9px] font-bold text-gray-400 uppercase mb-1 leading-none">Transaction Date</p>
+                <p className="text-sm font-bold text-gray-700">{new Date(result.bookedAt).toLocaleDateString()}</p>
+              </div>
+            </div> */}
+
+            {/* Disclaimer */}
+            <div className="flex items-center justify-center gap-2 text-gray-400 px-4">
+                <div className="h-[1px] flex-1 bg-gray-200"></div>
+                <p className="text-[9px] font-bold uppercase tracking-widest italic whitespace-nowrap opacity-60">Chart will be Prepared 4 hours before departure</p>
+                <div className="h-[1px] flex-1 bg-gray-200"></div>
+            </div>
           </div>
         )}
 
