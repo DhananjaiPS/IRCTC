@@ -7,7 +7,7 @@ import { CreditCard, Loader2, ShieldCheck, CheckCircle2 } from "lucide-react";
 import toast from "react-hot-toast";
 export default function Page() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin" /></div>}>
       <PaymentProcessPage />
     </Suspense>
   );
