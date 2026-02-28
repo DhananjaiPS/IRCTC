@@ -47,7 +47,7 @@ const IRCTCHomepage = () => {
     toast.success("Feature is Under Alpha Phase");
   };
 
-  
+
 
 
 
@@ -109,7 +109,7 @@ const IRCTCHomepage = () => {
             {/* Hiding less critical links on mobile */}
             <button className="hidden md:block px-3 py-1.5 text-gray-700 hover:text-blue-900 text-xs sm:text-sm cursor-pointer">AGENT LOGIN</button>
             <Link href={"/complain"}>
-            <button className="hidden sm:block px-3 py-1.5 text-gray-700 hover:text-blue-900 text-xs sm:text-sm cursor-pointer">CONTACT US</button></Link>
+              <button className="hidden sm:block px-3 py-1.5 text-gray-700 hover:text-blue-900 text-xs sm:text-sm cursor-pointer">CONTACT US</button></Link>
             <button className="hidden sm:block px-3 py-1.5 text-gray-700 hover:text-blue-900 text-xs sm:text-sm cursor-pointer">HELP & SUPPORT</button>
           </div>
           <div className="flex items-center space-x-2 sm:space-x-4">
@@ -167,15 +167,38 @@ const IRCTCHomepage = () => {
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-4">
                 <Link
                   href="/train/pnr-enquiry"
-                  className="flex-1 flex items-center justify-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 sm:px-6 sm:py-3  text-sm sm:text-base font-bold "
+                  className="flex-1 flex items-center justify-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 sm:px-6 sm:py-3  text-sm sm:text-base font-bold h-12 w-full"
                 >
-                  <span className="text-lg">📋</span>
+                  {/* 📋 */}
+                  <span className="text-lg "><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-book-search-icon lucide-book-search"><path d="M11 22H5.5a1 1 0 0 1 0-5h4.501" /><path d="m21 22-1.879-1.878" /><path d="M3 19.5v-15A2.5 2.5 0 0 1 5.5 2H18a1 1 0 0 1 1 1v8" /><circle cx="17" cy="18" r="3" /></svg></span>
                   <span className="tracking-wide uppercase">PNR Status</span>
                 </Link>
-
-                <button className="flex-1 bg-blue-900 text-white px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base font-semibold hover:bg-blue-800 transition flex items-center justify-center rounded">
-                  <span className="mr-2">📊</span> CHARTS / VACANCY
-                </button>
+                <Link
+                  href="/train/track-your-train"
+                  // Saari button wali classes ab seedha Link par hain
+                  className="flex-1 bg-blue-900 text-white px-4 py-3 sm:px-6 text-sm sm:text-base hover:bg-blue-800 transition flex items-center justify-center rounded cursor-pointer tracking-wide uppercase gap-2 h-12 w-full font-bold shadow-md active:scale-95 transition-all"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-train-front"
+                  >
+                    <path d="M8 3.1V7a4 4 0 0 0 8 0V3.1" />
+                    <path d="m9 15-1-1" />
+                    <path d="m15 15 1-1" />
+                    <path d="M9 19c-2.8 0-5-2.2-5-5v-4a8 8 0 0 1 16 0v4c0 2.8-2.2 5-5 5Z" />
+                    <path d="m8 19-2 3" />
+                    <path d="m16 19 2 3" />
+                  </svg>
+                  <span className="tracking-wide uppercase">LIVE TRAIN STATUS</span>
+                </Link>
               </div>
 
               {/* The new Search Form component */}
