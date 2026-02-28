@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { stations } from "@/Data/station";
+import { stations } from "../../Data/station";
 
 const CLASSES = [
   "All Classes",

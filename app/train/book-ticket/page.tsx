@@ -10,7 +10,7 @@ import {
     Loader2,
     Train as TrainIcon,
     MapPin as PinIcon,
-    RefreshCcw   // ✅ ADD THIS
+    RefreshCcw
 } from "lucide-react";
 import { stations } from "../../../Data/station";
 // import { useRouter } from "next/navigation";
@@ -71,7 +71,8 @@ interface TrainCardProps {
     train: TrainData;
     fromCode: string | null;
     toCode: string | null;
-    journeyDate: string; // Passed down to check running status accurately
+    journeyDate: string;
+    // Passed down to check running status accurately
 }
 
 const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyDate }) => {
@@ -129,47 +130,47 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
     }, []);
 
     const refreshAvailability = async (cls: string) => {
-    setSelectedClass(cls);
-    
-    // UI par loading dikhao
-    setClassData(prev => ({
-        ...prev,
-        [cls]: { ...prev[cls], loading: true }
-    }));
+        setSelectedClass(cls);
 
-    try {
-        // ✅ FRESH DATA FETCH KARO (Sirf ek API call jo current count bataye)
-       
-        const res = await fetch(`/api/train/availability`, {
-    method: "POST", // 👈 GET ki jagah POST karo
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ 
-        trainNo: train.trainNumber, 
-        date: train.journeyDate, 
-        class: cls 
-    }),
-});
-        const data = await res.json();
-
-        if (data.success) {
-            setClassData(prev => ({
-                ...prev,
-                [cls]: {
-                    count: data.availableCount, // DB wala fresh count (e.g. 140)
-                    status: data.status,
-                    loading: false
-                }
-            }));
-        }
-    } catch (error) {
-        console.error("Refresh failed");
-        // Fallback to old data on error
+        // UI par loading dikhao
         setClassData(prev => ({
             ...prev,
-            [cls]: { ...prev[cls], loading: false }
+            [cls]: { ...prev[cls], loading: true }
         }));
-    }
-};
+
+        try {
+            // ✅ FRESH DATA FETCH KARO (Sirf ek API call jo current count bataye)
+
+            const res = await fetch(`/api/train/availability`, {
+                method: "POST", // 👈 GET ki jagah POST karo
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    trainNo: train.trainNumber,
+                    date: train.journeyDate,
+                    class: cls
+                }),
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                setClassData(prev => ({
+                    ...prev,
+                    [cls]: {
+                        count: data.availableCount, // DB wala fresh count (e.g. 140)
+                        status: data.status,
+                        loading: false
+                    }
+                }));
+            }
+        } catch (error) {
+            console.error("Refresh failed");
+            // Fallback to old data on error
+            setClassData(prev => ({
+                ...prev,
+                [cls]: { ...prev[cls], loading: false }
+            }));
+        }
+    };
 
     // Check if booking is allowed (Not in past)
     const isDeparted = () => {
@@ -535,11 +536,11 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
 // BookTicketPage Component (Main)
 // ==========================================================
 export default function Page() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <BookTicketPage />
-    </Suspense>
-  );
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <BookTicketPage />
+        </Suspense>
+    );
 }
 
 

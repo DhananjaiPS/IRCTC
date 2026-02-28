@@ -3,7 +3,6 @@ import { useState } from "react";
 import Loading from "./Loading";
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 // Assuming stations import is needed, though not used directly in this snippet
-import { stations } from "@/Data/station";
 
 type Props = {
     train: any;
