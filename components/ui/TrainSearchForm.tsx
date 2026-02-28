@@ -15,21 +15,21 @@ import { stations } from "../../Data/station";
 
 const CLASSES = [
   "All Classes",
-  "Sleeper (SL)",
-  "AC 3 Tier (3A)",
-  "AC 2 Tier (2A)",
-  "AC First Class (1A)",
-  "Second Sitting (2S)",
+  // "Sleeper (SL)",
+  // "AC 3 Tier (3A)",
+  // "AC 2 Tier (2A)",
+  // "AC First Class (1A)",
+  // "Second Sitting (2S)",
 ];
 
 const QUOTAS = [
   "GENERAL",
-  "LADIES",
-  "LOWER BERTH",
-  "PERSON WITH DISABILITY",
-  "DUTY PASS",
-  "TATKAL",
-  "PREMIUM TATKAL",
+  // "LADIES",
+  // "LOWER BERTH",
+  // "PERSON WITH DISABILITY",
+  // "DUTY PASS",
+  // "TATKAL",
+  // "PREMIUM TATKAL",
 ];
 
 export default function TrainSearchForm() {
