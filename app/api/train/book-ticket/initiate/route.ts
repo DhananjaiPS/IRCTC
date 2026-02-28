@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     journeyDate.setHours(0, 0, 0, 0);
 
     const user = await currentUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!user) return NextResponse.json({ error: "Login required" }, { status: 401 });
 
     const validUser = await prisma.user.findUnique({ where: { clerkId: user.id } });
     if (!validUser) return NextResponse.json({ error: "User profile not found" }, { status: 404 });

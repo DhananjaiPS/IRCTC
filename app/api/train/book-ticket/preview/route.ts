@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
-
+import { currentUser } from "@clerk/nextjs/server";
 const RATE_PER_KM: Record<string, number> = {
   SL: 0.6,
   AC3: 1.5,
@@ -10,6 +10,8 @@ const RATE_PER_KM: Record<string, number> = {
 
 export async function POST(req: Request) {
   try {
+   
+
     const { trainNo, date, from, to, class: coachType } = await req.json();
     const journeyDate = new Date(date);
     journeyDate.setHours(0, 0, 0, 0);

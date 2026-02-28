@@ -22,7 +22,7 @@ interface TrainAvailability {
     prediction?: string;
 }
 
-// Updated RouteStop interface to match your Route rendering logic (r.stnName, r.arrival, etc.)
+// Updated RouteStop interface to mFunFatch your Route rendering logic (r.stnName, r.arrival, etc.)
 interface RouteStop {
     stnName: string;
     stnCode: string;
@@ -162,6 +162,7 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
                     }
                 }));
             }
+            
         } catch (error) {
             console.error("Refresh failed");
             // Fallback to old data on error
