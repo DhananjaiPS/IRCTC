@@ -12,7 +12,7 @@ import {
     MapPin as PinIcon,
     RefreshCcw   // ✅ ADD THIS
 } from "lucide-react";
-import { stations } from "@/Data/station";
+import { stations } from "../../../Data/station";
 // import { useRouter } from "next/navigation";
 /* ---------- Types ---------- */
 
