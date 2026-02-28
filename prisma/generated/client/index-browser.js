@@ -24,12 +24,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 7.1.0
- * Query Engine version: ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba
+ * Prisma Client JS version: 7.4.1
+ * Query Engine version: 55ae170b1ced7fc6ed07a15f110549408c501bb3
  */
 Prisma.prismaVersion = {
-  client: "7.1.0",
-  engine: "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba"
+  client: "7.4.1",
+  engine: "55ae170b1ced7fc6ed07a15f110549408c501bb3"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -123,6 +123,7 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.UserScalarFieldEnum = {
   clerkId: 'clerkId',
   id: 'id',
+  role: 'role',
   fullName: 'fullName',
   email: 'email',
   phone: 'phone',
@@ -199,25 +200,39 @@ exports.Prisma.SeatScalarFieldEnum = {
   berthType: 'berthType'
 };
 
-exports.Prisma.SeatAvailabilityScalarFieldEnum = {
+exports.Prisma.TrainInstanceScalarFieldEnum = {
   id: 'id',
   scheduleId: 'scheduleId',
+  journeyDate: 'journeyDate',
+  coachType: 'coachType',
+  totalSeats: 'totalSeats',
+  availableSeats: 'availableSeats',
+  bookedSeats: 'bookedSeats',
+  racSeats: 'racSeats',
+  wlSeats: 'wlSeats'
+};
+
+exports.Prisma.SeatAvailabilityScalarFieldEnum = {
+  id: 'id',
+  trainInstanceId: 'trainInstanceId',
+  bookingId: 'bookingId',
+  passengerId: 'passengerId',
   coachId: 'coachId',
   seatId: 'seatId',
-  fromStationId: 'fromStationId',
-  toStationId: 'toStationId',
-  status: 'status',
-  bookingId: 'bookingId'
+  status: 'status'
 };
 
 exports.Prisma.BookingScalarFieldEnum = {
   id: 'id',
   pnr: 'pnr',
   userId: 'userId',
+  journeyDate: 'journeyDate',
+  trainInstanceId: 'trainInstanceId',
   scheduleId: 'scheduleId',
   fromStationId: 'fromStationId',
   toStationId: 'toStationId',
   status: 'status',
+  totalFare: 'totalFare',
   bookedAt: 'bookedAt'
 };
 
@@ -254,6 +269,30 @@ exports.Prisma.ReviewScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ComplaintScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  fullName: 'fullName',
+  email: 'email',
+  phone: 'phone',
+  pnr: 'pnr',
+  complaintType: 'complaintType',
+  message: 'message',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  adminAction: 'adminAction',
+  adminMessage: 'adminMessage'
+};
+
+exports.Prisma.AttachmentScalarFieldEnum = {
+  id: 'id',
+  complaintId: 'complaintId',
+  filename: 'filename',
+  data: 'data',
+  mimeType: 'mimeType'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -268,6 +307,14 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.Role = exports.$Enums.Role = {
+  USER: 'USER',
+  ADMIN_OPS: 'ADMIN_OPS',
+  ADMIN_FINANCE: 'ADMIN_FINANCE',
+  ADMIN_SUPPORT: 'ADMIN_SUPPORT',
+  SUPER_ADMIN: 'SUPER_ADMIN'
+};
+
 exports.Sex = exports.$Enums.Sex = {
   MALE: 'MALE',
   FEMALE: 'FEMALE',
@@ -290,6 +337,14 @@ exports.ExceptionType = exports.$Enums.ExceptionType = {
   ADD: 'ADD'
 };
 
+exports.TrainBerthType = exports.$Enums.TrainBerthType = {
+  LOWER: 'LOWER',
+  MIDDLE: 'MIDDLE',
+  UPPER: 'UPPER',
+  SIDE_LOWER: 'SIDE_LOWER',
+  SIDE_UPPER: 'SIDE_UPPER'
+};
+
 exports.SeatStatus = exports.$Enums.SeatStatus = {
   AVAILABLE: 'AVAILABLE',
   BOOKED: 'BOOKED',
@@ -305,7 +360,8 @@ exports.BookingStatus = exports.$Enums.BookingStatus = {
 exports.PassengerStatus = exports.$Enums.PassengerStatus = {
   CONFIRMED: 'CONFIRMED',
   RAC: 'RAC',
-  WAITLISTED: 'WAITLISTED'
+  WAITLISTED: 'WAITLISTED',
+  CANCELLED: 'CANCELLED'
 };
 
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {
@@ -314,6 +370,12 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   FAILED: 'FAILED',
   REFUND_INITIATED: 'REFUND_INITIATED',
   REFUND_SUCCESS: 'REFUND_SUCCESS'
+};
+
+exports.ComplaintStatus = exports.$Enums.ComplaintStatus = {
+  PENDING: 'PENDING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  RESOLVED: 'RESOLVED'
 };
 
 exports.Prisma.ModelName = {
@@ -325,11 +387,14 @@ exports.Prisma.ModelName = {
   ScheduleException: 'ScheduleException',
   Coach: 'Coach',
   Seat: 'Seat',
+  TrainInstance: 'TrainInstance',
   SeatAvailability: 'SeatAvailability',
   Booking: 'Booking',
   Passenger: 'Passenger',
   Payment: 'Payment',
-  Review: 'Review'
+  Review: 'Review',
+  Complaint: 'Complaint',
+  Attachment: 'Attachment'
 };
 
 /**

@@ -3,7 +3,7 @@ import { useState } from "react";
 import Loading from "./Loading";
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 // Assuming stations import is needed, though not used directly in this snippet
-import { stations } from "@/Data/Station";
+import { stations } from "@/Data/station";
 
 type Props = {
     train: any;
@@ -59,6 +59,8 @@ export default function TrainCard({ train }: Props) {
             });
 
             const data = await res.json();
+            console.log("IRCTC trains")
+            console.log(data);
             if (data.success) {
                 // Assuming your API returns route data
                 setRoute(data.data.trains[0].route || []);
@@ -69,6 +71,8 @@ export default function TrainCard({ train }: Props) {
         }
     };
     // console.log(train) // Removed console.log for cleaner production code
+    type doggesh = string
+    const dog: doggesh = "rocky";
 
     return (
         <div className="bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">

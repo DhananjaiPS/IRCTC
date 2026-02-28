@@ -7,6 +7,7 @@ export async function POST(req: Request) {
     try {
         const { clerkId } = await req.json();
         console.log(clerkId)
+        console.log("first")
         if (!clerkId) return NextResponse.json({ error: "Missing Clerk ID" }, { status: 400 });
 
         // Fetch user from DB using Clerk ID

@@ -1,5 +1,5 @@
 "use client";
-
+import { Suspense } from "react";
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
@@ -9,10 +9,11 @@ import {
     Clock,
     Loader2,
     Train as TrainIcon,
-    MapPin as PinIcon, // PinIcon added for destination
+    MapPin as PinIcon,
+    RefreshCcw   // ✅ ADD THIS
 } from "lucide-react";
-import { stations } from "@/Data/Station";
-
+import { stations } from "@/Data/station";
+// import { useRouter } from "next/navigation";
 /* ---------- Types ---------- */
 
 interface TrainAvailability {
@@ -42,18 +43,21 @@ interface TrainData {
 
     runningDays: string
     coach: string
-    seatsAvailable: string
 
-    availability: TrainAvailability[]
+    availability: {
+        status: string
+        count: number
+        coachType: string
+    }
 
     startDate: string | null
     endDate: string | null
 
-    journeyDate: string        // user-selected date
-    destinationDate: string    // calculated
-    dayCount: number           // 0 | 1 | 2
+    journeyDate: string
+    destinationDate: string
+    dayCount: number
 
-    fare: { totalFare: number } | null
+    fare: number
 }
 
 // Placeholder Loading Component
@@ -75,6 +79,7 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
     const [open, setOpen] = useState(false);
     const [routeLoading, setRouteLoading] = useState(false);
     const [route, setRoute] = useState<RouteStop[]>([]);
+    const [selectedClass, setSelectedClass] = useState(train.availability.coachType);
 
     // Determine if route data can potentially be loaded
     const canLoadRoute = !!train.trainNumber;
@@ -102,6 +107,91 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
             ? new Date(journeyDate) >= new Date(train.startDate) &&
             new Date(journeyDate) <= new Date(train.endDate)
             : true;
+    const router = useRouter();
+    useEffect(() => {
+
+        console.log("Train Data in TrainCard:", train);
+    }, []);
+
+
+
+    const [classData, setClassData] = useState<
+        Record<string, { count: number; status: string; loading: boolean }>
+    >({
+        [train.availability.coachType]: {
+            count: train.availability.count,
+            status: train.availability.status,
+            loading: false
+        }
+    });
+    useEffect(() => {
+        refreshAvailability(selectedClass);
+    }, []);
+
+    const refreshAvailability = async (cls: string) => {
+    setSelectedClass(cls);
+    
+    // UI par loading dikhao
+    setClassData(prev => ({
+        ...prev,
+        [cls]: { ...prev[cls], loading: true }
+    }));
+
+    try {
+        // ✅ FRESH DATA FETCH KARO (Sirf ek API call jo current count bataye)
+       
+        const res = await fetch(`/api/train/availability`, {
+    method: "POST", // 👈 GET ki jagah POST karo
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ 
+        trainNo: train.trainNumber, 
+        date: train.journeyDate, 
+        class: cls 
+    }),
+});
+        const data = await res.json();
+
+        if (data.success) {
+            setClassData(prev => ({
+                ...prev,
+                [cls]: {
+                    count: data.availableCount, // DB wala fresh count (e.g. 140)
+                    status: data.status,
+                    loading: false
+                }
+            }));
+        }
+    } catch (error) {
+        console.error("Refresh failed");
+        // Fallback to old data on error
+        setClassData(prev => ({
+            ...prev,
+            [cls]: { ...prev[cls], loading: false }
+        }));
+    }
+};
+
+    // Check if booking is allowed (Not in past)
+    const isDeparted = () => {
+        const now = new Date();
+        const [h, m] = (train.departure || "00:00").split(":").map(Number);
+        const dep = new Date(train.journeyDate);
+        dep.setHours(h, m, 0, 0);
+        return now > dep;
+    };
+
+
+    const handleBooking = () => {
+        const params = new URLSearchParams({
+            trainNo: train.trainNumber,
+            date: train.journeyDate,
+            from: fromCode ?? "",
+            to: toCode ?? "",
+            class: selectedClass,
+        });
+
+        router.push(`/train/book-ticket/confirm?${params.toString()}`);
+    };
 
 
     // Fetch Route Logic
@@ -125,6 +215,7 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
             });
 
             const data = await res.json();
+            console.log(data);
 
             // NOTE: Adjusting the logic to handle potential nested structure
             if (data.success && data.data?.trains?.[0]?.route) {
@@ -141,6 +232,7 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
         }
     }, [train.trainNumber, route.length, open, canLoadRoute]);
 
+    console.log(train)
 
     return (
         <div
@@ -150,7 +242,7 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
             {/* ---------- Header (Train Name, Number, Route Button, Status) ---------- */}
             <div className="flex justify-between items-start">
                 <h2 className="text-lg md:text-xl font-bold text-blue-700 flex items-center">
-                    <TrainIcon className="mr-2 text-blue-500 w-6 h-6 line-clamp-1 sm:text-xl flex-shrink-0" />
+                    <TrainIcon className="mr-2 text-blue-500 w-6 h-6 line-clamp-1 sm:text-xl shrink-0" />
                     {train.trainName}
                     <span className="ml-2 text-sm text-gray-500 font-normal">
                         {/* ({train.trainNumber}) */}
@@ -209,7 +301,7 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
                             <p className="text-sm font-medium flex flex-col gap-1 items-center">
 
                                 <div className="flex justify-center gap-2 items-center">
-                                    <Clock className="hidden sm:block w-4 h-4 flex-shrink-0" />
+                                    <Clock className="hidden sm:block w-4 h-4 shrink-0" />
                                     <span>{train.duration}</span>
 
                                 </div>
@@ -238,7 +330,7 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
             </div>
 
             {/* ---------- Route Display Section (Fixed Timeline) ---------- */}
-              {open && route.length > 0 && (
+            {open && route.length > 0 && (
                 <div className="bg-gray-50 p-4 sm:p-6 border-t">
                     <h3 className="text-base font-bold text-blue-700 mb-4 border-b border-blue-100 pb-2">
                         Detailed Route Stops ({route.length} stations)
@@ -276,7 +368,7 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
                             return (
                                 <div key={i} className="relative flex gap-3 sm:gap-4 items-start z-10">
                                     {/* Timeline Marker (Dot/Icon) */}
-                                    <div className="flex-shrink-0 pt-1.5 relative">
+                                    <div className="shrink-0 pt-1.5 relative">
                                         {iconComponent ? (
                                             <div className={`p-1.5 rounded-full bg-white relative z-10 shadow-lg border-2 border-white`}>
                                                 {iconComponent}
@@ -343,27 +435,56 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
             <div className="mt-4 border-t pt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
                 {/* ---------- Class Selector ---------- */}
-                <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
-                    {["SL", "3A", "2A", "1A"].map((cls) => (
-                        <button
-                            key={cls}
-                            className="min-w-[90px]  sm:w-[20vh] h-[40px] rounded-lg border bg-gray-50
-                           hover:bg-blue-50 hover:border-blue-400
-                           transition-all text-center flex flex-col justify-center"
-                        >
-                            <span className="text-sm font-semibold text-gray-800">
-                                {cls}
-                            </span>
-                            <button className="text-xs flex gap-1 justify-center items-center cursor-pointer"> Refresh <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-refresh-ccw-icon lucide-refresh-ccw text-xs"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" /><path d="M16 16h5v5" /></svg></button>
-                            {/* <span className="text-[11px] text-gray-500">
-                                Available
-                            </span> */}
-                        </button>
-                    ))}
+                <div className="flex gap-3 overflow-x-auto">
+                    {Object.keys(classData).map((cls) => {
+                        const data = classData[cls];
+
+                        const textColor =
+                            typeof data.count === "string"
+                                ? "text-gray-600"
+                                : data.count > 20
+                                    ? "text-green-600"
+                                    : data.count > 0
+                                        ? "text-yellow-600"
+                                        : "text-red-600";
+
+                        return (
+                            <button
+                                key={cls}
+                                onClick={() => refreshAvailability(cls)}
+                                className={`border p-2 rounded-lg min-w-[100px] transition ${selectedClass === cls
+                                    ? "bg-blue-600 text-white border-blue-600"
+                                    : "bg-white"
+                                    }`}
+                            >
+                                <span className="block font-bold">{cls}</span>
+
+                                <span className={`text-xs flex items-center justify-center gap-1 ${textColor}`}>
+                                    {data.loading ? (
+                                        <Loader2 className="w-3 h-3 animate-spin" />
+                                    ) : (
+                                        `${data.status} ${data.count}`
+                                    )}
+
+                                    <RefreshCcw
+                                        size={12}
+                                        className={data.loading ? "animate-spin" : ""}
+                                    />
+                                </span>
+                            </button>
+                        );
+                    })}
                 </div>
+                <button
+                    disabled={isDeparted()}
+                    className={`px-6 py-2 rounded-lg ${isDeparted() ? 'bg-gray-400' : 'bg-blue-600 text-white'}`}
+                    onClick={handleBooking}
+                >
+                    {isDeparted() ? "Already Departed" : "Book Now"}
+                </button>
 
                 {/* ---------- Availability + CTA ---------- */}
-                <div className="flex items-center justify-between sm:justify-end gap-4">
+                {/* <div className="flex items-center justify-between sm:justify-end gap-4">
                     <p className="text-sm text-gray-600">
                         Seats:&nbsp;
                         <span
@@ -378,9 +499,23 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
 
                     <button
                         disabled={!isActive}
-                        onClick={() =>
-                            toast.success("Booking flow will be integrated next")
-                        }
+                        onClick={() => {
+                            const params = new URLSearchParams({
+                                trainNo: train.trainNumber,
+                                date: train.journeyDate,
+                                from: fromCode ?? "",
+                                to: toCode ?? "",
+                                class: train.coach,
+                            });
+                            toast.success("Booking flow initiated");
+
+                            router.push(`/train/book-ticket/confirm?${params.toString()}`);
+                        }}
+
+                        // onClick={() =>
+
+                        //     toast.success("Booking flow will be integrated next")
+                        // }
                         className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all ${isActive
                             ? "bg-blue-600 hover:bg-blue-700 text-white"
                             : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -388,7 +523,7 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
                     >
                         Book Now
                     </button>
-                </div>
+                </div> */}
             </div>
 
         </div>
@@ -399,8 +534,16 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
 // ==========================================================
 // BookTicketPage Component (Main)
 // ==========================================================
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BookTicketPage />
+    </Suspense>
+  );
+}
 
-export default function BookTicketPage() {
+
+function BookTicketPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -408,8 +551,11 @@ export default function BookTicketPage() {
     const fromCode = searchParams.get("from");
     const toCode = searchParams.get("to");
     const date = searchParams.get("date");
-    const quota = searchParams.get("quota");
-    const journeyClass = searchParams.get("class");
+    const rawQuota = searchParams.get("quota");
+    const quota = rawQuota === "GENERAL" ? "GN" : rawQuota;
+    const rawClass = searchParams.get("class");
+    const journeyClass =
+        rawClass === "All Classes" || !rawClass ? "SL" : rawClass;
 
     /* ---------- State ---------- */
     const [trains, setTrains] = useState<TrainData[]>([]);
@@ -442,14 +588,34 @@ export default function BookTicketPage() {
 
         return `${hours}h ${minutes.toString().padStart(2, '0')}m`
     }
+
+
+
+
     function calculateJourneyMeta(
         journeyDate: string,
         departure: string,
         arrival: string
     ) {
+        if (!journeyDate) {
+            return {
+                journeyStartDate: "",
+                journeyEndDate: "",
+                dayCount: 0,
+            }
+        }
+
         const [y, m, d] = journeyDate.split("-").map(Number)
-        const [dh, dm] = departure.split(":").map(Number)
-        const [ah, am] = arrival.split(":").map(Number)
+
+        // ✅ SAFE time parsing
+        const parseTime = (t?: string) => {
+            if (!t || !t.includes(":")) return [0, 0]
+            const [h, mm] = t.split(":").map(n => Number(n) || 0)
+            return [h, mm]
+        }
+
+        const [dh, dm] = parseTime(departure)
+        const [ah, am] = parseTime(arrival)
 
         const start = new Date(y, m - 1, d, dh, dm)
         const end = new Date(y, m - 1, d, ah, am)
@@ -520,51 +686,52 @@ export default function BookTicketPage() {
             setLoading(true);
             try {
                 const res = await fetch(
-                    `/api/train/book-ticket?from=${fromCode}&to=${toCode}&date=${date}&quota=${quota}&class=${journeyClass}`
+                    `/api/train/book-ticket?from=${fromCode}&to=${toCode}&date=${date}&quota=${quota}&class=${journeyClass || "SL"}`
                 );
+                if (!res.ok) throw new Error("Network response failed");
+
                 const data = await res.json();
+                console.log(data);
 
                 if (data.success && Array.isArray(data.record)) {
                     const mappedTrains = data.record.map((train: any) => {
-                        const schedule = train.schedules?.[0]
 
                         const duration = calculateDuration(
-                            train.departureTime!,
-                            train.arrivalTime!
+                            train.departure,
+                            train.arrival
                         )
 
                         const journeyMeta = calculateJourneyMeta(
-                            journeyDate,
-                            train.departureTime!,
-                            train.arrivalTime!
+                            date!,
+                            train.departure,
+                            train.arrival
                         )
 
                         return {
-                            trainNumber: train.trainNo,
-                            trainName: train.name,
+                            trainNumber: train.trainNo ?? "",
+                            trainName: train.name ?? "Unknown",
 
-                            departure: train.departureTime,
-                            arrival: train.arrivalTime,
+                            departure: train.departure ?? "00:00",
+                            arrival: train.arrival ?? "00:00",
                             duration,
 
-                            runningDays: schedule?.daysOfWeek
-                                ? schedule.daysOfWeek
-                                    .map((d: number) => ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d])
-                                    .join(", ")
-                                : "NA",
+                            runningDays: "Daily",
+                            coach: train?.availability?.coachType ?? "SL",
 
-                            coach: journeyClass || "SL",
-                            seatsAvailable: schedule ? "Available" : "NA",
-                            availability: [],
+                            availability: train?.availability ?? {
+                                status: "NA",
+                                count: 0,
+                                coachType: "SL"
+                            },
 
-                            startDate: schedule?.startDate ?? "",
-                            endDate: schedule?.endDate ?? "",
+                            startDate: null,
+                            endDate: null,
 
                             journeyDate: journeyMeta.journeyStartDate,
                             destinationDate: journeyMeta.journeyEndDate,
                             dayCount: journeyMeta.dayCount,
 
-                            fare: null,
+                            fare: train.fare ?? 0
                         }
                     })
 
@@ -574,7 +741,8 @@ export default function BookTicketPage() {
                     setTrains([]);
                 }
 
-            } catch {
+            } catch (err) {
+                console.error(err);
                 toast.error("Failed to fetch trains");
             } finally {
                 setLoading(false);

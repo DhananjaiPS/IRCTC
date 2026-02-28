@@ -153,7 +153,55 @@ export const trainSchedulesMock = [
   },
 ];
 
+// seed code for train schedule
+import 'dotenv/config'
+import prisma from '@/lib/prisma'
 
+// ✅ import enum from YOUR generated client
+// import { ScheduleStatus } from './generated/client'
+
+import { trainSchedulesMock } from '../Data/trainSchedule'
+
+async function main() {
+  console.log('🚆 Seeding Train Schedules...\n')
+
+  let count = 0
+
+  for (const s of trainSchedulesMock) {
+    const train = await prisma.train.findUnique({
+      where: { trainNo: s.trainNo },
+      select: { id: true },
+    })
+
+    if (!train) {
+      console.log(`❌ Train not found: ${s.trainNo}`)
+      continue
+    }
+
+    await prisma.trainSchedule.create({
+      data: {
+        trainId: train.id,
+
+        // ✅ enum now works
+        // status: ScheduleStatus[s.status as keyof typeof ScheduleStatus],
+
+        daysOfWeek: s.daysOfWeek,
+
+        startDate: new Date(s.startDate),
+        endDate: s.endDate ? new Date(s.endDate) : null,
+      },
+    })
+
+    count++
+    console.log(`✔ Added schedule for ${s.trainNo}`)
+  }
+
+  console.log(`\n✅ Inserted ${count} schedules`)
+}
+
+main()
+  .catch(console.error)
+  .finally(() => prisma.$disconnect())
 
 
 //Seed code 

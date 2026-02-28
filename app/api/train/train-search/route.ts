@@ -3,10 +3,54 @@ import {
   searchTrainBetweenStations,
   getTrainInfo,
 } from "irctc-connect";
+import prisma from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
+
   try {
     const body = await req.json();
+
+
+
+
+    console.log("first")
+function serializeBigInt(obj: any) {
+  return JSON.parse(
+    JSON.stringify(obj, (_, value) =>
+      typeof value === "bigint" ? value.toString() : value
+    )
+  );
+}
+
+
+    const coach = await prisma.train.findFirst({
+      where: { trainNo: body.trainNo },
+      select: {
+        trainNo: true,
+        name: true,
+        schedules: {
+          select: {
+            id: true,
+            coaches: {
+              select: {
+                coachNumber: true,
+                coachType: true,
+                seats: {
+                  select: {
+                    seatNo: true,
+                    berthType: true,
+                    seatAvailabilities: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+
+const safeCoach = serializeBigInt(coach);
 
     /**
      * ==========================
@@ -31,6 +75,8 @@ export async function POST(req: NextRequest) {
         data: {
           trains: [
             {
+              coach: safeCoach,
+              dev: "IRCTC HEllo",
               trainNo: info.train_no,
               trainName: info.train_name,
               from: info.from_stn_name,
@@ -48,6 +94,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
+
     /**
      * ==========================
      * SEARCH BY STATIONS
@@ -55,6 +102,7 @@ export async function POST(req: NextRequest) {
      * DOES NOT RETURN ROUTE (IRCTC BEHAVIOR)
      */
     if (body.fromStationCode && body.toStationCode) {
+      console.log(body.fromStationCode, body.toStationCode);
       const result = await searchTrainBetweenStations(
         body.fromStationCode,
         body.toStationCode
@@ -75,6 +123,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         success: true,
         data: {
+          coach: coach,
+          dev: "IRCTC HEllo",
           from: body.fromStationCode,
           to: body.toStationCode,
           trains: trains.map((t: any) => ({

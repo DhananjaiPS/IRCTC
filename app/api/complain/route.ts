@@ -3,9 +3,18 @@ import nodemailer from "nodemailer";
 import twilio from "twilio";
 import path from "path";
 import { emit } from "process";
+import prisma from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
 
 export async function POST(req: Request) {
     try {
+        const { userId } =await  auth(); // returns null if not logged in
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: "Please login first to submit a complaint." },
+        { status: 401 }
+      );
+    }
         const formData = await req.formData();
 
         const fullName = formData.get("fullName")?.toString() || "N/A";
@@ -15,7 +24,33 @@ export async function POST(req: Request) {
         const complaintType = formData.get("complaintType")?.toString() || "General";
         const message = formData.get("message")?.toString() || "No description.";
         const file = formData.get("file") as File | null;
+        // 1️⃣ Save complaint record in DB
+        const complaint = await prisma.complaint.create({
+            data: {
+                fullName,
+                email,
+                phone,
+                pnr,
+                complaintType,
+                message,
+                status: "PENDING",
+                userId: userId,
+            },
+        });
 
+        // 2️⃣ Save attachment if exists
+        if (file && file.size > 0) {
+            const buffer = Buffer.from(await file.arrayBuffer());
+
+            await prisma.attachment.create({
+                data: {
+                    complaintId: complaint.id,
+                    filename: file.name,
+                    data: buffer,
+                    mimeType: file.type,
+                },
+            });
+        }
         let attachments: any[] = [
             {
                 filename: 'irctc_logo.png',
@@ -36,8 +71,8 @@ export async function POST(req: Request) {
 
         // ... baki imports same رہیںge
 
-// 3. Email HTML with Rounded Logo
-const emailHtml = `
+        // 3. Email HTML with Rounded Logo
+        const emailHtml = `
 <div style="font-family: Arial, sans-serif; max-width: 600px; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden;">
     <div style="background-color: #003399; padding: 20px; text-align: center; color: white;">
         <img src="cid:irctclogo" alt="Logo" style="width: 70px; height: 70px; border-radius: 50%; background: white; padding: 5px; margin-bottom: 10px; object-fit: contain;">
@@ -87,7 +122,7 @@ const emailHtml = `
 </div>
 `;
 
-// ... baki transporter aur twilio code same rahega
+        // ... baki transporter aur twilio code same rahega
 
         await transporter.sendMail({
             from: `"RailMadad Admin" <${process.env.EMAIL_USER}>`,
@@ -99,9 +134,9 @@ const emailHtml = `
 
         const client = twilio(process.env.TWILIO_SID!, process.env.TWILIO_AUTH!);
         const whatsappBody = `
-==================================
-OFFICIAL GRIEVANCE LOG: RAIL MADAD
-==================================
+================================
+OFFICIAL GRIEVANCE LOG: IRCTC 
+================================
 
 [ JOURNEY DETAILS ]
 ▪ PNR NUMBER   : ${pnr}
@@ -115,10 +150,10 @@ OFFICIAL GRIEVANCE LOG: RAIL MADAD
 [ DESCRIPTION ]
 "${message.length > 150 ? message.substring(0, 150) + "..." : message}"
 
---------------------------------
+------------------------------
 TIMESTAMP : ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
 STATUS    : PENDING ACTION
-================================
+==============================
 _Note: Full attachments sent to ${process.env.ADMIN_EMAIL}_`;
 
         await client.messages.create({
@@ -133,6 +168,19 @@ _Note: Full attachments sent to ${process.env.ADMIN_EMAIL}_`;
         return NextResponse.json({ success: false }, { status: 500 });
     }
 }
+
+// database and log all these complain and then admin panel to view and take action on them.
+// Also send acknowledgement to user via email and whatsapp that their complain is registered.
+// Add status field to complain like pending, in-progress, resolved etc.
+// Send reminder to admin if complain is not resolved in 24 hours.
+// Add attachment support to complain form.
+// Make the email template look more professional with proper styling and logo.
+// Add rate limiting to this API to prevent spam.
+// Validate form data properly and sanitize inputs to prevent injection attacks.
+// Consider using a queue system like Bull or RabbitMQ for handling email and whatsapp sending asynchronously.
+// Add tests for this API route to ensure reliability.
+// Implement logging for monitoring and debugging purposes.
+// Optimize image attachments by resizing/compressing before sending.
 
 
 

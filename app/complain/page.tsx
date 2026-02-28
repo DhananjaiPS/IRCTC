@@ -32,7 +32,7 @@ export default function ComplainPage() {
                 (e.target as HTMLFormElement).reset();
                 setFileName("");
             } else {
-                toast.error("Submission failed.");
+                toast.error("Submission failed."+ (await res.json()).message);
             }
         } catch (error) {
             toast.error("Something went wrong!");

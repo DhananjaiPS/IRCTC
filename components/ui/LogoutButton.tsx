@@ -20,7 +20,7 @@ const LogoutButton = () => {
   return (
     <button
       onClick={handleLogout}
-      className="flex items-center justify-center px-2 py-1 w-[4vh] h-[3vh] bg-red-600 text-white rounded hover:bg-red-500 transition space-x-1"
+      className="flex items-center justify-center px-2 py-3  h-[3vh] bg-red-600 text-white rounded hover:bg-red-500 transition space-x-1"
     >
       {/* Show icon on all screens */}
       <LogOut className="w-4 h-4 sm:hidden" />

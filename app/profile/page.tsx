@@ -157,7 +157,10 @@ export default function ProfilePage() {
             }
             // await user?.reload();
             toast.success(`Welcome , ${user?.fullName || "New User"} to IRCTC`)
-            router.push("/");
+            setLoading(false); // ⭐ important
+
+    router.replace("/"); // better than push
+            // router.push("/");
         } catch (err) {
             console.error(err);
             toast.error("Unexpected error occurred."+err);

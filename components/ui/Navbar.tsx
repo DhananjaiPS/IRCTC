@@ -8,6 +8,7 @@ import { Menu, X, ChevronDown, ChevronUp } from "lucide-react";
 // --- Link Data (Completed from desktop menus) ---
 const TRAINS_LINKS = [
     { label: "Book Ticket", href: "/" },
+     { label: "My Booking", href: "train/my-bookings" },
     { label: "Foreign Tourist Booking", href: "train/foreign-tourist-booking" },
     { label: "Connecting Journey Booking", href: "/train/connecting-journey-booking" },
     { label: "Search TRAINS", href: "train/train-search" },
@@ -29,6 +30,9 @@ const LOYALTY_LINKS = [
 ];
 
 const MORE_LINKS = [
+
+
+    { label: "CONTACT US", href: "/complain" },
     { label: "ChatBot as a Service (CaaS)", href: "/caas" },
     { label: "Link Your Aadhaar", href: "/link-aadhaar" },
     { label: "Counter Ticket Cancellation", href: "/counter-ticket-cancellation" },
@@ -151,11 +155,14 @@ function Navbar() {
 
     return (
         <div>
-            <nav className="bg-white shadow-md">
+     <nav className="sticky top-0 z-50 bg-white shadow-md">
+{/* <nav className="fixed top-0 left-0 w-full z-[9999] bg-white shadow-md"> */}
+
+
                 <div className="max-w-7xl mx-auto px-4">
-                    <div className="flex justify-between items-center py-3">
+                    <div className="flex justify-between items-center py-3 ">
                         {/* Left Logo */}
-                        <div className="flex items-center space-x-2 sm:space-x-4">
+                        <div className="flex items-center space-x-2 sm:space-x-4 ">
                             <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center">
                                 <img
                                     src="/irctc_logo_2.png"
@@ -169,7 +176,7 @@ function Navbar() {
                             <button className="p-2 hover:bg-gray-100 rounded hidden sm:block">
                                 <Link href="/">
                                     <svg
-                                        className="w-7 h-7 text-gray-600"
+                                        className="w-5 h-5 text-gray-600"
                                         fill="currentColor"
                                         viewBox="0 0 20 20"
                                     >
@@ -180,7 +187,8 @@ function Navbar() {
                         </div>
 
                         {/* Desktop Menu */}
-                        <div className="hidden lg:flex items-center space-x-4">
+                     <div className="hidden lg:flex items-center gap-2 xl:gap-4 flex-wrap">
+
 
                             {/* IRCTC EXCLUSIVE Dropdown (Uses 'open' state) */}
                             <div
@@ -188,7 +196,8 @@ function Navbar() {
                                 onMouseEnter={() => setOpen(true)}
                                 onMouseLeave={() => setOpen(false)}
                             >
-                                <button className=" px-3 py-2 w-[18vh] bg-blue-900 text-xs text-white font-semibold rounded hover:bg-blue-800 shrink-0">
+                                <button className="px-3 py-2 min-w-[160px] bg-blue-900 text-xs text-white font-semibold rounded hover:bg-blue-800">
+
                                     IRCTC EXCLUSIVE
                                 </button>
 
@@ -228,7 +237,7 @@ function Navbar() {
                                                 className="relative px-4 py-2 hover:bg-gray-100 cursor-pointer flex justify-start gap-2 items-center "
                                                 onMouseEnter={() => handleMouseEnter("ewallet-desktop-sub")}
                                                 onMouseLeave={handleMouseLeave}
-                                            ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-hand-coins-icon lucide-hand-coins text-blue-900"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17"/><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"/><path d="m2 16 6 6"/><circle cx="16" cy="9" r="2.9"/><circle cx="6" cy="5" r="3"/></svg>
+                                            ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-hand-coins-icon lucide-hand-coins text-blue-900"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17" /><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 16 6 6" /><circle cx="16" cy="9" r="2.9" /><circle cx="6" cy="5" r="3" /></svg>
                                                 IRCTC eWallet
                                                 {/* Note: Using a unique key for the nested submenu to avoid conflict */}
                                                 {submenuOpen === "ewallet-desktop-sub" && (
@@ -346,7 +355,7 @@ function Navbar() {
                         </div>
 
                         {/* Right Logo */}
-                        <div className="w-32 md:w-48 lg:w-60 h-12 sm:h-16 flex justify-center items-center shrink-0">
+                        <div className=" ml-2  h-12 sm:h-16 flex justify-center items-center shrink-0 bg-pink-400">
                             <img
                                 src="/logo3.png"
                                 alt="IRCTC Logo"

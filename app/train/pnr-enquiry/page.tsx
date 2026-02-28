@@ -42,7 +42,7 @@ export default function Page() {
       setResult(response.data);
 
     } catch (error) {
-      toast.error("Network error. Please try again."+error);
+      toast.error("Network error. Please try again." + error);
     } finally {
       setLoading(false);
     }
@@ -150,14 +150,37 @@ export default function Page() {
                 <p>
                   <b>To:</b> {result.journey.to?.name} ({result.journey.to?.code})
                 </p>
-                <p>
-                  <b>Departure:</b>{" "}
-                  {new Date(result.journey.departure).toLocaleString()}
-                </p>
-                <p>
-                  <b>Arrival:</b>{" "}
-                  {new Date(result.journey.arrival).toLocaleString()}
-                </p>
+                {/* Replace your Departure/Arrival lines with this */}
+                <div className="border-t pt-4 grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase">Departure</p>
+                    <p className="text-sm font-semibold">
+                      {new Date(result.journey.departure).toLocaleDateString('en-IN', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                      })}, {new Date(result.journey.departure).toLocaleTimeString('en-IN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                      })}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase">Arrival</p>
+                    <p className="text-sm font-semibold">
+                      {new Date(result.journey.arrival).toLocaleDateString('en-IN', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                      })}, {new Date(result.journey.arrival).toLocaleTimeString('en-IN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                      })}
+                    </p>
+                  </div>
+                </div>
                 <p>
                   <b>Duration:</b> {result.journey.duration}
                 </p>

@@ -1,71 +1,71 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
-/**
- * Routes that should NEVER be blocked
- */
 const isPublicRoute = createRouteMatcher([
   "/",
-  "/sign-in",
-  "/sign-up",
-  "/after-signup",
-  "/auth/profile",
-  "/api/(.*)",
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/profile(.*)",   // ✅ allow profile always
+  "/api(.*)",
 ]);
 
-export default clerkMiddleware((auth, req: NextRequest) => {
-  const { userId, sessionClaims } = auth();
+type Claims = {
+  publicMetadata?: {
+    isProfileComplete?: boolean;
+  };
+};
 
-  // If route is public → allow immediately
-  if (isPublicRoute(req)) {
+// add like if user hows role is ADMIN_SUPPORT then only he is aloow to see /admin/support ro
+// simple userID jo clerk se aa rhi h use le use db call kr ek or fidi kr us euser ko or fir uska rol echeck kr le agar usk arole ADMIN_SUPPORT ho tbhi use allow kr ki wo use route ko vist rik ske les nhi 
+
+export default clerkMiddleware(async (auth, req) => {
+  const { userId, sessionClaims } = await auth();
+  console.log(userId);
+  const raw = req.cookies.get("token")?.value;
+
+  let userData: any = null;
+
+  if (raw) {
+    try {
+      const decoded = decodeURIComponent(raw); // step 1
+      userData = JSON.parse(decoded);          // step 2
+    } catch {
+      userData = null;
+    }
+  }
+  if(userId===userData?.clerkId){
+    console.log("User data matches");
+  } else {
+    console.warn("User data does NOT match Clerk ID:", { userId, userData });
+  }
+  // console.log(userData);
+  // const 
+  // ✅ public routes skip everything
+  if (userId===userData?.clerkId || isPublicRoute(req)) {
     return NextResponse.next();
   }
 
-  // If user is not logged in → Clerk will handle redirect
+  // ✅ not logged in → let Clerk handle it
   if (!userId) {
     return NextResponse.next();
   }
 
-  /**
-   * Read metadata safely
-   */
-  const unsafeMetadata =
-    sessionClaims?.unsafeMetadata as { isProfileComplete?: boolean } | undefined;
+  const claims = sessionClaims as Claims | null;
 
-  const isProfileComplete = unsafeMetadata?.isProfileComplete === true;
+  // safer boolean conversion
+  const complete = Boolean(
+    claims?.publicMetadata?.isProfileComplete
+  );
 
-  const pathname = req.nextUrl.pathname;
-
-  /**
-   * Only redirect:
-   * - user is authenticated
-   * - profile is NOT complete
-   * - user is NOT already on /auth/profile
-   */
-  if (!isProfileComplete && pathname !== "/auth/profile") {
-    const redirectUrl = req.nextUrl.clone();
-    redirectUrl.pathname = "/auth/profile";
-
-    // Preserve original destination
-    redirectUrl.searchParams.set("redirect", pathname);
-
-    return NextResponse.redirect(redirectUrl);
-  }
-
-  /**
-   * Prevent completed users from revisiting profile setup
-   */
-  if (isProfileComplete && pathname === "/auth/profile") {
-    return NextResponse.redirect(new URL("/", req.url));
+  // ✅ only redirect if NOT complete
+  if (userId!=userData?.clerkId || !complete) {
+    const profileUrl = new URL("/profile", req.url);
+    return NextResponse.redirect(profileUrl);
   }
 
   return NextResponse.next();
 });
 
 export const config = {
-  matcher: [
-    "/((?!_next|.*\\..*|api/sign-in).*)",
-  ],
+  matcher: ["/((?!_next|.*\\..*).*)"],
 };
-

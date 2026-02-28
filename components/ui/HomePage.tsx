@@ -167,7 +167,7 @@ const IRCTCHomepage = () => {
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-4">
                 <Link
                   href="/train/pnr-enquiry"
-                  className="flex-1 flex items-center justify-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl text-sm sm:text-base font-bold transition-all active:scale-[0.98] shadow-md shadow-blue-100"
+                  className="flex-1 flex items-center justify-center gap-2 bg-blue-900 hover:bg-blue-800 text-white px-4 py-2 sm:px-6 sm:py-3  text-sm sm:text-base font-bold "
                 >
                   <span className="text-lg">📋</span>
                   <span className="tracking-wide uppercase">PNR Status</span>

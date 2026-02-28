@@ -4,7 +4,7 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { stations } from "@/Data/Station";
+import { stations } from "@/Data/station";
 import TrainCard from "@/components/ui/TrainCard";
 import toast from "react-hot-toast";
 
@@ -89,7 +89,7 @@ export default function Page() {
       });
 
       const data = await res.json();
-
+      console.log("API Response Data:", data);
       if (data.success) {
         setResults(data.data.trains || []);
       } else {

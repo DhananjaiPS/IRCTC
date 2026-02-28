@@ -1,307 +1,307 @@
 // prisma/Data/Train.js (or Train.ts) - Consolidated Array
 
-export const allTrains = [
-  // --- Original 10 Trains (trainMockData) ---
-  {
-    // 1. Duronto Express
-    trainNo: "12260",
-    name: "Sealdah Duronto Express",
-    type: "Duronto",
-    sourceStationId: "BCT", 
-    destinationStationId: "HWH", 
-  },
-  {
-    // 2. Rajdhani Express
-    trainNo: "12431",
-    name: "Thiruvananthapuram Rajdhani Express",
-    type: "Rajdhani",
-    sourceStationId: "TVC", 
-    destinationStationId: "NDLS", 
-  },
-  {
-    // 3. Shatabdi Express
-    trainNo: "12003",
-    name: "Lucknow Swarn Shatabdi Express",
-    type: "Shatabdi",
-    sourceStationId: "NDLS", 
-    destinationStationId: "LKO", 
-  },
-  {
-    // 4. Garib Rath Express
-    trainNo: "12611",
-    name: "Chennai Central Garib Rath Express",
-    type: "Garib Rath",
-    sourceStationId: "MAS", 
-    destinationStationId: "HWH", 
-  },
-  {
-    // 5. Superfast Express
-    trainNo: "12801",
-    name: "Puri Express",
-    type: "Superfast",
-    sourceStationId: "CSMT", 
-    destinationStationId: "BBS", 
-  },
-  {
-    // 6. Mail Express
-    trainNo: "11057",
-    name: "Amritsar Express",
-    type: "Mail Express",
-    sourceStationId: "CSMT", 
-    destinationStationId: "MB", 
-  },
-  {
-    // 7. Vande Bharat Express
-    trainNo: "22411",
-    name: "New Delhi - Prayagraj Vande Bharat",
-    type: "Vande Bharat",
-    sourceStationId: "NDLS", 
-    destinationStationId: "LKO", 
-  },
-  {
-    // 8. Superfast Express
-    trainNo: "12838",
-    name: "Puri - Howrah Express",
-    type: "Superfast",
-    sourceStationId: "BBS", 
-    destinationStationId: "HWH", 
-  },
-  {
-    // 9. Janshatabdi Express
-    trainNo: "12053",
-    name: "Amritsar Janshatabdi Express",
-    type: "Jan Shatabdi",
-    sourceStationId: "HWH", 
-    destinationStationId: "MAS", 
-  },
-  {
-    // 10. Vivek Express
-    trainNo: "15906",
-    name: "Dibrugarh - Vivek Express",
-    type: "Mail Express",
-    sourceStationId: "LKO", 
-    destinationStationId: "TVC", 
-  },
+// export const allTrains = [
+//   // --- Original 10 Trains (trainMockData) ---
+//   {
+//     // 1. Duronto Express
+//     trainNo: "12260",
+//     name: "Sealdah Duronto Express",
+//     type: "Duronto",
+//     sourceStationId: "BCT", 
+//     destinationStationId: "HWH", 
+//   },
+//   {
+//     // 2. Rajdhani Express
+//     trainNo: "12431",
+//     name: "Thiruvananthapuram Rajdhani Express",
+//     type: "Rajdhani",
+//     sourceStationId: "TVC", 
+//     destinationStationId: "NDLS", 
+//   },
+//   {
+//     // 3. Shatabdi Express
+//     trainNo: "12003",
+//     name: "Lucknow Swarn Shatabdi Express",
+//     type: "Shatabdi",
+//     sourceStationId: "NDLS", 
+//     destinationStationId: "LKO", 
+//   },
+//   {
+//     // 4. Garib Rath Express
+//     trainNo: "12611",
+//     name: "Chennai Central Garib Rath Express",
+//     type: "Garib Rath",
+//     sourceStationId: "MAS", 
+//     destinationStationId: "HWH", 
+//   },
+//   {
+//     // 5. Superfast Express
+//     trainNo: "12801",
+//     name: "Puri Express",
+//     type: "Superfast",
+//     sourceStationId: "CSMT", 
+//     destinationStationId: "BBS", 
+//   },
+//   {
+//     // 6. Mail Express
+//     trainNo: "11057",
+//     name: "Amritsar Express",
+//     type: "Mail Express",
+//     sourceStationId: "CSMT", 
+//     destinationStationId: "MB", 
+//   },
+//   {
+//     // 7. Vande Bharat Express
+//     trainNo: "22411",
+//     name: "New Delhi - Prayagraj Vande Bharat",
+//     type: "Vande Bharat",
+//     sourceStationId: "NDLS", 
+//     destinationStationId: "LKO", 
+//   },
+//   {
+//     // 8. Superfast Express
+//     trainNo: "12838",
+//     name: "Puri - Howrah Express",
+//     type: "Superfast",
+//     sourceStationId: "BBS", 
+//     destinationStationId: "HWH", 
+//   },
+//   {
+//     // 9. Janshatabdi Express
+//     trainNo: "12053",
+//     name: "Amritsar Janshatabdi Express",
+//     type: "Jan Shatabdi",
+//     sourceStationId: "HWH", 
+//     destinationStationId: "MAS", 
+//   },
+//   {
+//     // 10. Vivek Express
+//     trainNo: "15906",
+//     name: "Dibrugarh - Vivek Express",
+//     type: "Mail Express",
+//     sourceStationId: "LKO", 
+//     destinationStationId: "TVC", 
+//   },
 
-  // --- Additional 7 Trains (sevenTrainMockData) ---
-  {
-    // 11. Mumbai Rajdhani Express
-    trainNo: "12951",
-    name: "Mumbai Rajdhani Express",
-    type: "Rajdhani",
-    sourceStationId: "BCT", 
-    destinationStationId: "NDLS", 
-  },
-  {
-    // 12. Howrah Rajdhani Express
-    trainNo: "12301",
-    name: "Howrah Rajdhani Express",
-    type: "Rajdhani",
-    sourceStationId: "NDLS", 
-    destinationStationId: "HWH", 
-  },
-  {
-    // 13. Brindavan Express
-    trainNo: "12639",
-    name: "Brindavan Express",
-    type: "Superfast",
-    sourceStationId: "MAS", 
-    destinationStationId: "SBC", 
-  },
-  {
-    // 14. Lucknow Mail
-    trainNo: "12232",
-    name: "Lucknow Mail",
-    type: "Mail Express",
-    sourceStationId: "CHD", 
-    destinationStationId: "LKO", 
-  },
-  {
-    // 15. Puri Express
-    trainNo: "12833",
-    name: "Puri Express",
-    type: "Superfast",
-    sourceStationId: "ADI", 
-    destinationStationId: "PURI", 
-  },
-  {
-    // 16. Devagiri Express
-    trainNo: "17058",
-    name: "Devagiri Express",
-    type: "Express",
-    sourceStationId: "SC", 
-    destinationStationId: "CSMT", 
-  },
-  {
-    // 17. Intercity Express
-    trainNo: "15103",
-    name: "Intercity Express",
-    type: "Intercity",
-    sourceStationId: "BSB", 
-    destinationStationId: "GKP", 
-  },
-];
+//   // --- Additional 7 Trains (sevenTrainMockData) ---
+//   {
+//     // 11. Mumbai Rajdhani Express
+//     trainNo: "12951",
+//     name: "Mumbai Rajdhani Express",
+//     type: "Rajdhani",
+//     sourceStationId: "BCT", 
+//     destinationStationId: "NDLS", 
+//   },
+//   {
+//     // 12. Howrah Rajdhani Express
+//     trainNo: "12301",
+//     name: "Howrah Rajdhani Express",
+//     type: "Rajdhani",
+//     sourceStationId: "NDLS", 
+//     destinationStationId: "HWH", 
+//   },
+//   {
+//     // 13. Brindavan Express
+//     trainNo: "12639",
+//     name: "Brindavan Express",
+//     type: "Superfast",
+//     sourceStationId: "MAS", 
+//     destinationStationId: "SBC", 
+//   },
+//   {
+//     // 14. Lucknow Mail
+//     trainNo: "12232",
+//     name: "Lucknow Mail",
+//     type: "Mail Express",
+//     sourceStationId: "CHD", 
+//     destinationStationId: "LKO", 
+//   },
+//   {
+//     // 15. Puri Express
+//     trainNo: "12833",
+//     name: "Puri Express",
+//     type: "Superfast",
+//     sourceStationId: "ADI", 
+//     destinationStationId: "PURI", 
+//   },
+//   {
+//     // 16. Devagiri Express
+//     trainNo: "17058",
+//     name: "Devagiri Express",
+//     type: "Express",
+//     sourceStationId: "SC", 
+//     destinationStationId: "CSMT", 
+//   },
+//   {
+//     // 17. Intercity Express
+//     trainNo: "15103",
+//     name: "Intercity Express",
+//     type: "Intercity",
+//     sourceStationId: "BSB", 
+//     destinationStationId: "GKP", 
+//   },
+// ];
 
 
 // prisma/Data/Train.ts
 
-// export const allTrains = [
-//   {
-//     trainNo: "12260",
-//     name: "Sealdah Duronto Express",
-//     type: "Duronto",
-//     sourceStationId: "BCT",
-//     destinationStationId: "HWH",
-//     departureTime: "12:10",
-//     arrivalTime: "13:45",
-//   },
-//   {
-//     trainNo: "12431",
-//     name: "Thiruvananthapuram Rajdhani Express",
-//     type: "Rajdhani",
-//     sourceStationId: "TVC",
-//     destinationStationId: "NDLS",
-//     departureTime: "16:00",
-//     arrivalTime: "13:30",
-//   },
-//   {
-//     trainNo: "12003",
-//     name: "Lucknow Swarn Shatabdi Express",
-//     type: "Shatabdi",
-//     sourceStationId: "NDLS",
-//     destinationStationId: "LKO",
-//     departureTime: "06:15",
-//     arrivalTime: "12:35",
-//   },
-//   {
-//     trainNo: "12611",
-//     name: "Chennai Central Garib Rath Express",
-//     type: "Garib Rath",
-//     sourceStationId: "MAS",
-//     destinationStationId: "HWH",
-//     departureTime: "10:50",
-//     arrivalTime: "17:45",
-//   },
-//   {
-//     trainNo: "12801",
-//     name: "Puri Express",
-//     type: "Superfast",
-//     sourceStationId: "CSMT",
-//     destinationStationId: "BBS",
-//     departureTime: "21:30",
-//     arrivalTime: "05:15",
-//   },
-//   {
-//     trainNo: "11057",
-//     name: "Amritsar Express",
-//     type: "Mail Express",
-//     sourceStationId: "CSMT",
-//     destinationStationId: "MB",
-//     departureTime: "23:05",
-//     arrivalTime: "04:40",
-//   },
-//   {
-//     trainNo: "22411",
-//     name: "New Delhi - Prayagraj Vande Bharat",
-//     type: "Vande Bharat",
-//     sourceStationId: "NDLS",
-//     destinationStationId: "LKO",
-//     departureTime: "06:00",
-//     arrivalTime: "12:00",
-//   },
-//   {
-//     trainNo: "12838",
-//     name: "Puri - Howrah Express",
-//     type: "Superfast",
-//     sourceStationId: "BBS",
-//     destinationStationId: "HWH",
-//     departureTime: "20:45",
-//     arrivalTime: "06:30",
-//   },
-//   {
-//     trainNo: "12053",
-//     name: "Amritsar Janshatabdi Express",
-//     type: "Jan Shatabdi",
-//     sourceStationId: "HWH",
-//     destinationStationId: "MAS",
-//     departureTime: "05:55",
-//     arrivalTime: "22:30",
-//   },
-//   {
-//     trainNo: "15906",
-//     name: "Dibrugarh - Vivek Express",
-//     type: "Mail Express",
-//     sourceStationId: "LKO",
-//     destinationStationId: "TVC",
-//     departureTime: "18:40",
-//     arrivalTime: "03:20",
-//   },
+export const allTrains = [
+  {
+    trainNo: "12260",
+    name: "Sealdah Duronto Express",
+    type: "Duronto",
+    sourceStationId: "BCT",
+    destinationStationId: "HWH",
+    departureTime: "12:10",
+    arrivalTime: "13:45",
+  },
+  {
+    trainNo: "12431",
+    name: "Thiruvananthapuram Rajdhani Express",
+    type: "Rajdhani",
+    sourceStationId: "TVC",
+    destinationStationId: "NDLS",
+    departureTime: "16:00",
+    arrivalTime: "13:30",
+  },
+  {
+    trainNo: "12003",
+    name: "Lucknow Swarn Shatabdi Express",
+    type: "Shatabdi",
+    sourceStationId: "NDLS",
+    destinationStationId: "LKO",
+    departureTime: "06:15",
+    arrivalTime: "12:35",
+  },
+  {
+    trainNo: "12611",
+    name: "Chennai Central Garib Rath Express",
+    type: "Garib Rath",
+    sourceStationId: "MAS",
+    destinationStationId: "HWH",
+    departureTime: "10:50",
+    arrivalTime: "17:45",
+  },
+  {
+    trainNo: "12801",
+    name: "Puri Express",
+    type: "Superfast",
+    sourceStationId: "CSMT",
+    destinationStationId: "BBS",
+    departureTime: "21:30",
+    arrivalTime: "05:15",
+  },
+  {
+    trainNo: "11057",
+    name: "Amritsar Express",
+    type: "Mail Express",
+    sourceStationId: "CSMT",
+    destinationStationId: "MB",
+    departureTime: "23:05",
+    arrivalTime: "04:40",
+  },
+  {
+    trainNo: "22411",
+    name: "New Delhi - Prayagraj Vande Bharat",
+    type: "Vande Bharat",
+    sourceStationId: "NDLS",
+    destinationStationId: "LKO",
+    departureTime: "06:00",
+    arrivalTime: "12:00",
+  },
+  {
+    trainNo: "12838",
+    name: "Puri - Howrah Express",
+    type: "Superfast",
+    sourceStationId: "BBS",
+    destinationStationId: "HWH",
+    departureTime: "20:45",
+    arrivalTime: "06:30",
+  },
+  {
+    trainNo: "12053",
+    name: "Amritsar Janshatabdi Express",
+    type: "Jan Shatabdi",
+    sourceStationId: "HWH",
+    destinationStationId: "MAS",
+    departureTime: "05:55",
+    arrivalTime: "22:30",
+  },
+  {
+    trainNo: "15906",
+    name: "Dibrugarh - Vivek Express",
+    type: "Mail Express",
+    sourceStationId: "LKO",
+    destinationStationId: "TVC",
+    departureTime: "18:40",
+    arrivalTime: "03:20",
+  },
 
-//   // ---------- Additional Trains ----------
-//   {
-//     trainNo: "12951",
-//     name: "Mumbai Rajdhani Express",
-//     type: "Rajdhani",
-//     sourceStationId: "BCT",
-//     destinationStationId: "NDLS",
-//     departureTime: "16:35",
-//     arrivalTime: "08:35",
-//   },
-//   {
-//     trainNo: "12301",
-//     name: "Howrah Rajdhani Express",
-//     type: "Rajdhani",
-//     sourceStationId: "NDLS",
-//     destinationStationId: "HWH",
-//     departureTime: "17:10",
-//     arrivalTime: "10:05",
-//   },
-//   {
-//     trainNo: "12639",
-//     name: "Brindavan Express",
-//     type: "Superfast",
-//     sourceStationId: "MAS",
-//     destinationStationId: "SBC",
-//     departureTime: "07:50",
-//     arrivalTime: "14:10",
-//   },
-//   {
-//     trainNo: "12232",
-//     name: "Lucknow Mail",
-//     type: "Mail Express",
-//     sourceStationId: "CHD",
-//     destinationStationId: "LKO",
-//     departureTime: "22:20",
-//     arrivalTime: "07:15",
-//   },
-//   {
-//     trainNo: "12833",
-//     name: "Puri Express",
-//     type: "Superfast",
-//     sourceStationId: "ADI",
-//     destinationStationId: "PURI",
-//     departureTime: "19:10",
-//     arrivalTime: "04:30",
-//   },
-//   {
-//     trainNo: "17058",
-//     name: "Devagiri Express",
-//     type: "Express",
-//     sourceStationId: "SC",
-//     destinationStationId: "CSMT",
-//     departureTime: "18:25",
-//     arrivalTime: "04:55",
-//   },
-//   {
-//     trainNo: "15103",
-//     name: "Intercity Express",
-//     type: "Intercity",
-//     sourceStationId: "BSB",
-//     destinationStationId: "GKP",
-//     departureTime: "06:30",
-//     arrivalTime: "10:45",
-//   },
-// ];
+  // ---------- Additional Trains ----------
+  {
+    trainNo: "12951",
+    name: "Mumbai Rajdhani Express",
+    type: "Rajdhani",
+    sourceStationId: "BCT",
+    destinationStationId: "NDLS",
+    departureTime: "16:35",
+    arrivalTime: "08:35",
+  },
+  {
+    trainNo: "12301",
+    name: "Howrah Rajdhani Express",
+    type: "Rajdhani",
+    sourceStationId: "NDLS",
+    destinationStationId: "HWH",
+    departureTime: "17:10",
+    arrivalTime: "10:05",
+  },
+  {
+    trainNo: "12639",
+    name: "Brindavan Express",
+    type: "Superfast",
+    sourceStationId: "MAS",
+    destinationStationId: "SBC",
+    departureTime: "07:50",
+    arrivalTime: "14:10",
+  },
+  {
+    trainNo: "12232",
+    name: "Lucknow Mail",
+    type: "Mail Express",
+    sourceStationId: "CHD",
+    destinationStationId: "LKO",
+    departureTime: "22:20",
+    arrivalTime: "07:15",
+  },
+  {
+    trainNo: "12833",
+    name: "Puri Express",
+    type: "Superfast",
+    sourceStationId: "ADI",
+    destinationStationId: "PURI",
+    departureTime: "19:10",
+    arrivalTime: "04:30",
+  },
+  {
+    trainNo: "17058",
+    name: "Devagiri Express",
+    type: "Express",
+    sourceStationId: "SC",
+    destinationStationId: "CSMT",
+    departureTime: "18:25",
+    arrivalTime: "04:55",
+  },
+  {
+    trainNo: "15103",
+    name: "Intercity Express",
+    type: "Intercity",
+    sourceStationId: "BSB",
+    destinationStationId: "GKP",
+    departureTime: "06:30",
+    arrivalTime: "10:45",
+  },
+];
 
 
 
@@ -444,3 +444,87 @@ export const allTrains = [
 //   .finally(async () => {
 //     await prisma.$disconnect()
 //   })
+
+
+
+
+
+
+import 'dotenv/config'
+import prisma from '@/lib/prisma'
+// import { allTrains } from '../Data/Train'
+
+/* ⚠️ IMPORTANT
+   Use RELATIVE PATHS only (NOT @/ aliases)
+*/
+// import { allTrains } from '../Data/train'
+import { stations } from '../Data/station'
+
+// const prisma = new PrismaClient()
+
+async function main() {
+  console.log('\n🚀 Seeding Started...\n')
+
+  /* ---------------------------------
+     1️⃣ Insert Stations first
+  --------------------------------- */
+  console.log('📍 Inserting Stations...')
+
+  await prisma.station.createMany({
+    data: stations,
+    skipDuplicates: true,
+  })
+
+  console.log(`✔ Stations inserted/checked: ${stations.length}`)
+
+
+  /* ---------------------------------
+     2️⃣ Prepare Train data (with times)
+  --------------------------------- */
+  console.log('\n🚆 Preparing Train data...')
+
+  const trainData = allTrains.map((t) => ({
+    trainNo: t.trainNo.trim(),
+    name: t.name,
+    type: t.type,
+    sourceStationId: t.sourceStationId,
+    destinationStationId: t.destinationStationId,
+    departureTime: t.departureTime ?? null,
+    arrivalTime: t.arrivalTime ?? null,
+  }))
+
+
+  /* ---------------------------------
+     3️⃣ Insert Trains in chunks
+  --------------------------------- */
+  console.log('\n🚆 Inserting Trains...')
+
+  const CHUNK = 500
+
+  for (let i = 0; i < trainData.length; i += CHUNK) {
+    const chunk = trainData.slice(i, i + CHUNK)
+
+    await prisma.train.createMany({
+      data: chunk,
+      skipDuplicates: true,
+    })
+
+    console.log(`✔ Inserted ${Math.min(i + CHUNK, trainData.length)} / ${trainData.length}`)
+  }
+
+  console.log('\n✅ Seeding completed successfully!\n')
+}
+
+
+/* ---------------------------------
+   Execute
+--------------------------------- */
+
+main()
+  .catch((e) => {
+    console.error('❌ Seed failed:', e)
+    process.exit(1)
+  })
+  .finally(async () => {
+    await prisma.$disconnect()
+  })
