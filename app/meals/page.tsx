@@ -278,7 +278,7 @@ const MealPage = () => {
       <footer className="relative z-10 bg-white border-t border-slate-100 pt-20 pb-10">
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-8">
-            <Image src="/irctc_logo.png" alt="Logo" width={40} height={40} />
+            <Image src="/irctc_logo_2.png" alt="Logo" width={40} height={40} />
             <span className="font-black text-xl">IRCTC E-Catering</span>
           </div>
           <div className="flex flex-wrap justify-center gap-8 text-sm font-bold text-slate-500 mb-12">
