@@ -102,47 +102,45 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
     const displayJourneyDate = formatDate(train.journeyDate);
     const displayDestinationDate = formatDate(train.destinationDate);
 
-    // Running status check (using the passed down journeyDate)
+    // Running status check
     const isActive =
         train.startDate && train.endDate
             ? new Date(journeyDate) >= new Date(train.startDate) &&
             new Date(journeyDate) <= new Date(train.endDate)
             : true;
+
     const router = useRouter();
-    useEffect(() => {
 
-        console.log("Train Data in TrainCard:", train);
-    }, []);
-
-
-
+    // ✅ LOGIC 1: Initialize all classes so they are visible
     const [classData, setClassData] = useState<
-        Record<string, { count: number; status: string; loading: boolean }>
-    >({
-        [train.availability.coachType]: {
-            count: train.availability.count,
-            status: train.availability.status,
-            loading: false
-        }
+        Record<string, { count: number | string; status: string; loading: boolean }>
+    >(() => {
+        const classes = ["SL", "AC3", "AC2", "AC1", "S2"];
+        const initial: any = {};
+        classes.forEach(cls => {
+            initial[cls] = {
+                count: cls === train.availability.coachType ? train.availability.count : "--",
+                status: cls === train.availability.coachType ? train.availability.status : "CHECK",
+                loading: false
+            };
+        });
+        return initial;
     });
+
     useEffect(() => {
         refreshAvailability(selectedClass);
     }, []);
 
     const refreshAvailability = async (cls: string) => {
         setSelectedClass(cls);
-
-        // UI par loading dikhao
         setClassData(prev => ({
             ...prev,
             [cls]: { ...prev[cls], loading: true }
         }));
 
         try {
-            // ✅ FRESH DATA FETCH KARO (Sirf ek API call jo current count bataye)
-
             const res = await fetch(`/api/train/availability`, {
-                method: "POST", // 👈 GET ki jagah POST karo
+                method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     trainNo: train.trainNumber,
@@ -156,16 +154,19 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
                 setClassData(prev => ({
                     ...prev,
                     [cls]: {
-                        count: data.availableCount, // DB wala fresh count (e.g. 140)
+                        count: data.availableCount,
                         status: data.status,
                         loading: false
                     }
                 }));
+            } else {
+                setClassData(prev => ({
+                    ...prev,
+                    [cls]: { count: 0, status: "N/A", loading: false }
+                }));
             }
-            
         } catch (error) {
             console.error("Refresh failed");
-            // Fallback to old data on error
             setClassData(prev => ({
                 ...prev,
                 [cls]: { ...prev[cls], loading: false }
@@ -182,6 +183,15 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
         return now > dep;
     };
 
+    // ✅ LOGIC 2: Disable button if FULL, N/A or Departed
+    const isBookingDisabled = () => {
+        const current = classData[selectedClass];
+        if (!current || current.loading) return true;
+        const status = current.status.toUpperCase();
+        // Booking Allowed only if status is positive
+        const canBook = status.includes("AVAILABLE") || status.includes("RAC") || status.includes("WL") || status.includes("WAITLIST");
+        return !canBook || isDeparted();
+    };
 
     const handleBooking = () => {
         const params = new URLSearchParams({
@@ -191,343 +201,135 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
             to: toCode ?? "",
             class: selectedClass,
         });
-
         router.push(`/train/book-ticket/confirm?${params.toString()}`);
     };
 
-
-    // Fetch Route Logic
     const fetchRoute = useCallback(async () => {
         if (!canLoadRoute) return;
-
         if (route.length > 0) {
-            setOpen(!open); // Toggle if data is already loaded
+            setOpen(!open);
             return;
         }
-
-        setOpen(true); // Open the route panel immediately
+        setOpen(true);
         setRouteLoading(true);
-
         try {
-            // NOTE: Assuming your API endpoint is correct and requires 'trainNo' in the body
             const res = await fetch("/api/train/train-search", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ trainNo: train.trainNumber }),
             });
-
             const data = await res.json();
-            console.log(data);
-
-            // NOTE: Adjusting the logic to handle potential nested structure
             if (data.success && data.data?.trains?.[0]?.route) {
                 setRoute(data.data.trains[0].route as RouteStop[]);
             } else {
                 toast.error("Failed to load route details.");
-                setOpen(false); // Close if fetching failed
+                setOpen(false);
             }
         } catch (error) {
             toast.error("Error fetching train route.");
-            setOpen(false); // Close if fetching failed
+            setOpen(false);
         } finally {
             setRouteLoading(false);
         }
     }, [train.trainNumber, route.length, open, canLoadRoute]);
 
-    console.log(train)
-
     return (
-        <div
-            key={train.trainNumber}
-            className="bg-white rounded-2xl shadow-md p-4 sm:p- space-y-4 border border-blue-100 max-w-6xl mx-auto w-full"
-        >
-            {/* ---------- Header (Train Name, Number, Route Button, Status) ---------- */}
+        <div key={train.trainNumber} className="bg-white rounded-2xl shadow-md p-4 space-y-4 border border-blue-100 max-w-6xl mx-auto w-full">
+            {/* Header */}
             <div className="flex justify-between items-start">
                 <h2 className="text-lg md:text-xl font-bold text-blue-700 flex items-center">
-                    <TrainIcon className="mr-2 text-blue-500 w-6 h-6 line-clamp-1 sm:text-xl shrink-0" />
+                    <TrainIcon className="mr-2 text-blue-500 w-6 h-6 shrink-0" />
                     {train.trainName}
-                    <span className="ml-2 text-sm text-gray-500 font-normal">
-                        {/* ({train.trainNumber}) */}
-                    </span>
                 </h2>
-
                 <div className="flex gap-2 items-center">
-                    {/* Route Button */}
-                    <button
-                        onClick={fetchRoute}
-                        disabled={!canLoadRoute}
-                        className={`px-3 py-1 text-xs font-bold rounded-full transition z-10 
-                            ${canLoadRoute
-                                ? "bg-white text-blue-600 border border-blue-200 hover:bg-blue-50 shadow-sm"
-                                : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                            }`}
-                    >
-                        {routeLoading
-                            ? <Loading />
-                            : open
-                                ? "Hide"
-                                : "Route"}
+                    <button onClick={fetchRoute} disabled={!canLoadRoute} className={`px-3 py-1 text-xs font-bold rounded-full transition z-10 ${canLoadRoute ? "bg-white text-blue-600 border border-blue-200 hover:bg-blue-50 shadow-sm" : "bg-gray-100 text-gray-400 cursor-not-allowed"}`}>
+                        {routeLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : open ? "Hide" : "Route"}
                     </button>
-
-                    {/* Running Status Tag */}
-                    <span
-                        className={`hidden sm:block text-xs font-semibold px-3 py-1 rounded-full ${isActive
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-700"
-                            }`}
-                    >
+                    <span className={`hidden sm:block text-xs font-semibold px-3 py-1 rounded-full ${isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
                         {isActive ? "RUNNING" : "NOT RUNNING"}
                     </span>
                 </div>
             </div>
 
-            {/* ---------- Schedule ---------- */}
+            {/* Schedule */}
             <div className="grid grid-cols-3 gap-2 text-center items-center bg-blue-50 rounded-xl py-2 sm:py-1">
-
                 <div>
-                    <p className="text-lg font-semibold text-green-600">
-                        {train.departure}
-                    </p>
+                    <p className="text-lg font-semibold text-green-600">{train.departure}</p>
                     <p className="text-xs text-gray-600 font-medium sm:text-[15px]">{fromCode}</p>
                     <span className="font-bold text-gray-800 text-xs sm:text-[15px]">{displayJourneyDate}</span>
                 </div>
-
-                <div className="flex flex-col sm:flex-row items-center justify-center  text-gray-600 py-2">
-                    {/* Icon (desktop only) */}
-
-                    {/* Text */}
-                    <div className="flex flex-col justify-center items-center h-[8vh] bg">
-
-                        <div className="flex  justify-center items-center">
-
-                            <p className="text-sm font-medium flex flex-col gap-1 items-center">
-
-                                <div className="flex justify-center gap-2 items-center">
-                                    <Clock className="hidden sm:block w-4 h-4 shrink-0" />
-                                    <span>{train.duration}</span>
-
-                                </div>
-
-
-                                {train.dayCount > 0 && (
-                                    <span className="text-xs sm:text-sm text-gray-500 font-bold ">
-                                        (+{train.dayCount} Day{train.dayCount > 1 ? "s" : ""})
-                                    </span>
-                                )}
-                            </p>
+                <div className="flex flex-col items-center justify-center text-gray-600 py-2">
+                    <div className="flex flex-col justify-center items-center h-[8vh]">
+                        <div className="flex justify-center gap-2 items-center">
+                            <Clock className="hidden sm:block w-4 h-4 shrink-0" />
+                            <span className="text-sm font-medium">{train.duration}</span>
                         </div>
-
+                        {train.dayCount > 0 && <span className="text-xs sm:text-sm text-gray-500 font-bold">(+{train.dayCount} Day{train.dayCount > 1 ? "s" : ""})</span>}
                         <p className="line-clamp-1 text-xs sm:text-sm sm:mt-1">{train.runningDays}</p>
                     </div>
                 </div>
-
                 <div>
-                    <p className="text-lg font-semibold text-red-600">
-                        {train.arrival}
-                    </p>
+                    <p className="text-lg font-semibold text-red-600">{train.arrival}</p>
                     <p className="text-xs text-gray-600 font-medium sm:text-[15px]">{toCode}</p>
                     <span className="font-bold text-gray-800 text-xs sm:text-[15px]">{displayDestinationDate}</span>
                 </div>
-
             </div>
 
-            {/* ---------- Route Display Section (Fixed Timeline) ---------- */}
+            {/* Route Timeline */}
             {open && route.length > 0 && (
                 <div className="bg-gray-50 p-4 sm:p-6 border-t">
-                    <h3 className="text-base font-bold text-blue-700 mb-4 border-b border-blue-100 pb-2">
-                        Detailed Route Stops ({route.length} stations)
-                    </h3>
-
-                    {/* Visual separation for the timeline scroll area */}
+                    <h3 className="text-base font-bold text-blue-700 mb-4 border-b border-blue-100 pb-2">Route Stops</h3>
                     <div className="relative pl-6 space-y-5 max-h-[400px] overflow-y-auto pr-2">
-
-                        {/* Vertical Timeline Line - Thicker and Dotted */}
                         <div className="absolute left-2 top-0 bottom-0 w-1 bg-blue-200 rounded-full" />
-
-                        {route.map((r: any, i: number) => {
-                            const isSource = i === 0;
-                            const isDestination = i === route.length - 1;
-
-                            // Dynamic Icon and Color Scheme
-                            let timelineDotClass = "bg-blue-600";
-                            let stationCardClass = "bg-white border-blue-100 shadow-sm hover:shadow-md";
-                            let iconComponent;
-
-                            if (isSource) {
-                                timelineDotClass = "bg-green-600 ring-4 ring-green-200";
-                                stationCardClass = "bg-green-50 border-green-300 shadow-md";
-                                iconComponent = <TrainIcon className="w-4 h-4 text-green-700" />;
-                            } else if (isDestination) {
-                                timelineDotClass = "bg-red-600 ring-4 ring-red-200";
-                                stationCardClass = "bg-red-50 border-red-300 shadow-md";
-                                iconComponent = <PinIcon className="w-4 h-4 text-red-700" />;
-                            } else {
-                                timelineDotClass = "bg-blue-500 ring-2 ring-blue-100";
-                                stationCardClass = "bg-white border-gray-200 hover:shadow";
-                                iconComponent = null;
-                            }
-
-                            return (
-                                <div key={i} className="relative flex gap-3 sm:gap-4 items-start z-10">
-                                    {/* Timeline Marker (Dot/Icon) */}
-                                    <div className="shrink-0 pt-1.5 relative">
-                                        {iconComponent ? (
-                                            <div className={`p-1.5 rounded-full bg-white relative z-10 shadow-lg border-2 border-white`}>
-                                                {iconComponent}
-                                            </div>
-                                        ) : (
-                                            <div
-                                                className={`w-3 h-3 mt-2 rounded-full relative z-10 transition ${timelineDotClass}`}
-                                            />
-                                        )}
+                        {route.map((r: any, i: number) => (
+                            <div key={i} className="relative flex gap-3 items-start z-10">
+                                <div className="shrink-0 pt-1.5"><div className="w-3 h-3 mt-2 rounded-full bg-blue-500 ring-2 ring-blue-100" /></div>
+                                <div className="border rounded-xl p-3 w-full bg-white">
+                                    <div className="flex justify-between items-start text-sm">
+                                        <div className="max-w-[65%]"><p className="font-extrabold text-base text-gray-800">{r.stnName}</p></div>
+                                        <div className="text-right text-xs">
+                                            <p className="text-gray-700">Arr: {r.arrival || "--"}</p>
+                                            <p className="text-gray-700">Dep: {r.departure || "--"}</p>
+                                        </div>
                                     </div>
-
-                                    {/* Station Card - Increased readability on smaller screens */}
-                                    <div className={`border rounded-xl p-3 w-full transition-all ${stationCardClass}`}>
-                                        <div className="flex  justify-between items-start text-sm ">
-                                            {/* Left side: Station Name and Details */}
-                                            <div className="max-w-[65%] ">
-                                                <p className={`font-extrabold text-base line-clamp-1 ${isSource ? 'text-green-800' : isDestination ? 'text-red-800' : 'text-gray-800'}`}>
-                                                    {r.stnName} <span className="text-xs font-normal text-gray-500">({r.stnCode})</span>
-                                                </p>
-
-                                            </div>
-
-
-                                            {/* Right side: Time Details (Specific Time blocks) */}
-                                            <div className="text-right text-xs pt-0.5 space-y-1">
-                                                {/* Source: Only Departure */}
-                                                {isSource && r.departure && (
-                                                    <div className="text-green-700 font-bold bg-green-100 py-0.5 px-2 rounded-md whitespace-nowrap">
-                                                        Dep: {r.departure}
-                                                    </div>
-                                                )}
-
-                                                {/* Intermediate: Arr & Dep */}
-                                                {!isSource && !isDestination && (
-                                                    <>
-                                                        <p className="text-gray-700 font-medium">Arr: {r.arrival || "--"}</p>
-                                                        <p className="text-gray-700 font-medium">Dep: {r.departure || "--"}</p>
-                                                    </>
-                                                )}
-
-                                                {/* Destination: Only Arrival */}
-                                                {isDestination && r.arrival && (
-                                                    <div className="text-red-700 font-bold bg-red-100 py-0.5 px-2 rounded-md whitespace-nowrap">
-                                                        Arr: {r.arrival}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div className=" flex flex-wrap text-xs text-gray-600 space-x-2 sm:space-x-3 mt-1 w-full">
-                                            <span className="font-medium">Day {r.day}</span>
-                                            <span>| {r.distance} km</span>
-                                            <span className="font-medium bg-gray-100 px-1.5 rounded-md text-gray-700">PF {r.platform || "01"}</span>
-                                        </div>
+                                    <div className="flex text-xs text-gray-600 gap-3 mt-1">
+                                        <span>Day {r.day}</span><span>| {r.distance} km</span>
                                     </div>
                                 </div>
-                            );
-                        })}
+                            </div>
+                        ))}
                     </div>
                 </div>
             )}
 
-
-            {/* ---------- Availability and Booking Button ---------- */}
+            {/* Availability Footer */}
             <div className="mt-4 border-t pt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-
-                {/* ---------- Class Selector ---------- */}
-                <div className="flex gap-3 overflow-x-auto">
+                <div className="flex gap-3 overflow-x-auto pb-2">
                     {Object.keys(classData).map((cls) => {
                         const data = classData[cls];
-
-                        const textColor =
-                            typeof data.count === "string"
-                                ? "text-gray-600"
-                                : data.count > 20
-                                    ? "text-green-600"
-                                    : data.count > 0
-                                        ? "text-yellow-600"
-                                        : "text-red-600";
+                        const isActiveCls = selectedClass === cls;
+                        const statusColor = data.status === "AVAILABLE" ? "text-green-600" : (data.status === "CHECK" ? "text-gray-400" : "text-red-600");
 
                         return (
-                            <button
-                                key={cls}
-                                onClick={() => refreshAvailability(cls)}
-                                className={`border p-2 rounded-lg min-w-[100px] transition ${selectedClass === cls
-                                    ? "bg-blue-600 text-white border-blue-600"
-                                    : "bg-white"
-                                    }`}
-                            >
-                                <span className="block font-bold">{cls}</span>
-
-                                <span className={`text-xs flex items-center  text-white justify-center gap-1 ${textColor}`}>
-                                    {data.loading ? (
-                                        <Loader2 className="w-3 h-3 animate-spin" />
-                                    ) : (
-                                        `${data.status} ${data.count}`
-                                    )}
-
-                                    <RefreshCcw
-                                        size={12}
-                                        className={data.loading ? "animate-spin" : ""}
-                                    />
+                            <button key={cls} onClick={() => refreshAvailability(cls)} className={`border p-2 rounded-lg min-w-[100px] transition ${isActiveCls ? "bg-blue-600 text-white border-blue-600" : "bg-white border-gray-200"}`}>
+                                <span className={`block font-bold ${isActiveCls ? "text-white" : "text-gray-700"}`}>{cls}</span>
+                                <span className={`text-[10px] flex items-center justify-center gap-1 font-bold ${isActiveCls ? "text-blue-100" : statusColor}`}>
+                                    {data.loading ? <Loader2 className="w-3 h-3 animate-spin" /> : `${data.status} ${data.count !== "--" ? data.count : ""}`}
+                                    <RefreshCcw size={10} className={data.loading ? "animate-spin" : ""} />
                                 </span>
                             </button>
                         );
                     })}
                 </div>
+
                 <button
-                    disabled={isDeparted()}
-                    className={`px-6 py-2 rounded-lg ${isDeparted() ? 'bg-red-600 text-white' : 'bg-blue-600 text-white'}`}
+                    disabled={isBookingDisabled()}
+                    className={`px-8 py-2 rounded-lg font-bold transition ${isBookingDisabled() ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white active:scale-95'}`}
                     onClick={handleBooking}
                 >
-                    {isDeparted() ? "Already Departed" : "Book Now"}
+                    {isDeparted() ? "Already Departed" : (classData[selectedClass]?.status === "CHECK" ? "Refreshing..." : "Book Now")}
                 </button>
-
-                {/* ---------- Availability + CTA ---------- */}
-                {/* <div className="flex items-center justify-between sm:justify-end gap-4">
-                    <p className="text-sm text-gray-600">
-                        Seats:&nbsp;
-                        <span
-                            className={`font-semibold ${train.seatsAvailable === "Available"
-                                ? "text-green-600"
-                                : "text-red-600"
-                                }`}
-                        >
-                            {train.seatsAvailable}
-                        </span>
-                    </p>
-
-                    <button
-                        disabled={!isActive}
-                        onClick={() => {
-                            const params = new URLSearchParams({
-                                trainNo: train.trainNumber,
-                                date: train.journeyDate,
-                                from: fromCode ?? "",
-                                to: toCode ?? "",
-                                class: train.coach,
-                            });
-                            toast.success("Booking flow initiated");
-
-                            router.push(`/train/book-ticket/confirm?${params.toString()}`);
-                        }}
-
-                        // onClick={() =>
-
-                        //     toast.success("Booking flow will be integrated next")
-                        // }
-                        className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all ${isActive
-                            ? "bg-blue-600 hover:bg-blue-700 text-white"
-                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                            }`}
-                    >
-                        Book Now
-                    </button>
-                </div> */}
             </div>
-
         </div>
     );
 };

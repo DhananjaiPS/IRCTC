@@ -15,22 +15,42 @@ import { stations } from "../../Data/station";
 
 const CLASSES = [
   "All Classes",
-  // "Sleeper (SL)",
-  // "AC 3 Tier (3A)",
-  // "AC 2 Tier (2A)",
-  // "AC First Class (1A)",
-  // "Second Sitting (2S)",
+  "Sleeper (SL)",
+  "AC 3 Tier (3A)",
+  "AC 2 Tier (2A)",
+  "AC First Class (1A)",
+  "Second Sitting (2S)",
 ];
 
+// ✅ Logic mapping for short codes
+const CLASS_MAP: Record<string, string> = {
+  "All Classes": "ALL",
+  "Sleeper (SL)": "SL",
+  "AC 3 Tier (3A)": "AC3",
+  "AC 2 Tier (2A)": "AC2",
+  "AC First Class (1A)": "AC1",
+  "Second Sitting (2S)": "2S",
+};
+
 const QUOTAS = [
-  "GENERAL",
-  // "LADIES",
-  // "LOWER BERTH",
-  // "PERSON WITH DISABILITY",
-  // "DUTY PASS",
-  // "TATKAL",
-  // "PREMIUM TATKAL",
+
+"GENERAL",
+
+// "LADIES",
+
+// "LOWER BERTH",
+
+// "PERSON WITH DISABILITY",
+
+// "DUTY PASS",
+
+// "TATKAL",
+
+// "PREMIUM TATKAL",
+
 ];
+
+
 
 export default function TrainSearchForm() {
   const router = useRouter();
@@ -51,8 +71,6 @@ export default function TrainSearchForm() {
     d.setDate(d.getDate() + 120);
     return d.toISOString().split("T")[0];
   })();
-
-  /* -------------------- Station Search Logic -------------------- */
 
   const filterStations = (query: string) => {
     const q = query.toLowerCase();
@@ -107,18 +125,19 @@ export default function TrainSearchForm() {
       return;
     }
 
+    // ✅ Logic change: Use the map to get short code
+    const classCode = CLASS_MAP[selectedClass] || "ALL";
+
     const query = new URLSearchParams({
       from: fromCode,
       to: toCode,
       date: journeyDate,
-      class: selectedClass,
+      class: classCode, // Now sends SL, 3A, etc.
       quota,
     }).toString();
 
     router.push(`/train/book-ticket?${query}`);
   };
-
-  /* -------------------- UI -------------------- */
 
   return (
     <div className="shadow-2xl p-4 sm:p-6 bg-white rounded-xl w-full max-w-xl mx-auto">
@@ -191,7 +210,7 @@ export default function TrainSearchForm() {
               className="w-full py-3 px-3 border-2 rounded-lg text-sm"
             >
               {CLASSES.map((c) => (
-                <option key={c}>{c}</option>
+                <option key={c} value={c}>{c}</option>
               ))}
             </select>
           </div>
@@ -206,28 +225,28 @@ export default function TrainSearchForm() {
             className="w-full py-3 px-3 border-2 rounded-lg text-sm"
           >
             {QUOTAS.map((q) => (
-              <option key={q}>{q}</option>
+              <option key={q} value={q}>{q}</option>
             ))}
           </select>
         </div>
 
         {/* SEARCH */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-                    <button
-                        onClick={handleSearch}
-                        className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 md:py-4 rounded-lg transition flex items-center justify-center shadow-lg text-base"
-                    >
-                        <Search className="w-5 h-5 mr-2" />
-                        Search Trains
-                    </button>
-                    <button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 md:py-4 rounded-lg transition shadow-lg text-base"
-                        onClick={()=>{
-                            toast.success("Feature Under Alpha Phase")
-                        }}
-                    >
-                        Easy Booking on AskDISHA
-                    </button>
-                </div>
+            <button
+                onClick={handleSearch}
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 md:py-4 rounded-lg transition flex items-center justify-center shadow-lg text-base"
+            >
+                <Search className="w-5 h-5 mr-2" />
+                Search Trains
+            </button>
+            <button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 md:py-4 rounded-lg transition shadow-lg text-base"
+                onClick={()=>{
+                    toast.success("Feature Under Alpha Phase")
+                }}
+            >
+                Easy Booking on AskDISHA
+            </button>
+        </div>
       </div>
     </div>
   );
