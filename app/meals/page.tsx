@@ -82,7 +82,7 @@ const MealPage = () => {
                 className="bg-transparent text-white w-full py-4 text-center md:text-left text-lg md:text-xl font-bold outline-none placeholder:text-white/40"
               />
             </div>
-            <button className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl md:rounded-full font-black flex items-center justify-center gap-2 transition-all shadow-lg shadow-orange-500/20 active:scale-95" onClick={() => { toast.success("Food E-CATERING coming soon! Stay tuned 🚀") }}>
+            <button className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-xl md:rounded-full font-black flex items-center justify-center gap-2 transition-all shadow-lg shadow-orange-500/20 active:scale-95" onClick={() => { toast.success("Food delivery is not available at your PNR") }}>
               FIND FOOD <ArrowRight size={20} />
             </button>
           </div>

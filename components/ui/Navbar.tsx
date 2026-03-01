@@ -327,7 +327,7 @@ function Navbar() {
                             {/* <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
                                 HOLIDAYS
                             </button> */}
-                            <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
+                            <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0" onClick={() => window.location.href = "/meals"}>
                                 MEALS
                             </button>
                             {/* <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
