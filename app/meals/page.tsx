@@ -45,7 +45,7 @@ const MealPage = () => {
           </button>
           <div className="flex items-center gap-3 mx-auto md:mx-0"> {/* Centered on mobile */}
             <div className="bg-white p-1 rounded-full shadow-lg">
-              <Image src="/irctc_logo.png" alt="IRCTC" width={45} height={45} className="w-8 h-8 sm:w-11 sm:h-11 object-contain" />
+              <Image src="/irctc_logo_2.png" alt="IRCTC" width={45} height={45} className="w-8 h-8 sm:w-11 sm:h-11 object-contain" />
             </div>
             <span className="text-white font-black tracking-tighter text-xl sm:block">E-CATERING</span>
           </div>
