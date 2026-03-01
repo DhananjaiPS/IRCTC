@@ -14,9 +14,9 @@ const TRAINS_LINKS = [
     { label: "Search TRAINS", href: "train/train-search" },
     { label: "Cancel Ticket", href: "/train/cancel-ticket" },
     { label: "PNR Enquiry", href: "/train/pnr-enquiry" },
-    { label: "Train Schedule", href: "/train/train-schedule" },
+    { label: "Train Schedule", href: "/train/track-your-train" },
     { label: "Track Your Train", href: "/train/track-your-train" },
-    { label: "FTR Coach/Train Booking", href: "/train/ftr-coach-train-booking" },
+    { label: "FTR Coach/Train Booking", href: "/" },
     { label: "Dogs/Cats Booking", href: "/train/dogs-cats-booking" },
 ];
 
@@ -33,14 +33,14 @@ const MORE_LINKS = [
 
 
     { label: "CONTACT US", href: "/complain" },
-    { label: "ChatBot as a Service (CaaS)", href: "/caas" },
-    { label: "Link Your Aadhaar", href: "/link-aadhaar" },
-    { label: "Counter Ticket Cancellation", href: "/counter-ticket-cancellation" },
-    { label: "Counter Ticket Boarding Point Change", href: "/counter-ticket-boarding-change" },
-    { label: "FORGOT ACCOUNT DETAILS?", href: "/forgot-account-details" },
-    { label: "AT STATIONS", href: "/at-stations" },
-    { label: "WI-Fi Railway Stations", href: "/wi-fi-railway-stations" },
-    { label: "Battery Operated Cars", href: "/battery-operated-cars" },
+    // { label: "ChatBot as a Service (CaaS)", href: "/caas" },
+    // { label: "Link Your Aadhaar", href: "/link-aadhaar" },
+    // { label: "Counter Ticket Cancellation", href: "/counter-ticket-cancellation" },
+    // { label: "Counter Ticket Boarding Point Change", href: "/counter-ticket-boarding-change" },
+    // { label: "FORGOT ACCOUNT DETAILS?", href: "/forgot-account-details" },
+    // { label: "AT STATIONS", href: "/at-stations" },
+    // { label: "WI-Fi Railway Stations", href: "/wi-fi-railway-stations" },
+    // { label: "Battery Operated Cars", href: "/battery-operated-cars" },
 ];
 
 // --- Component Props Definitions ---
@@ -315,24 +315,24 @@ function Navbar() {
                                 )}
                             </div>
 
-                            <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
+                            {/* <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
                                 BUSES
-                            </button>
-                            <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
+                            </button> */}
+                            {/* <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
                                 FLIGHTS
-                            </button>
-                            <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
+                            </button> */}
+                            {/* <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
                                 HOTELS
-                            </button>
-                            <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
+                            </button> */}
+                            {/* <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
                                 HOLIDAYS
-                            </button>
+                            </button> */}
                             <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
                                 MEALS
                             </button>
-                            <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
+                            {/* <button className="px-2 py-2 text-xs font-semibold text-gray-700 hover:text-blue-900 shrink-0">
                                 PROMOTIONS
-                            </button>
+                            </button> */}
 
                             {/* MORE (Uses 'submenuOpen' state) */}
                             <button
@@ -435,36 +435,36 @@ function Navbar() {
                         />
 
                         {/* --- Direct Links (No Submenu) --- */}
-                        <MobileMenuItem
+                        {/* <MobileMenuItem
                             label="BUSES"
                             href={"/buses"}
                             onClick={closeMobileMenu}
-                        />
-                        <MobileMenuItem
+                        /> */}
+                        {/* <MobileMenuItem
                             label="FLIGHTS"
                             href={"/flights"}
                             onClick={closeMobileMenu}
-                        />
-                        <MobileMenuItem
+                        /> */}
+                        {/* <MobileMenuItem
                             label="HOTELS"
                             href={"/hotels"}
                             onClick={closeMobileMenu}
-                        />
-                        <MobileMenuItem
+                        /> */}
+                        {/* <MobileMenuItem
                             label="HOLIDAYS"
                             href={"/holidays"}
                             onClick={closeMobileMenu}
-                        />
+                        /> */}
                         <MobileMenuItem
                             label="MEALS"
                             href={"/meals"}
                             onClick={closeMobileMenu}
                         />
-                        <MobileMenuItem
+                        {/* <MobileMenuItem
                             label="PROMOTIONS"
                             href={"/promotions"}
                             onClick={closeMobileMenu}
-                        />
+                        /> */}
 
                     </div>
                 </div>
