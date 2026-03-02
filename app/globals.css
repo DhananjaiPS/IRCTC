@@ -6,10 +6,39 @@
   from { opacity: 0; transform: translateY(3px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.animate-fadeIn {
-  animation: fadeIn 0.15s ease-out;
+/* 1. Google ke saare UI elements ko hide karo */
+.goog-te-banner-frame.skiptranslate,
+.goog-te-gadget-simple,
+.goog-te-menu-value,
+.goog-te-menu-frame,
+.skiptranslate > iframe,
+.goog-te-spinner-pos,
+#goog-gt-tt {
+    display: none !important;
 }
 
+/* 2. "Powered by Google" aur dropdown text ko hide karo */
+.goog-te-gadget {
+    font-size: 0 !important;
+    color: transparent !important;
+}
+
+.goog-te-gadget span {
+    display: none !important;
+}
+
+/* 3. Page ke upar jo extra space aati hai use hatao */
+body {
+    top: 0px !important;
+}
+
+/* 4. Hidden container jahan Google apna kaam karega */
+#google_translate_element {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    visibility: hidden;
+}
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

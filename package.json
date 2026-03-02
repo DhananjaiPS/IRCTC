@@ -12,11 +12,15 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.34",
+    "@ai-sdk/react": "^3.0.107",
     "@clerk/nextjs": "^6.36.0",
     "@neondatabase/serverless": "^1.0.2",
     "@prisma/adapter-pg": "^7.1.0",
     "@prisma/client": "^7.4.1",
     "@prisma/extension-accelerate": "^3.0.1",
+    "@stripe/stripe-js": "^8.8.0",
+    "ai": "^6.0.105",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
@@ -34,6 +38,7 @@
     "react-dom": "^19.2.4",
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.5.0",
+    "stripe": "^20.4.0",
     "swiper": "^12.0.3",
     "tailwind-merge": "^3.4.0",
     "twilio": "^5.11.1"

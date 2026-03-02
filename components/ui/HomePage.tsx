@@ -16,6 +16,8 @@ import { Bell } from "lucide-react";
 import LogoutButton from "./LogoutButton";
 import Link from "next/link";
 
+import GoogleTranslator from "../GoogleTranslator";
+
 // ---- User Context Type ----
 export type UserType = {
   id: string;
@@ -130,7 +132,8 @@ const IRCTCHomepage = () => {
               })}
             </span>
             {/* Visible on large screen */}
-            <button className="px-3 py-1.5 text-gray-700 text-xs sm:text-sm">हिंदी</button>
+            {/* <button className="px-3 py-1.5 text-gray-700 text-xs sm:text-sm">हिंदी</button> */}
+               <button className="px-3 py-1.5 text-gray-700 text-xs sm:text-sm"><GoogleTranslator/></button>
           </div>
         </div>
       </div>
@@ -245,6 +248,7 @@ const IRCTCHomepage = () => {
                   onClick={handleSearchViaDisksha}
                   onError={(e) => (e.currentTarget.style.display = 'none')}
                 />
+                {/* <ChatBot /> */}
               </div>
             </div>
 

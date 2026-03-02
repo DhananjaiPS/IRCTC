@@ -27,9 +27,9 @@ function PaymentProcessPage() {
       try {
         const res = await fetch(`/api/payment/details?bookingId=${bookingId}`);
         const data = await res.json();
-         console.log(data);
+        console.log(data);
         if (res.ok) setDetails(data);
-       
+
         else toast.error("Booking not found");
       } catch (err) {
         toast.error("Error loading payment info");
@@ -40,29 +40,57 @@ function PaymentProcessPage() {
     if (bookingId) fetchPaymentDetails();
   }, [bookingId]);
 
-  const handlePay = async () => {
-    setProcessing(true);
-    try {
-      const res = await fetch("/api/payment/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bookingId, status: "SUCCESS" }),
-      });
+  // const handlePay = async () => {
+  //   setProcessing(true);
+  //   try {
+  //     const res = await fetch("/api/payment/verify", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ bookingId, status: "SUCCESS" }),
+  //     });
 
-      const data = await res.json();
-      console.log(data);
-      if (data.success) {
-        toast.success("Payment Successful!");
-        router.push(`/booking/ticket/${bookingId}`);
-      } else {
-        throw new Error(data.error);
-      }
-    } catch (err: any) {
-      toast.error(err.message || "Payment Failed");
-    } finally {
-      setProcessing(false);
+  //     const data = await res.json();
+  //     console.log(data);
+  //     if (data.success) {
+  //       toast.success("Payment Successful!");
+  //       router.push(`/booking/ticket/${bookingId}`);
+  //     } else {
+  //       throw new Error(data.error);
+  //     }
+  //   } catch (err: any) {
+  //     toast.error(err.message || "Payment Failed");
+  //   } finally {
+  //     setProcessing(false);
+  //   }
+  // };
+  // handlePay function ko replace karo isse:
+const handlePay = async () => {
+  setProcessing(true);
+  try {
+    // 1. Stripe Session create karne ki request
+    const res = await fetch("/api/payment/stripe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        bookingId, 
+        amount: details?.amount, 
+        pnr: details?.pnr 
+      }),
+    });
+
+    const data = await res.json();
+    
+    if (data.url) {
+      // 2. Stripe ke secure page par redirect kar do
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || "Payment session failed");
     }
-  };
+  } catch (err: any) {
+    toast.error(err.message || "Payment Failed");
+    setProcessing(false); // Sirf error case mein loading stop karo
+  }
+};
 
   if (loading) return <div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin" /></div>;
 
