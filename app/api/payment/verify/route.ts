@@ -12,8 +12,9 @@ export async function POST(req: Request) {
     // Normalize status to uppercase to avoid "success" vs "SUCCESS" bugs
     const paymentStatus = status?.toUpperCase();
 
+    // ... (Initial checks same)
+
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Fetch Booking + Passengers
       const booking = await tx.booking.findUnique({
         where: { id: bId },
         include: {
@@ -23,14 +24,13 @@ export async function POST(req: Request) {
         }
       });
 
-      if (!booking || !booking.trainInstance) throw new Error("Booking or Instance not found");
+      if (!booking || !booking.trainInstance) throw new Error("Booking not found");
 
-      // 2. CHECK STATUS
       if (paymentStatus === "SUCCESS") {
         const passengerCount = booking.passengers.length;
 
-        // 🔥 FORCE UPDATE INVENTORY: Isse count 100% kam hoga
-        const updatedInstance = await tx.trainInstance.update({
+        // 1. Inventory Update
+        await tx.trainInstance.update({
           where: { id: booking.trainInstanceId! },
           data: {
             availableSeats: { decrement: passengerCount },
@@ -38,10 +38,22 @@ export async function POST(req: Request) {
           }
         });
 
-        console.log(`DECREMENTED: ${passengerCount} seats. New count: ${updatedInstance.availableSeats}`);
+        // 2. Class Variants Mapping
+        const COACH_VARIANTS: Record<string, string[]> = {
+          "AC3": ["AC3", "3A", "3-TIER"], "3A": ["AC3", "3A", "3-TIER"],
+          "AC2": ["AC2", "2A", "2-TIER"], "2A": ["AC2", "2A", "2-TIER"],
+          "AC1": ["AC1", "1A", "FIRST AC"], "1A": ["AC1", "1A", "FIRST AC"],
+          "SL": ["SL", "SLEEPER"],
+        };
 
-        // 3. Seat Allocation (Physical)
-        const targetCoaches = booking.schedule.coaches.filter(c => c.coachType === booking.trainInstance?.coachType);
+        const requestedClass = booking.trainInstance.coachType.toUpperCase();
+        const acceptableVariants = COACH_VARIANTS[requestedClass] || [requestedClass];
+
+        const targetCoaches = booking.schedule.coaches.filter(c =>
+          acceptableVariants.includes(c.coachType.toUpperCase())
+        );
+
+        // 3. Find Available Physical Seats
         const bookedSeats = await tx.seatAvailability.findMany({
           where: { trainInstanceId: booking.trainInstanceId, status: "BOOKED" },
           select: { seatId: true }
@@ -49,6 +61,7 @@ export async function POST(req: Request) {
         const bookedSeatIds = bookedSeats.map(s => s.seatId);
         const availablePhysicalSeats = targetCoaches.flatMap(c => c.seats).filter(s => !bookedSeatIds.includes(s.id));
 
+        // 4. 🔥 SEAT ASSIGNMENTS (Individual Logic)
         const seatAssignments = booking.passengers.map((p, idx) => ({
           trainInstanceId: booking.trainInstanceId,
           bookingId: bId,
@@ -60,16 +73,25 @@ export async function POST(req: Request) {
 
         await tx.seatAvailability.createMany({ data: seatAssignments });
 
-        // 4. Update Other Tables
+        // 5. Update Payment Status
         await tx.payment.update({
           where: { bookingId: bId },
           data: { status: "SUCCESS", paymentTime: new Date() }
         });
 
-        await tx.passenger.updateMany({
-          where: { bookingId: bId },
-          data: { status: "CONFIRMED" }
-        });
+        // 6. 🔥 FIX: Update Passengers Individually (Success Block ke andar)
+        for (let i = 0; i < booking.passengers.length; i++) {
+          const p = booking.passengers[i];
+          const s = availablePhysicalSeats[i]; // Check if seat was actually found
+
+          await tx.passenger.update({
+            where: { id: p.id },
+            data: {
+              status: s ? "CONFIRMED" : "WAITLISTED",
+              seatId: s ? s.id : null
+            }
+          });
+        }
 
         return await tx.booking.update({
           where: { id: bId },
@@ -77,15 +99,14 @@ export async function POST(req: Request) {
         });
 
       } else {
-        // Failure logic
+        // 7. REAL Failure logic (Payment failed)
         await tx.payment.update({ where: { bookingId: bId }, data: { status: "FAILED" } });
         return await tx.booking.update({ where: { id: bId }, data: { status: "CANCELLED" } });
       }
     }, {
       isolationLevel: "ReadCommitted",
-      maxWait: 5000, // Connection milne ke liye 5 sec tak wait karega
-      timeout: 15000, // Pura transaction finish karne ke liye 15 sec dega
-      // isolationLevel: "Serializable" ko hata do (Default use hone do)
+      maxWait: 5000,
+      timeout: 15000,
     });
 
     return NextResponse.json({ success: true, pnr: result.pnr });
