@@ -54,7 +54,7 @@ function PrintTicketPage() {
             <header className="bg-blue-900 text-white p-4 shadow-md mb-6 print:hidden">
                 <div className="max-w-4xl mx-auto flex justify-between items-center">
                     <div className="flex items-center gap-4">
-                        <button onClick={() => window.history.back()}><ChevronLeft /></button>
+                        <button onClick={() => router.replace("/")}><ChevronLeft /></button>
                         <h1 className="font-bold">Electronic Reservation Slip</h1>
                     </div>
                     <button

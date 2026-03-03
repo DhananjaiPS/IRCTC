@@ -1,44 +1,85 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState, useCallback } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { FaTrain, FaPrint, FaCheckCircle, FaStar, FaHome } from "react-icons/fa";
-import { Loader2, Clock, X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 export default function TicketPage() {
   const { id } = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [ticket, setTicket] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [verifying, setVerifying] = useState(false);
 
   // Review States
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [submittingReview, setSubmittingReview] = useState(false);
+
+  const status = searchParams.get("status");
+
+  // 1. Fetch Ticket logic ko ek function mein dala taaki verify ke baad call ho sake
+  const fetchTicket = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/booking/details?bookingId=${id}`);
+      const data = await res.json();
+      if (res.ok) {
+        setTicket(data);
+        // Show review modal after a short delay if booking is confirmed
+        if (data.status === "BOOKED") {
+          setTimeout(() => setShowReviewModal(true), 1500);
+        }
+      }
+    } catch (err) {
+      toast.error("Error loading ticket");
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
+  // 2. Logic Change: Pehle Verify, Phir Fetch
+  useEffect(() => {
+    const processVerification = async () => {
+      if (status === "success") {
+        setVerifying(true);
+        try {
+          const res = await fetch("/api/payment/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              bookingId: id,
+              status: "SUCCESS"
+            }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            toast.success("Payment Verified & Seat Allocated!");
+            await fetchTicket(); // Seat allot hone ke baad data refresh
+          } else {
+            throw new Error(data.error);
+          }
+        } catch (err: any) {
+          toast.error(err.message || "Verification Failed");
+          fetchTicket();
+        } finally {
+          setVerifying(false);
+        }
+      } else {
+        fetchTicket(); // Agar direct visit hai
+      }
+    };
+
+    if (id) processVerification();
+  }, [id, status, fetchTicket]);
+
   const handlePrintNavigation = (pnr: string) => {
     router.push(`/train/print-ticket?pnr=${pnr}`);
   };
-  useEffect(() => {
-    async function fetchTicket() {
-      try {
-        const res = await fetch(`/api/booking/details?bookingId=${id}`);
-        const data = await res.json();
-        console.log(data);
-        if (res.ok) {
-          setTicket(data);
-          // Show review modal after a short delay if booking is confirmed
-          setTimeout(() => setShowReviewModal(true), 1500);
-        }
-      } catch (err) {
-        toast.error("Error loading ticket");
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchTicket();
-  }, [id]);
 
   const submitReview = async () => {
     setSubmittingReview(true);
@@ -64,11 +105,37 @@ export default function TicketPage() {
     }
   };
 
-  if (loading) return <div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin text-blue-600" /></div>;
+  if (loading || verifying) {
+  return (
+    <div className="h-screen flex flex-col items-center justify-center bg-white overflow-hidden">
+      
+      {/* Coin Image - Mobile par small, Desktop par bada */}
+      <img 
+        src="/coin2.gif" 
+        alt="Processing Coin" 
+        className="w-[280px] h-[280px] sm:w-[400px] sm:h-[400px] object-contain relative z-10 transition-transform duration-500" 
+      />
+      
+      {/* Text - Perfectly 20px above its natural position */}
+      <div className="relative z-20 -mt-8 sm:-mt-10 text-center px-6">
+        <p className="text-slate-700 text-lg sm:text-xl font-semibold tracking-tight">
+          {verifying ? "Verifying Payment & Allocating Seats..." : "Loading Ticket..."}
+        </p>
+        
+        {/* Sub-text for better UX */}
+        <p className="text-slate-400 text-[10px] mt-2 font-bold uppercase tracking-[0.3em] animate-pulse">
+          Please wait a moment
+        </p>
+      </div>
+
+    </div>
+  );
+}
+
+  if (!ticket) return null;
 
   return (
     <div className="min-h-screen bg-slate-100 py-10 px-4 relative">
-      {/* Navigation: Home Button */}
       <button
         onClick={() => router.push("/")}
         className="fixed top-6 left-6 z-10 bg-white p-3 rounded-full shadow-lg hover:bg-slate-50 transition-all flex items-center gap-2 font-bold text-slate-700"
@@ -77,13 +144,11 @@ export default function TicketPage() {
       </button>
 
       <div className="max-w-3xl mx-auto">
-        {/* Success Header */}
         <div className="flex flex-col items-center mb-8 text-center">
           <FaCheckCircle className="text-green-500 text-5xl mb-3" />
           <h1 className="text-2xl font-bold text-slate-800">Booking Confirmed!</h1>
         </div>
 
-        {/* Ticket Card */}
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border-t-8 border-blue-600">
           <div className="p-6 sm:p-8 bg-slate-50 border-b border-dashed border-slate-200">
             <div className="flex justify-between items-start">
@@ -125,20 +190,15 @@ export default function TicketPage() {
                 </thead>
                 <tbody>
                   {ticket.passengers.map((p: any, i: number) => {
-                    // 🔍 Print Ticket wala logic yahan bhi apply hoga
-                    // Hum check kar rahe hain ki seatAvailabilities mein is passengerId ka koi record hai?
                     const mapping = ticket.seatAvailabilities?.find(
                       (m: any) => m.passengerId?.toString() === p.id?.toString()
                     );
-
                     const allottedSeat = mapping?.seat;
                     const isConfirmed = !!allottedSeat;
 
                     return (
                       <tr key={i} className="border-t border-slate-200">
                         <td className="py-3 font-medium">{p.name}</td>
-
-                        {/* Seat mapping display */}
                         <td className="py-3 text-center text-slate-700 font-bold">
                           {isConfirmed ? (
                             `${allottedSeat.coach.coachNumber}/${allottedSeat.seatNo} (${allottedSeat.berthType[0]})`
@@ -146,8 +206,6 @@ export default function TicketPage() {
                             "WL"
                           )}
                         </td>
-
-                        {/* Status display logic */}
                         <td className={`py-3 text-right font-bold ${isConfirmed ? 'text-green-600' : 'text-orange-500'}`}>
                           {isConfirmed ? "CONFIRMED" : (p.status || "WAITLIST")}
                         </td>
@@ -171,7 +229,6 @@ export default function TicketPage() {
         </div>
       </div>
 
-      {/* Review Modal */}
       {showReviewModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-white rounded-3xl w-full max-w-md p-8 shadow-2xl relative">
@@ -182,7 +239,6 @@ export default function TicketPage() {
               <h2 className="text-2xl font-bold text-slate-800">Rate Your Experience</h2>
               <p className="text-slate-500 text-sm mt-1">How was your booking journey?</p>
             </div>
-
             <div className="flex justify-center gap-2 mb-6">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button key={star} onClick={() => setRating(star)}>
@@ -190,14 +246,12 @@ export default function TicketPage() {
                 </button>
               ))}
             </div>
-
             <textarea
               className="w-full border border-slate-200 rounded-xl p-4 text-sm focus:outline-blue-500 min-h-[100px] bg-slate-50"
               placeholder="Write a short review..."
               value={comment}
               onChange={(e) => setComment(e.target.value)}
             />
-
             <button
               onClick={submitReview}
               disabled={submittingReview}

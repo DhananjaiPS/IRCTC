@@ -269,7 +269,7 @@ const TrainCard: React.FC<TrainCardProps> = ({ train, fromCode, toCode, journeyD
                     </div>
                 </div>
                 <div>
-                    <p className="text-lg font-semibold text-red-600">{train.arrival}</p>
+                    <p className="text-lg font-semibold text-green-600">{train.arrival}</p>
                     <p className="text-xs text-gray-600 font-medium sm:text-[15px]">{toCode}</p>
                     <span className="font-bold text-gray-800 text-xs sm:text-[15px]">{displayDestinationDate}</span>
                 </div>

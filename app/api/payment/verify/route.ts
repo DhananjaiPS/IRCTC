@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 export async function POST(req: Request) {
   try {
     const { bookingId, status } = await req.json();
+    console.log("VERIFY BODY:", { bookingId, status });
     if (!bookingId) return NextResponse.json({ error: "Missing ID" }, { status: 400 });
 
     const bId = BigInt(bookingId);

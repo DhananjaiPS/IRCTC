@@ -18,13 +18,24 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Booking ID is required" }, { status: 400 });
     }
 
-    // Ek hi query mein Payment aur Booking fetch karlo
+    // 🔍 Deep inclusion: Booking ke saath Passengers aur Train details bhi fetch kar rahe hain
     const payment = await prisma.payment.findUnique({
       where: { bookingId: BigInt(bookingId) },
       include: { 
         booking: {
           include: {
-             trainInstance: true // Optional: if you need train info
+             passengers: true, // 👈 Passengers details yahan se aayengi
+             fromStation: true,
+             toStation: true,
+             trainInstance: {
+               include: {
+                 schedule: {
+                   include: {
+                     train: true // Train name aur number ke liye
+                   }
+                 }
+               }
+             }
           }
         } 
       }
@@ -34,14 +45,15 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Payment record not found" }, { status: 404 });
     }
 
-    // Response ko serialize function se wrap karlo
+    // Response structure for your UI
     return NextResponse.json(serialize({
       success: true,
       amount: payment.booking.totalFare,
       pnr: payment.booking.pnr,
       status: payment.status,
+      gatewayTransactionId: payment.gatewayTransactionId, // UI mein dikhane ke liye
       data: payment,
-      book: payment.booking
+      book: payment.booking // Iske andar ab 'passengers' array milega
     }));
 
   } catch (error: any) {

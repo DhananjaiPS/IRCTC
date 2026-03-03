@@ -24,7 +24,7 @@ const CLASSES = [
 
 // ✅ Logic mapping for short codes
 const CLASS_MAP: Record<string, string> = {
-  "All Classes": "ALL",
+  "All Classes": "SL",
   "Sleeper (SL)": "SL",
   "AC 3 Tier (3A)": "AC3",
   "AC 2 Tier (2A)": "AC2",
