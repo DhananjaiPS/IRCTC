@@ -195,7 +195,7 @@ export async function POST(req: Request) {
     await qstashClient.publishJSON({
       url: `https://irctc-lilac.vercel.app/api/train/book-ticket/rollback`, // 👈 Apna LIVE Vercel URL yahan dalo
       body: { bookingId: bookingIdStr },
-      delay: 120, // 15 minutes (900 seconds)
+      delay: 600, // 10 minutes (600 seconds)
       retries: 3,  // Agar server down ho toh 3 baar koshish karega
     });
 
