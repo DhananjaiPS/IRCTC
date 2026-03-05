@@ -149,13 +149,15 @@ export type SeatStatus = (typeof SeatStatus)[keyof typeof SeatStatus]
 
 export const BookingStatus: {
   BOOKED: 'BOOKED',
-  CANCELLED: 'CANCELLED'
+  CANCELLED: 'CANCELLED',
+  PAYMENT_PENDING: 'PAYMENT_PENDING'
 };
 
 export type BookingStatus = (typeof BookingStatus)[keyof typeof BookingStatus]
 
 
 export const PassengerStatus: {
+  PAYMENT_PENDING: 'PAYMENT_PENDING',
   CONFIRMED: 'CONFIRMED',
   RAC: 'RAC',
   WAITLISTED: 'WAITLISTED',
@@ -253,7 +255,9 @@ export const ExceptionType: typeof $Enums.ExceptionType
  * Type-safe database client for TypeScript & Node.js
  * @example
  * ```
- * const prisma = new PrismaClient()
+ * const prisma = new PrismaClient({
+ *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
+ * })
  * // Fetch zero or more Users
  * const users = await prisma.user.findMany()
  * ```
@@ -274,7 +278,9 @@ export class PrismaClient<
    * Type-safe database client for TypeScript & Node.js
    * @example
    * ```
-   * const prisma = new PrismaClient()
+   * const prisma = new PrismaClient({
+   *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
+   * })
    * // Fetch zero or more Users
    * const users = await prisma.user.findMany()
    * ```
@@ -573,8 +579,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 7.4.1
-   * Query Engine version: 55ae170b1ced7fc6ed07a15f110549408c501bb3
+   * Prisma Client JS version: 7.4.2
+   * Query Engine version: 94a226be1cf2967af2541cca5529f0f7ba866919
    */
   export type PrismaVersion = {
     client: string
@@ -2547,15 +2553,15 @@ export namespace Prisma {
   export type TrainScheduleCountOutputType = {
     bookings: number
     coaches: number
-    trainInstances: number
     exceptions: number
+    trainInstances: number
   }
 
   export type TrainScheduleCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     bookings?: boolean | TrainScheduleCountOutputTypeCountBookingsArgs
     coaches?: boolean | TrainScheduleCountOutputTypeCountCoachesArgs
-    trainInstances?: boolean | TrainScheduleCountOutputTypeCountTrainInstancesArgs
     exceptions?: boolean | TrainScheduleCountOutputTypeCountExceptionsArgs
+    trainInstances?: boolean | TrainScheduleCountOutputTypeCountTrainInstancesArgs
   }
 
   // Custom InputTypes
@@ -2586,15 +2592,15 @@ export namespace Prisma {
   /**
    * TrainScheduleCountOutputType without action
    */
-  export type TrainScheduleCountOutputTypeCountTrainInstancesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TrainInstanceWhereInput
+  export type TrainScheduleCountOutputTypeCountExceptionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ScheduleExceptionWhereInput
   }
 
   /**
    * TrainScheduleCountOutputType without action
    */
-  export type TrainScheduleCountOutputTypeCountExceptionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ScheduleExceptionWhereInput
+  export type TrainScheduleCountOutputTypeCountTrainInstancesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TrainInstanceWhereInput
   }
 
 
@@ -2816,7 +2822,6 @@ export namespace Prisma {
   export type UserMinAggregateOutputType = {
     clerkId: string | null
     id: string | null
-    role: $Enums.Role | null
     fullName: string | null
     email: string | null
     phone: string | null
@@ -2834,12 +2839,12 @@ export namespace Prisma {
     walletBalance: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    role: $Enums.Role | null
   }
 
   export type UserMaxAggregateOutputType = {
     clerkId: string | null
     id: string | null
-    role: $Enums.Role | null
     fullName: string | null
     email: string | null
     phone: string | null
@@ -2857,12 +2862,12 @@ export namespace Prisma {
     walletBalance: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    role: $Enums.Role | null
   }
 
   export type UserCountAggregateOutputType = {
     clerkId: number
     id: number
-    role: number
     fullName: number
     email: number
     phone: number
@@ -2880,6 +2885,7 @@ export namespace Prisma {
     walletBalance: number
     createdAt: number
     updatedAt: number
+    role: number
     _all: number
   }
 
@@ -2895,7 +2901,6 @@ export namespace Prisma {
   export type UserMinAggregateInputType = {
     clerkId?: true
     id?: true
-    role?: true
     fullName?: true
     email?: true
     phone?: true
@@ -2913,12 +2918,12 @@ export namespace Prisma {
     walletBalance?: true
     createdAt?: true
     updatedAt?: true
+    role?: true
   }
 
   export type UserMaxAggregateInputType = {
     clerkId?: true
     id?: true
-    role?: true
     fullName?: true
     email?: true
     phone?: true
@@ -2936,12 +2941,12 @@ export namespace Prisma {
     walletBalance?: true
     createdAt?: true
     updatedAt?: true
+    role?: true
   }
 
   export type UserCountAggregateInputType = {
     clerkId?: true
     id?: true
-    role?: true
     fullName?: true
     email?: true
     phone?: true
@@ -2959,6 +2964,7 @@ export namespace Prisma {
     walletBalance?: true
     createdAt?: true
     updatedAt?: true
+    role?: true
     _all?: true
   }
 
@@ -3051,7 +3057,6 @@ export namespace Prisma {
   export type UserGroupByOutputType = {
     clerkId: string
     id: string
-    role: $Enums.Role
     fullName: string
     email: string
     phone: string
@@ -3069,6 +3074,7 @@ export namespace Prisma {
     walletBalance: number
     createdAt: Date
     updatedAt: Date
+    role: $Enums.Role
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -3093,7 +3099,6 @@ export namespace Prisma {
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     clerkId?: boolean
     id?: boolean
-    role?: boolean
     fullName?: boolean
     email?: boolean
     phone?: boolean
@@ -3111,6 +3116,7 @@ export namespace Prisma {
     walletBalance?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    role?: boolean
     bookings?: boolean | User$bookingsArgs<ExtArgs>
     reviews?: boolean | User$reviewsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -3119,7 +3125,6 @@ export namespace Prisma {
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     clerkId?: boolean
     id?: boolean
-    role?: boolean
     fullName?: boolean
     email?: boolean
     phone?: boolean
@@ -3137,12 +3142,12 @@ export namespace Prisma {
     walletBalance?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    role?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     clerkId?: boolean
     id?: boolean
-    role?: boolean
     fullName?: boolean
     email?: boolean
     phone?: boolean
@@ -3160,12 +3165,12 @@ export namespace Prisma {
     walletBalance?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    role?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
     clerkId?: boolean
     id?: boolean
-    role?: boolean
     fullName?: boolean
     email?: boolean
     phone?: boolean
@@ -3183,9 +3188,10 @@ export namespace Prisma {
     walletBalance?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    role?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"clerkId" | "id" | "role" | "fullName" | "email" | "phone" | "passwordHash" | "gender" | "dateOfBirth" | "addressLine1" | "addressLine2" | "city" | "state" | "pincode" | "idType" | "idNumber" | "kycVerified" | "walletBalance" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"clerkId" | "id" | "fullName" | "email" | "phone" | "passwordHash" | "gender" | "dateOfBirth" | "addressLine1" | "addressLine2" | "city" | "state" | "pincode" | "idType" | "idNumber" | "kycVerified" | "walletBalance" | "createdAt" | "updatedAt" | "role", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     bookings?: boolean | User$bookingsArgs<ExtArgs>
     reviews?: boolean | User$reviewsArgs<ExtArgs>
@@ -3203,7 +3209,6 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       clerkId: string
       id: string
-      role: $Enums.Role
       fullName: string
       email: string
       phone: string
@@ -3221,6 +3226,7 @@ export namespace Prisma {
       walletBalance: number
       createdAt: Date
       updatedAt: Date
+      role: $Enums.Role
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -3648,7 +3654,6 @@ export namespace Prisma {
   interface UserFieldRefs {
     readonly clerkId: FieldRef<"User", 'String'>
     readonly id: FieldRef<"User", 'String'>
-    readonly role: FieldRef<"User", 'Role'>
     readonly fullName: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly phone: FieldRef<"User", 'String'>
@@ -3666,6 +3671,7 @@ export namespace Prisma {
     readonly walletBalance: FieldRef<"User", 'Float'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
+    readonly role: FieldRef<"User", 'Role'>
   }
     
 
@@ -6456,8 +6462,8 @@ export namespace Prisma {
     type: string | null
     sourceStationId: string | null
     destinationStationId: string | null
-    departureTime: string | null
     arrivalTime: string | null
+    departureTime: string | null
   }
 
   export type TrainMaxAggregateOutputType = {
@@ -6467,8 +6473,8 @@ export namespace Prisma {
     type: string | null
     sourceStationId: string | null
     destinationStationId: string | null
-    departureTime: string | null
     arrivalTime: string | null
+    departureTime: string | null
   }
 
   export type TrainCountAggregateOutputType = {
@@ -6478,8 +6484,8 @@ export namespace Prisma {
     type: number
     sourceStationId: number
     destinationStationId: number
-    departureTime: number
     arrivalTime: number
+    departureTime: number
     _all: number
   }
 
@@ -6499,8 +6505,8 @@ export namespace Prisma {
     type?: true
     sourceStationId?: true
     destinationStationId?: true
-    departureTime?: true
     arrivalTime?: true
+    departureTime?: true
   }
 
   export type TrainMaxAggregateInputType = {
@@ -6510,8 +6516,8 @@ export namespace Prisma {
     type?: true
     sourceStationId?: true
     destinationStationId?: true
-    departureTime?: true
     arrivalTime?: true
+    departureTime?: true
   }
 
   export type TrainCountAggregateInputType = {
@@ -6521,8 +6527,8 @@ export namespace Prisma {
     type?: true
     sourceStationId?: true
     destinationStationId?: true
-    departureTime?: true
     arrivalTime?: true
+    departureTime?: true
     _all?: true
   }
 
@@ -6619,8 +6625,8 @@ export namespace Prisma {
     type: string
     sourceStationId: string
     destinationStationId: string
-    departureTime: string | null
     arrivalTime: string | null
+    departureTime: string | null
     _count: TrainCountAggregateOutputType | null
     _avg: TrainAvgAggregateOutputType | null
     _sum: TrainSumAggregateOutputType | null
@@ -6649,8 +6655,8 @@ export namespace Prisma {
     type?: boolean
     sourceStationId?: boolean
     destinationStationId?: boolean
-    departureTime?: boolean
     arrivalTime?: boolean
+    departureTime?: boolean
     reviews?: boolean | Train$reviewsArgs<ExtArgs>
     routes?: boolean | Train$routesArgs<ExtArgs>
     destinationStation?: boolean | StationDefaultArgs<ExtArgs>
@@ -6666,8 +6672,8 @@ export namespace Prisma {
     type?: boolean
     sourceStationId?: boolean
     destinationStationId?: boolean
-    departureTime?: boolean
     arrivalTime?: boolean
+    departureTime?: boolean
     destinationStation?: boolean | StationDefaultArgs<ExtArgs>
     sourceStation?: boolean | StationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["train"]>
@@ -6679,8 +6685,8 @@ export namespace Prisma {
     type?: boolean
     sourceStationId?: boolean
     destinationStationId?: boolean
-    departureTime?: boolean
     arrivalTime?: boolean
+    departureTime?: boolean
     destinationStation?: boolean | StationDefaultArgs<ExtArgs>
     sourceStation?: boolean | StationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["train"]>
@@ -6692,11 +6698,11 @@ export namespace Prisma {
     type?: boolean
     sourceStationId?: boolean
     destinationStationId?: boolean
-    departureTime?: boolean
     arrivalTime?: boolean
+    departureTime?: boolean
   }
 
-  export type TrainOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "trainNo" | "name" | "type" | "sourceStationId" | "destinationStationId" | "departureTime" | "arrivalTime", ExtArgs["result"]["train"]>
+  export type TrainOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "trainNo" | "name" | "type" | "sourceStationId" | "destinationStationId" | "arrivalTime" | "departureTime", ExtArgs["result"]["train"]>
   export type TrainInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     reviews?: boolean | Train$reviewsArgs<ExtArgs>
     routes?: boolean | Train$routesArgs<ExtArgs>
@@ -6730,8 +6736,8 @@ export namespace Prisma {
       type: string
       sourceStationId: string
       destinationStationId: string
-      departureTime: string | null
       arrivalTime: string | null
+      departureTime: string | null
     }, ExtArgs["result"]["train"]>
     composites: {}
   }
@@ -7166,8 +7172,8 @@ export namespace Prisma {
     readonly type: FieldRef<"Train", 'String'>
     readonly sourceStationId: FieldRef<"Train", 'String'>
     readonly destinationStationId: FieldRef<"Train", 'String'>
-    readonly departureTime: FieldRef<"Train", 'String'>
     readonly arrivalTime: FieldRef<"Train", 'String'>
+    readonly departureTime: FieldRef<"Train", 'String'>
   }
     
 
@@ -7866,8 +7872,8 @@ export namespace Prisma {
     startDate?: boolean
     bookings?: boolean | TrainSchedule$bookingsArgs<ExtArgs>
     coaches?: boolean | TrainSchedule$coachesArgs<ExtArgs>
-    trainInstances?: boolean | TrainSchedule$trainInstancesArgs<ExtArgs>
     exceptions?: boolean | TrainSchedule$exceptionsArgs<ExtArgs>
+    trainInstances?: boolean | TrainSchedule$trainInstancesArgs<ExtArgs>
     train?: boolean | TrainDefaultArgs<ExtArgs>
     _count?: boolean | TrainScheduleCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["trainSchedule"]>
@@ -7905,8 +7911,8 @@ export namespace Prisma {
   export type TrainScheduleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     bookings?: boolean | TrainSchedule$bookingsArgs<ExtArgs>
     coaches?: boolean | TrainSchedule$coachesArgs<ExtArgs>
-    trainInstances?: boolean | TrainSchedule$trainInstancesArgs<ExtArgs>
     exceptions?: boolean | TrainSchedule$exceptionsArgs<ExtArgs>
+    trainInstances?: boolean | TrainSchedule$trainInstancesArgs<ExtArgs>
     train?: boolean | TrainDefaultArgs<ExtArgs>
     _count?: boolean | TrainScheduleCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -7922,8 +7928,8 @@ export namespace Prisma {
     objects: {
       bookings: Prisma.$BookingPayload<ExtArgs>[]
       coaches: Prisma.$CoachPayload<ExtArgs>[]
-      trainInstances: Prisma.$TrainInstancePayload<ExtArgs>[]
       exceptions: Prisma.$ScheduleExceptionPayload<ExtArgs>[]
+      trainInstances: Prisma.$TrainInstancePayload<ExtArgs>[]
       train: Prisma.$TrainPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -8329,8 +8335,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     bookings<T extends TrainSchedule$bookingsArgs<ExtArgs> = {}>(args?: Subset<T, TrainSchedule$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     coaches<T extends TrainSchedule$coachesArgs<ExtArgs> = {}>(args?: Subset<T, TrainSchedule$coachesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CoachPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    trainInstances<T extends TrainSchedule$trainInstancesArgs<ExtArgs> = {}>(args?: Subset<T, TrainSchedule$trainInstancesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainInstancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     exceptions<T extends TrainSchedule$exceptionsArgs<ExtArgs> = {}>(args?: Subset<T, TrainSchedule$exceptionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScheduleExceptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    trainInstances<T extends TrainSchedule$trainInstancesArgs<ExtArgs> = {}>(args?: Subset<T, TrainSchedule$trainInstancesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TrainInstancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     train<T extends TrainDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TrainDefaultArgs<ExtArgs>>): Prisma__TrainClient<$Result.GetResult<Prisma.$TrainPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -8811,30 +8817,6 @@ export namespace Prisma {
   }
 
   /**
-   * TrainSchedule.trainInstances
-   */
-  export type TrainSchedule$trainInstancesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TrainInstance
-     */
-    select?: TrainInstanceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TrainInstance
-     */
-    omit?: TrainInstanceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TrainInstanceInclude<ExtArgs> | null
-    where?: TrainInstanceWhereInput
-    orderBy?: TrainInstanceOrderByWithRelationInput | TrainInstanceOrderByWithRelationInput[]
-    cursor?: TrainInstanceWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: TrainInstanceScalarFieldEnum | TrainInstanceScalarFieldEnum[]
-  }
-
-  /**
    * TrainSchedule.exceptions
    */
   export type TrainSchedule$exceptionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8856,6 +8838,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ScheduleExceptionScalarFieldEnum | ScheduleExceptionScalarFieldEnum[]
+  }
+
+  /**
+   * TrainSchedule.trainInstances
+   */
+  export type TrainSchedule$trainInstancesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TrainInstance
+     */
+    select?: TrainInstanceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TrainInstance
+     */
+    omit?: TrainInstanceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TrainInstanceInclude<ExtArgs> | null
+    where?: TrainInstanceWhereInput
+    orderBy?: TrainInstanceOrderByWithRelationInput | TrainInstanceOrderByWithRelationInput[]
+    cursor?: TrainInstanceWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TrainInstanceScalarFieldEnum | TrainInstanceScalarFieldEnum[]
   }
 
   /**
@@ -12513,9 +12519,9 @@ export namespace Prisma {
     bookedSeats?: boolean
     racSeats?: boolean
     wlSeats?: boolean
-    schedule?: boolean | TrainInstance$scheduleArgs<ExtArgs>
     bookings?: boolean | TrainInstance$bookingsArgs<ExtArgs>
     seatRecords?: boolean | TrainInstance$seatRecordsArgs<ExtArgs>
+    schedule?: boolean | TrainInstance$scheduleArgs<ExtArgs>
     _count?: boolean | TrainInstanceCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["trainInstance"]>
 
@@ -12559,9 +12565,9 @@ export namespace Prisma {
 
   export type TrainInstanceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "scheduleId" | "journeyDate" | "coachType" | "totalSeats" | "availableSeats" | "bookedSeats" | "racSeats" | "wlSeats", ExtArgs["result"]["trainInstance"]>
   export type TrainInstanceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    schedule?: boolean | TrainInstance$scheduleArgs<ExtArgs>
     bookings?: boolean | TrainInstance$bookingsArgs<ExtArgs>
     seatRecords?: boolean | TrainInstance$seatRecordsArgs<ExtArgs>
+    schedule?: boolean | TrainInstance$scheduleArgs<ExtArgs>
     _count?: boolean | TrainInstanceCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TrainInstanceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -12574,9 +12580,9 @@ export namespace Prisma {
   export type $TrainInstancePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "TrainInstance"
     objects: {
-      schedule: Prisma.$TrainSchedulePayload<ExtArgs> | null
       bookings: Prisma.$BookingPayload<ExtArgs>[]
       seatRecords: Prisma.$SeatAvailabilityPayload<ExtArgs>[]
+      schedule: Prisma.$TrainSchedulePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: bigint
@@ -12982,9 +12988,9 @@ export namespace Prisma {
    */
   export interface Prisma__TrainInstanceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    schedule<T extends TrainInstance$scheduleArgs<ExtArgs> = {}>(args?: Subset<T, TrainInstance$scheduleArgs<ExtArgs>>): Prisma__TrainScheduleClient<$Result.GetResult<Prisma.$TrainSchedulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     bookings<T extends TrainInstance$bookingsArgs<ExtArgs> = {}>(args?: Subset<T, TrainInstance$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     seatRecords<T extends TrainInstance$seatRecordsArgs<ExtArgs> = {}>(args?: Subset<T, TrainInstance$seatRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SeatAvailabilityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    schedule<T extends TrainInstance$scheduleArgs<ExtArgs> = {}>(args?: Subset<T, TrainInstance$scheduleArgs<ExtArgs>>): Prisma__TrainScheduleClient<$Result.GetResult<Prisma.$TrainSchedulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13419,25 +13425,6 @@ export namespace Prisma {
   }
 
   /**
-   * TrainInstance.schedule
-   */
-  export type TrainInstance$scheduleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TrainSchedule
-     */
-    select?: TrainScheduleSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TrainSchedule
-     */
-    omit?: TrainScheduleOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TrainScheduleInclude<ExtArgs> | null
-    where?: TrainScheduleWhereInput
-  }
-
-  /**
    * TrainInstance.bookings
    */
   export type TrainInstance$bookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13486,6 +13473,25 @@ export namespace Prisma {
   }
 
   /**
+   * TrainInstance.schedule
+   */
+  export type TrainInstance$scheduleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TrainSchedule
+     */
+    select?: TrainScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TrainSchedule
+     */
+    omit?: TrainScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TrainScheduleInclude<ExtArgs> | null
+    where?: TrainScheduleWhereInput
+  }
+
+  /**
    * TrainInstance without action
    */
   export type TrainInstanceDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13518,100 +13524,100 @@ export namespace Prisma {
 
   export type SeatAvailabilityAvgAggregateOutputType = {
     id: number | null
-    trainInstanceId: number | null
-    bookingId: number | null
-    passengerId: number | null
     coachId: number | null
     seatId: number | null
+    bookingId: number | null
+    passengerId: number | null
+    trainInstanceId: number | null
   }
 
   export type SeatAvailabilitySumAggregateOutputType = {
     id: bigint | null
-    trainInstanceId: bigint | null
-    bookingId: bigint | null
-    passengerId: bigint | null
     coachId: bigint | null
     seatId: bigint | null
+    bookingId: bigint | null
+    passengerId: bigint | null
+    trainInstanceId: bigint | null
   }
 
   export type SeatAvailabilityMinAggregateOutputType = {
     id: bigint | null
-    trainInstanceId: bigint | null
-    bookingId: bigint | null
-    passengerId: bigint | null
     coachId: bigint | null
     seatId: bigint | null
     status: $Enums.SeatStatus | null
+    bookingId: bigint | null
+    passengerId: bigint | null
+    trainInstanceId: bigint | null
   }
 
   export type SeatAvailabilityMaxAggregateOutputType = {
     id: bigint | null
-    trainInstanceId: bigint | null
-    bookingId: bigint | null
-    passengerId: bigint | null
     coachId: bigint | null
     seatId: bigint | null
     status: $Enums.SeatStatus | null
+    bookingId: bigint | null
+    passengerId: bigint | null
+    trainInstanceId: bigint | null
   }
 
   export type SeatAvailabilityCountAggregateOutputType = {
     id: number
-    trainInstanceId: number
-    bookingId: number
-    passengerId: number
     coachId: number
     seatId: number
     status: number
+    bookingId: number
+    passengerId: number
+    trainInstanceId: number
     _all: number
   }
 
 
   export type SeatAvailabilityAvgAggregateInputType = {
     id?: true
-    trainInstanceId?: true
-    bookingId?: true
-    passengerId?: true
     coachId?: true
     seatId?: true
+    bookingId?: true
+    passengerId?: true
+    trainInstanceId?: true
   }
 
   export type SeatAvailabilitySumAggregateInputType = {
     id?: true
-    trainInstanceId?: true
-    bookingId?: true
-    passengerId?: true
     coachId?: true
     seatId?: true
+    bookingId?: true
+    passengerId?: true
+    trainInstanceId?: true
   }
 
   export type SeatAvailabilityMinAggregateInputType = {
     id?: true
-    trainInstanceId?: true
-    bookingId?: true
-    passengerId?: true
     coachId?: true
     seatId?: true
     status?: true
+    bookingId?: true
+    passengerId?: true
+    trainInstanceId?: true
   }
 
   export type SeatAvailabilityMaxAggregateInputType = {
     id?: true
-    trainInstanceId?: true
-    bookingId?: true
-    passengerId?: true
     coachId?: true
     seatId?: true
     status?: true
+    bookingId?: true
+    passengerId?: true
+    trainInstanceId?: true
   }
 
   export type SeatAvailabilityCountAggregateInputType = {
     id?: true
-    trainInstanceId?: true
-    bookingId?: true
-    passengerId?: true
     coachId?: true
     seatId?: true
     status?: true
+    bookingId?: true
+    passengerId?: true
+    trainInstanceId?: true
     _all?: true
   }
 
@@ -13703,12 +13709,12 @@ export namespace Prisma {
 
   export type SeatAvailabilityGroupByOutputType = {
     id: bigint
-    trainInstanceId: bigint | null
-    bookingId: bigint | null
-    passengerId: bigint | null
     coachId: bigint | null
     seatId: bigint | null
     status: $Enums.SeatStatus
+    bookingId: bigint | null
+    passengerId: bigint | null
+    trainInstanceId: bigint | null
     _count: SeatAvailabilityCountAggregateOutputType | null
     _avg: SeatAvailabilityAvgAggregateOutputType | null
     _sum: SeatAvailabilitySumAggregateOutputType | null
@@ -13732,92 +13738,92 @@ export namespace Prisma {
 
   export type SeatAvailabilitySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    trainInstanceId?: boolean
-    bookingId?: boolean
-    passengerId?: boolean
     coachId?: boolean
     seatId?: boolean
     status?: boolean
-    trainInstance?: boolean | SeatAvailability$trainInstanceArgs<ExtArgs>
+    bookingId?: boolean
+    passengerId?: boolean
+    trainInstanceId?: boolean
     booking?: boolean | SeatAvailability$bookingArgs<ExtArgs>
     coach?: boolean | SeatAvailability$coachArgs<ExtArgs>
     seat?: boolean | SeatAvailability$seatArgs<ExtArgs>
+    trainInstance?: boolean | SeatAvailability$trainInstanceArgs<ExtArgs>
   }, ExtArgs["result"]["seatAvailability"]>
 
   export type SeatAvailabilitySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    trainInstanceId?: boolean
-    bookingId?: boolean
-    passengerId?: boolean
     coachId?: boolean
     seatId?: boolean
     status?: boolean
-    trainInstance?: boolean | SeatAvailability$trainInstanceArgs<ExtArgs>
+    bookingId?: boolean
+    passengerId?: boolean
+    trainInstanceId?: boolean
     booking?: boolean | SeatAvailability$bookingArgs<ExtArgs>
     coach?: boolean | SeatAvailability$coachArgs<ExtArgs>
     seat?: boolean | SeatAvailability$seatArgs<ExtArgs>
+    trainInstance?: boolean | SeatAvailability$trainInstanceArgs<ExtArgs>
   }, ExtArgs["result"]["seatAvailability"]>
 
   export type SeatAvailabilitySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    trainInstanceId?: boolean
-    bookingId?: boolean
-    passengerId?: boolean
     coachId?: boolean
     seatId?: boolean
     status?: boolean
-    trainInstance?: boolean | SeatAvailability$trainInstanceArgs<ExtArgs>
+    bookingId?: boolean
+    passengerId?: boolean
+    trainInstanceId?: boolean
     booking?: boolean | SeatAvailability$bookingArgs<ExtArgs>
     coach?: boolean | SeatAvailability$coachArgs<ExtArgs>
     seat?: boolean | SeatAvailability$seatArgs<ExtArgs>
+    trainInstance?: boolean | SeatAvailability$trainInstanceArgs<ExtArgs>
   }, ExtArgs["result"]["seatAvailability"]>
 
   export type SeatAvailabilitySelectScalar = {
     id?: boolean
-    trainInstanceId?: boolean
-    bookingId?: boolean
-    passengerId?: boolean
     coachId?: boolean
     seatId?: boolean
     status?: boolean
+    bookingId?: boolean
+    passengerId?: boolean
+    trainInstanceId?: boolean
   }
 
-  export type SeatAvailabilityOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "trainInstanceId" | "bookingId" | "passengerId" | "coachId" | "seatId" | "status", ExtArgs["result"]["seatAvailability"]>
+  export type SeatAvailabilityOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "coachId" | "seatId" | "status" | "bookingId" | "passengerId" | "trainInstanceId", ExtArgs["result"]["seatAvailability"]>
   export type SeatAvailabilityInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    trainInstance?: boolean | SeatAvailability$trainInstanceArgs<ExtArgs>
     booking?: boolean | SeatAvailability$bookingArgs<ExtArgs>
     coach?: boolean | SeatAvailability$coachArgs<ExtArgs>
     seat?: boolean | SeatAvailability$seatArgs<ExtArgs>
+    trainInstance?: boolean | SeatAvailability$trainInstanceArgs<ExtArgs>
   }
   export type SeatAvailabilityIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    trainInstance?: boolean | SeatAvailability$trainInstanceArgs<ExtArgs>
     booking?: boolean | SeatAvailability$bookingArgs<ExtArgs>
     coach?: boolean | SeatAvailability$coachArgs<ExtArgs>
     seat?: boolean | SeatAvailability$seatArgs<ExtArgs>
+    trainInstance?: boolean | SeatAvailability$trainInstanceArgs<ExtArgs>
   }
   export type SeatAvailabilityIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    trainInstance?: boolean | SeatAvailability$trainInstanceArgs<ExtArgs>
     booking?: boolean | SeatAvailability$bookingArgs<ExtArgs>
     coach?: boolean | SeatAvailability$coachArgs<ExtArgs>
     seat?: boolean | SeatAvailability$seatArgs<ExtArgs>
+    trainInstance?: boolean | SeatAvailability$trainInstanceArgs<ExtArgs>
   }
 
   export type $SeatAvailabilityPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SeatAvailability"
     objects: {
-      trainInstance: Prisma.$TrainInstancePayload<ExtArgs> | null
       booking: Prisma.$BookingPayload<ExtArgs> | null
       coach: Prisma.$CoachPayload<ExtArgs> | null
       seat: Prisma.$SeatPayload<ExtArgs> | null
+      trainInstance: Prisma.$TrainInstancePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: bigint
-      trainInstanceId: bigint | null
-      bookingId: bigint | null
-      passengerId: bigint | null
       coachId: bigint | null
       seatId: bigint | null
       status: $Enums.SeatStatus
+      bookingId: bigint | null
+      passengerId: bigint | null
+      trainInstanceId: bigint | null
     }, ExtArgs["result"]["seatAvailability"]>
     composites: {}
   }
@@ -14212,10 +14218,10 @@ export namespace Prisma {
    */
   export interface Prisma__SeatAvailabilityClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    trainInstance<T extends SeatAvailability$trainInstanceArgs<ExtArgs> = {}>(args?: Subset<T, SeatAvailability$trainInstanceArgs<ExtArgs>>): Prisma__TrainInstanceClient<$Result.GetResult<Prisma.$TrainInstancePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     booking<T extends SeatAvailability$bookingArgs<ExtArgs> = {}>(args?: Subset<T, SeatAvailability$bookingArgs<ExtArgs>>): Prisma__BookingClient<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     coach<T extends SeatAvailability$coachArgs<ExtArgs> = {}>(args?: Subset<T, SeatAvailability$coachArgs<ExtArgs>>): Prisma__CoachClient<$Result.GetResult<Prisma.$CoachPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     seat<T extends SeatAvailability$seatArgs<ExtArgs> = {}>(args?: Subset<T, SeatAvailability$seatArgs<ExtArgs>>): Prisma__SeatClient<$Result.GetResult<Prisma.$SeatPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    trainInstance<T extends SeatAvailability$trainInstanceArgs<ExtArgs> = {}>(args?: Subset<T, SeatAvailability$trainInstanceArgs<ExtArgs>>): Prisma__TrainInstanceClient<$Result.GetResult<Prisma.$TrainInstancePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -14246,12 +14252,12 @@ export namespace Prisma {
    */
   interface SeatAvailabilityFieldRefs {
     readonly id: FieldRef<"SeatAvailability", 'BigInt'>
-    readonly trainInstanceId: FieldRef<"SeatAvailability", 'BigInt'>
-    readonly bookingId: FieldRef<"SeatAvailability", 'BigInt'>
-    readonly passengerId: FieldRef<"SeatAvailability", 'BigInt'>
     readonly coachId: FieldRef<"SeatAvailability", 'BigInt'>
     readonly seatId: FieldRef<"SeatAvailability", 'BigInt'>
     readonly status: FieldRef<"SeatAvailability", 'SeatStatus'>
+    readonly bookingId: FieldRef<"SeatAvailability", 'BigInt'>
+    readonly passengerId: FieldRef<"SeatAvailability", 'BigInt'>
+    readonly trainInstanceId: FieldRef<"SeatAvailability", 'BigInt'>
   }
     
 
@@ -14648,25 +14654,6 @@ export namespace Prisma {
   }
 
   /**
-   * SeatAvailability.trainInstance
-   */
-  export type SeatAvailability$trainInstanceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TrainInstance
-     */
-    select?: TrainInstanceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TrainInstance
-     */
-    omit?: TrainInstanceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TrainInstanceInclude<ExtArgs> | null
-    where?: TrainInstanceWhereInput
-  }
-
-  /**
    * SeatAvailability.booking
    */
   export type SeatAvailability$bookingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14724,6 +14711,25 @@ export namespace Prisma {
   }
 
   /**
+   * SeatAvailability.trainInstance
+   */
+  export type SeatAvailability$trainInstanceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TrainInstance
+     */
+    select?: TrainInstanceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TrainInstance
+     */
+    omit?: TrainInstanceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TrainInstanceInclude<ExtArgs> | null
+    where?: TrainInstanceWhereInput
+  }
+
+  /**
    * SeatAvailability without action
    */
   export type SeatAvailabilityDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14756,116 +14762,116 @@ export namespace Prisma {
 
   export type BookingAvgAggregateOutputType = {
     id: number | null
-    trainInstanceId: number | null
     scheduleId: number | null
     totalFare: number | null
+    trainInstanceId: number | null
   }
 
   export type BookingSumAggregateOutputType = {
     id: bigint | null
-    trainInstanceId: bigint | null
     scheduleId: bigint | null
     totalFare: number | null
+    trainInstanceId: bigint | null
   }
 
   export type BookingMinAggregateOutputType = {
     id: bigint | null
     pnr: string | null
     userId: string | null
-    journeyDate: Date | null
-    trainInstanceId: bigint | null
     scheduleId: bigint | null
     fromStationId: string | null
     toStationId: string | null
     status: $Enums.BookingStatus | null
-    totalFare: number | null
     bookedAt: Date | null
+    journeyDate: Date | null
+    totalFare: number | null
+    trainInstanceId: bigint | null
   }
 
   export type BookingMaxAggregateOutputType = {
     id: bigint | null
     pnr: string | null
     userId: string | null
-    journeyDate: Date | null
-    trainInstanceId: bigint | null
     scheduleId: bigint | null
     fromStationId: string | null
     toStationId: string | null
     status: $Enums.BookingStatus | null
-    totalFare: number | null
     bookedAt: Date | null
+    journeyDate: Date | null
+    totalFare: number | null
+    trainInstanceId: bigint | null
   }
 
   export type BookingCountAggregateOutputType = {
     id: number
     pnr: number
     userId: number
-    journeyDate: number
-    trainInstanceId: number
     scheduleId: number
     fromStationId: number
     toStationId: number
     status: number
-    totalFare: number
     bookedAt: number
+    journeyDate: number
+    totalFare: number
+    trainInstanceId: number
     _all: number
   }
 
 
   export type BookingAvgAggregateInputType = {
     id?: true
-    trainInstanceId?: true
     scheduleId?: true
     totalFare?: true
+    trainInstanceId?: true
   }
 
   export type BookingSumAggregateInputType = {
     id?: true
-    trainInstanceId?: true
     scheduleId?: true
     totalFare?: true
+    trainInstanceId?: true
   }
 
   export type BookingMinAggregateInputType = {
     id?: true
     pnr?: true
     userId?: true
-    journeyDate?: true
-    trainInstanceId?: true
     scheduleId?: true
     fromStationId?: true
     toStationId?: true
     status?: true
-    totalFare?: true
     bookedAt?: true
+    journeyDate?: true
+    totalFare?: true
+    trainInstanceId?: true
   }
 
   export type BookingMaxAggregateInputType = {
     id?: true
     pnr?: true
     userId?: true
-    journeyDate?: true
-    trainInstanceId?: true
     scheduleId?: true
     fromStationId?: true
     toStationId?: true
     status?: true
-    totalFare?: true
     bookedAt?: true
+    journeyDate?: true
+    totalFare?: true
+    trainInstanceId?: true
   }
 
   export type BookingCountAggregateInputType = {
     id?: true
     pnr?: true
     userId?: true
-    journeyDate?: true
-    trainInstanceId?: true
     scheduleId?: true
     fromStationId?: true
     toStationId?: true
     status?: true
-    totalFare?: true
     bookedAt?: true
+    journeyDate?: true
+    totalFare?: true
+    trainInstanceId?: true
     _all?: true
   }
 
@@ -14959,14 +14965,14 @@ export namespace Prisma {
     id: bigint
     pnr: string
     userId: string
-    journeyDate: Date | null
-    trainInstanceId: bigint | null
     scheduleId: bigint
     fromStationId: string
     toStationId: string
     status: $Enums.BookingStatus
-    totalFare: number
     bookedAt: Date
+    journeyDate: Date | null
+    totalFare: number
+    trainInstanceId: bigint | null
     _count: BookingCountAggregateOutputType | null
     _avg: BookingAvgAggregateOutputType | null
     _sum: BookingSumAggregateOutputType | null
@@ -14992,18 +14998,18 @@ export namespace Prisma {
     id?: boolean
     pnr?: boolean
     userId?: boolean
-    journeyDate?: boolean
-    trainInstanceId?: boolean
     scheduleId?: boolean
     fromStationId?: boolean
     toStationId?: boolean
     status?: boolean
-    totalFare?: boolean
     bookedAt?: boolean
-    trainInstance?: boolean | Booking$trainInstanceArgs<ExtArgs>
+    journeyDate?: boolean
+    totalFare?: boolean
+    trainInstanceId?: boolean
     fromStation?: boolean | StationDefaultArgs<ExtArgs>
     schedule?: boolean | TrainScheduleDefaultArgs<ExtArgs>
     toStation?: boolean | StationDefaultArgs<ExtArgs>
+    trainInstance?: boolean | Booking$trainInstanceArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     passengers?: boolean | Booking$passengersArgs<ExtArgs>
     payment?: boolean | Booking$paymentArgs<ExtArgs>
@@ -15015,18 +15021,18 @@ export namespace Prisma {
     id?: boolean
     pnr?: boolean
     userId?: boolean
-    journeyDate?: boolean
-    trainInstanceId?: boolean
     scheduleId?: boolean
     fromStationId?: boolean
     toStationId?: boolean
     status?: boolean
-    totalFare?: boolean
     bookedAt?: boolean
-    trainInstance?: boolean | Booking$trainInstanceArgs<ExtArgs>
+    journeyDate?: boolean
+    totalFare?: boolean
+    trainInstanceId?: boolean
     fromStation?: boolean | StationDefaultArgs<ExtArgs>
     schedule?: boolean | TrainScheduleDefaultArgs<ExtArgs>
     toStation?: boolean | StationDefaultArgs<ExtArgs>
+    trainInstance?: boolean | Booking$trainInstanceArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["booking"]>
 
@@ -15034,18 +15040,18 @@ export namespace Prisma {
     id?: boolean
     pnr?: boolean
     userId?: boolean
-    journeyDate?: boolean
-    trainInstanceId?: boolean
     scheduleId?: boolean
     fromStationId?: boolean
     toStationId?: boolean
     status?: boolean
-    totalFare?: boolean
     bookedAt?: boolean
-    trainInstance?: boolean | Booking$trainInstanceArgs<ExtArgs>
+    journeyDate?: boolean
+    totalFare?: boolean
+    trainInstanceId?: boolean
     fromStation?: boolean | StationDefaultArgs<ExtArgs>
     schedule?: boolean | TrainScheduleDefaultArgs<ExtArgs>
     toStation?: boolean | StationDefaultArgs<ExtArgs>
+    trainInstance?: boolean | Booking$trainInstanceArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["booking"]>
 
@@ -15053,22 +15059,22 @@ export namespace Prisma {
     id?: boolean
     pnr?: boolean
     userId?: boolean
-    journeyDate?: boolean
-    trainInstanceId?: boolean
     scheduleId?: boolean
     fromStationId?: boolean
     toStationId?: boolean
     status?: boolean
-    totalFare?: boolean
     bookedAt?: boolean
+    journeyDate?: boolean
+    totalFare?: boolean
+    trainInstanceId?: boolean
   }
 
-  export type BookingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "pnr" | "userId" | "journeyDate" | "trainInstanceId" | "scheduleId" | "fromStationId" | "toStationId" | "status" | "totalFare" | "bookedAt", ExtArgs["result"]["booking"]>
+  export type BookingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "pnr" | "userId" | "scheduleId" | "fromStationId" | "toStationId" | "status" | "bookedAt" | "journeyDate" | "totalFare" | "trainInstanceId", ExtArgs["result"]["booking"]>
   export type BookingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    trainInstance?: boolean | Booking$trainInstanceArgs<ExtArgs>
     fromStation?: boolean | StationDefaultArgs<ExtArgs>
     schedule?: boolean | TrainScheduleDefaultArgs<ExtArgs>
     toStation?: boolean | StationDefaultArgs<ExtArgs>
+    trainInstance?: boolean | Booking$trainInstanceArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     passengers?: boolean | Booking$passengersArgs<ExtArgs>
     payment?: boolean | Booking$paymentArgs<ExtArgs>
@@ -15076,27 +15082,27 @@ export namespace Prisma {
     _count?: boolean | BookingCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type BookingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    trainInstance?: boolean | Booking$trainInstanceArgs<ExtArgs>
     fromStation?: boolean | StationDefaultArgs<ExtArgs>
     schedule?: boolean | TrainScheduleDefaultArgs<ExtArgs>
     toStation?: boolean | StationDefaultArgs<ExtArgs>
+    trainInstance?: boolean | Booking$trainInstanceArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type BookingIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    trainInstance?: boolean | Booking$trainInstanceArgs<ExtArgs>
     fromStation?: boolean | StationDefaultArgs<ExtArgs>
     schedule?: boolean | TrainScheduleDefaultArgs<ExtArgs>
     toStation?: boolean | StationDefaultArgs<ExtArgs>
+    trainInstance?: boolean | Booking$trainInstanceArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $BookingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Booking"
     objects: {
-      trainInstance: Prisma.$TrainInstancePayload<ExtArgs> | null
       fromStation: Prisma.$StationPayload<ExtArgs>
       schedule: Prisma.$TrainSchedulePayload<ExtArgs>
       toStation: Prisma.$StationPayload<ExtArgs>
+      trainInstance: Prisma.$TrainInstancePayload<ExtArgs> | null
       user: Prisma.$UserPayload<ExtArgs>
       passengers: Prisma.$PassengerPayload<ExtArgs>[]
       payment: Prisma.$PaymentPayload<ExtArgs> | null
@@ -15106,14 +15112,14 @@ export namespace Prisma {
       id: bigint
       pnr: string
       userId: string
-      journeyDate: Date | null
-      trainInstanceId: bigint | null
       scheduleId: bigint
       fromStationId: string
       toStationId: string
       status: $Enums.BookingStatus
-      totalFare: number
       bookedAt: Date
+      journeyDate: Date | null
+      totalFare: number
+      trainInstanceId: bigint | null
     }, ExtArgs["result"]["booking"]>
     composites: {}
   }
@@ -15508,10 +15514,10 @@ export namespace Prisma {
    */
   export interface Prisma__BookingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    trainInstance<T extends Booking$trainInstanceArgs<ExtArgs> = {}>(args?: Subset<T, Booking$trainInstanceArgs<ExtArgs>>): Prisma__TrainInstanceClient<$Result.GetResult<Prisma.$TrainInstancePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     fromStation<T extends StationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StationDefaultArgs<ExtArgs>>): Prisma__StationClient<$Result.GetResult<Prisma.$StationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     schedule<T extends TrainScheduleDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TrainScheduleDefaultArgs<ExtArgs>>): Prisma__TrainScheduleClient<$Result.GetResult<Prisma.$TrainSchedulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     toStation<T extends StationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StationDefaultArgs<ExtArgs>>): Prisma__StationClient<$Result.GetResult<Prisma.$StationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    trainInstance<T extends Booking$trainInstanceArgs<ExtArgs> = {}>(args?: Subset<T, Booking$trainInstanceArgs<ExtArgs>>): Prisma__TrainInstanceClient<$Result.GetResult<Prisma.$TrainInstancePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     passengers<T extends Booking$passengersArgs<ExtArgs> = {}>(args?: Subset<T, Booking$passengersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PassengerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     payment<T extends Booking$paymentArgs<ExtArgs> = {}>(args?: Subset<T, Booking$paymentArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -15548,14 +15554,14 @@ export namespace Prisma {
     readonly id: FieldRef<"Booking", 'BigInt'>
     readonly pnr: FieldRef<"Booking", 'String'>
     readonly userId: FieldRef<"Booking", 'String'>
-    readonly journeyDate: FieldRef<"Booking", 'DateTime'>
-    readonly trainInstanceId: FieldRef<"Booking", 'BigInt'>
     readonly scheduleId: FieldRef<"Booking", 'BigInt'>
     readonly fromStationId: FieldRef<"Booking", 'String'>
     readonly toStationId: FieldRef<"Booking", 'String'>
     readonly status: FieldRef<"Booking", 'BookingStatus'>
-    readonly totalFare: FieldRef<"Booking", 'Float'>
     readonly bookedAt: FieldRef<"Booking", 'DateTime'>
+    readonly journeyDate: FieldRef<"Booking", 'DateTime'>
+    readonly totalFare: FieldRef<"Booking", 'Float'>
+    readonly trainInstanceId: FieldRef<"Booking", 'BigInt'>
   }
     
 
@@ -21883,7 +21889,6 @@ export namespace Prisma {
   export const UserScalarFieldEnum: {
     clerkId: 'clerkId',
     id: 'id',
-    role: 'role',
     fullName: 'fullName',
     email: 'email',
     phone: 'phone',
@@ -21900,7 +21905,8 @@ export namespace Prisma {
     kycVerified: 'kycVerified',
     walletBalance: 'walletBalance',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    role: 'role'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -21934,8 +21940,8 @@ export namespace Prisma {
     type: 'type',
     sourceStationId: 'sourceStationId',
     destinationStationId: 'destinationStationId',
-    departureTime: 'departureTime',
-    arrivalTime: 'arrivalTime'
+    arrivalTime: 'arrivalTime',
+    departureTime: 'departureTime'
   };
 
   export type TrainScalarFieldEnum = (typeof TrainScalarFieldEnum)[keyof typeof TrainScalarFieldEnum]
@@ -22001,12 +22007,12 @@ export namespace Prisma {
 
   export const SeatAvailabilityScalarFieldEnum: {
     id: 'id',
-    trainInstanceId: 'trainInstanceId',
-    bookingId: 'bookingId',
-    passengerId: 'passengerId',
     coachId: 'coachId',
     seatId: 'seatId',
-    status: 'status'
+    status: 'status',
+    bookingId: 'bookingId',
+    passengerId: 'passengerId',
+    trainInstanceId: 'trainInstanceId'
   };
 
   export type SeatAvailabilityScalarFieldEnum = (typeof SeatAvailabilityScalarFieldEnum)[keyof typeof SeatAvailabilityScalarFieldEnum]
@@ -22016,14 +22022,14 @@ export namespace Prisma {
     id: 'id',
     pnr: 'pnr',
     userId: 'userId',
-    journeyDate: 'journeyDate',
-    trainInstanceId: 'trainInstanceId',
     scheduleId: 'scheduleId',
     fromStationId: 'fromStationId',
     toStationId: 'toStationId',
     status: 'status',
+    bookedAt: 'bookedAt',
+    journeyDate: 'journeyDate',
     totalFare: 'totalFare',
-    bookedAt: 'bookedAt'
+    trainInstanceId: 'trainInstanceId'
   };
 
   export type BookingScalarFieldEnum = (typeof BookingScalarFieldEnum)[keyof typeof BookingScalarFieldEnum]
@@ -22145,20 +22151,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Role'
-   */
-  export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
-    
-
-
-  /**
-   * Reference to a field of type 'Role[]'
-   */
-  export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Sex'
    */
   export type EnumSexFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Sex'>
@@ -22218,6 +22210,20 @@ export namespace Prisma {
    * Reference to a field of type 'Float[]'
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Role'
+   */
+  export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
+    
+
+
+  /**
+   * Reference to a field of type 'Role[]'
+   */
+  export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role[]'>
     
 
 
@@ -22384,7 +22390,6 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     clerkId?: StringFilter<"User"> | string
     id?: StringFilter<"User"> | string
-    role?: EnumRoleFilter<"User"> | $Enums.Role
     fullName?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
     phone?: StringFilter<"User"> | string
@@ -22402,6 +22407,7 @@ export namespace Prisma {
     walletBalance?: FloatFilter<"User"> | number
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    role?: EnumRoleFilter<"User"> | $Enums.Role
     bookings?: BookingListRelationFilter
     reviews?: ReviewListRelationFilter
   }
@@ -22409,7 +22415,6 @@ export namespace Prisma {
   export type UserOrderByWithRelationInput = {
     clerkId?: SortOrder
     id?: SortOrder
-    role?: SortOrder
     fullName?: SortOrder
     email?: SortOrder
     phone?: SortOrder
@@ -22427,6 +22432,7 @@ export namespace Prisma {
     walletBalance?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    role?: SortOrder
     bookings?: BookingOrderByRelationAggregateInput
     reviews?: ReviewOrderByRelationAggregateInput
   }
@@ -22440,7 +22446,6 @@ export namespace Prisma {
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
-    role?: EnumRoleFilter<"User"> | $Enums.Role
     fullName?: StringFilter<"User"> | string
     passwordHash?: StringNullableFilter<"User"> | string | null
     gender?: EnumSexNullableFilter<"User"> | $Enums.Sex | null
@@ -22455,6 +22460,7 @@ export namespace Prisma {
     walletBalance?: FloatFilter<"User"> | number
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    role?: EnumRoleFilter<"User"> | $Enums.Role
     bookings?: BookingListRelationFilter
     reviews?: ReviewListRelationFilter
   }, "id" | "clerkId" | "email" | "phone" | "idNumber">
@@ -22462,7 +22468,6 @@ export namespace Prisma {
   export type UserOrderByWithAggregationInput = {
     clerkId?: SortOrder
     id?: SortOrder
-    role?: SortOrder
     fullName?: SortOrder
     email?: SortOrder
     phone?: SortOrder
@@ -22480,6 +22485,7 @@ export namespace Prisma {
     walletBalance?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    role?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -22493,7 +22499,6 @@ export namespace Prisma {
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     clerkId?: StringWithAggregatesFilter<"User"> | string
     id?: StringWithAggregatesFilter<"User"> | string
-    role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
     fullName?: StringWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
     phone?: StringWithAggregatesFilter<"User"> | string
@@ -22511,6 +22516,7 @@ export namespace Prisma {
     walletBalance?: FloatWithAggregatesFilter<"User"> | number
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
   }
 
   export type StationWhereInput = {
@@ -22648,8 +22654,8 @@ export namespace Prisma {
     type?: StringFilter<"Train"> | string
     sourceStationId?: StringFilter<"Train"> | string
     destinationStationId?: StringFilter<"Train"> | string
-    departureTime?: StringNullableFilter<"Train"> | string | null
     arrivalTime?: StringNullableFilter<"Train"> | string | null
+    departureTime?: StringNullableFilter<"Train"> | string | null
     reviews?: ReviewListRelationFilter
     routes?: RouteListRelationFilter
     destinationStation?: XOR<StationScalarRelationFilter, StationWhereInput>
@@ -22664,8 +22670,8 @@ export namespace Prisma {
     type?: SortOrder
     sourceStationId?: SortOrder
     destinationStationId?: SortOrder
-    departureTime?: SortOrderInput | SortOrder
     arrivalTime?: SortOrderInput | SortOrder
+    departureTime?: SortOrderInput | SortOrder
     reviews?: ReviewOrderByRelationAggregateInput
     routes?: RouteOrderByRelationAggregateInput
     destinationStation?: StationOrderByWithRelationInput
@@ -22683,8 +22689,8 @@ export namespace Prisma {
     type?: StringFilter<"Train"> | string
     sourceStationId?: StringFilter<"Train"> | string
     destinationStationId?: StringFilter<"Train"> | string
-    departureTime?: StringNullableFilter<"Train"> | string | null
     arrivalTime?: StringNullableFilter<"Train"> | string | null
+    departureTime?: StringNullableFilter<"Train"> | string | null
     reviews?: ReviewListRelationFilter
     routes?: RouteListRelationFilter
     destinationStation?: XOR<StationScalarRelationFilter, StationWhereInput>
@@ -22699,8 +22705,8 @@ export namespace Prisma {
     type?: SortOrder
     sourceStationId?: SortOrder
     destinationStationId?: SortOrder
-    departureTime?: SortOrderInput | SortOrder
     arrivalTime?: SortOrderInput | SortOrder
+    departureTime?: SortOrderInput | SortOrder
     _count?: TrainCountOrderByAggregateInput
     _avg?: TrainAvgOrderByAggregateInput
     _max?: TrainMaxOrderByAggregateInput
@@ -22718,8 +22724,8 @@ export namespace Prisma {
     type?: StringWithAggregatesFilter<"Train"> | string
     sourceStationId?: StringWithAggregatesFilter<"Train"> | string
     destinationStationId?: StringWithAggregatesFilter<"Train"> | string
-    departureTime?: StringNullableWithAggregatesFilter<"Train"> | string | null
     arrivalTime?: StringNullableWithAggregatesFilter<"Train"> | string | null
+    departureTime?: StringNullableWithAggregatesFilter<"Train"> | string | null
   }
 
   export type TrainScheduleWhereInput = {
@@ -22734,8 +22740,8 @@ export namespace Prisma {
     startDate?: DateTimeFilter<"TrainSchedule"> | Date | string
     bookings?: BookingListRelationFilter
     coaches?: CoachListRelationFilter
-    trainInstances?: TrainInstanceListRelationFilter
     exceptions?: ScheduleExceptionListRelationFilter
+    trainInstances?: TrainInstanceListRelationFilter
     train?: XOR<TrainScalarRelationFilter, TrainWhereInput>
   }
 
@@ -22748,8 +22754,8 @@ export namespace Prisma {
     startDate?: SortOrder
     bookings?: BookingOrderByRelationAggregateInput
     coaches?: CoachOrderByRelationAggregateInput
-    trainInstances?: TrainInstanceOrderByRelationAggregateInput
     exceptions?: ScheduleExceptionOrderByRelationAggregateInput
+    trainInstances?: TrainInstanceOrderByRelationAggregateInput
     train?: TrainOrderByWithRelationInput
   }
 
@@ -22765,8 +22771,8 @@ export namespace Prisma {
     startDate?: DateTimeFilter<"TrainSchedule"> | Date | string
     bookings?: BookingListRelationFilter
     coaches?: CoachListRelationFilter
-    trainInstances?: TrainInstanceListRelationFilter
     exceptions?: ScheduleExceptionListRelationFilter
+    trainInstances?: TrainInstanceListRelationFilter
     train?: XOR<TrainScalarRelationFilter, TrainWhereInput>
   }, "id">
 
@@ -22982,9 +22988,9 @@ export namespace Prisma {
     bookedSeats?: IntFilter<"TrainInstance"> | number
     racSeats?: IntFilter<"TrainInstance"> | number
     wlSeats?: IntFilter<"TrainInstance"> | number
-    schedule?: XOR<TrainScheduleNullableScalarRelationFilter, TrainScheduleWhereInput> | null
     bookings?: BookingListRelationFilter
     seatRecords?: SeatAvailabilityListRelationFilter
+    schedule?: XOR<TrainScheduleNullableScalarRelationFilter, TrainScheduleWhereInput> | null
   }
 
   export type TrainInstanceOrderByWithRelationInput = {
@@ -22997,9 +23003,9 @@ export namespace Prisma {
     bookedSeats?: SortOrder
     racSeats?: SortOrder
     wlSeats?: SortOrder
-    schedule?: TrainScheduleOrderByWithRelationInput
     bookings?: BookingOrderByRelationAggregateInput
     seatRecords?: SeatAvailabilityOrderByRelationAggregateInput
+    schedule?: TrainScheduleOrderByWithRelationInput
   }
 
   export type TrainInstanceWhereUniqueInput = Prisma.AtLeast<{
@@ -23016,9 +23022,9 @@ export namespace Prisma {
     bookedSeats?: IntFilter<"TrainInstance"> | number
     racSeats?: IntFilter<"TrainInstance"> | number
     wlSeats?: IntFilter<"TrainInstance"> | number
-    schedule?: XOR<TrainScheduleNullableScalarRelationFilter, TrainScheduleWhereInput> | null
     bookings?: BookingListRelationFilter
     seatRecords?: SeatAvailabilityListRelationFilter
+    schedule?: XOR<TrainScheduleNullableScalarRelationFilter, TrainScheduleWhereInput> | null
   }, "id" | "scheduleId_journeyDate_coachType">
 
   export type TrainInstanceOrderByWithAggregationInput = {
@@ -23058,30 +23064,30 @@ export namespace Prisma {
     OR?: SeatAvailabilityWhereInput[]
     NOT?: SeatAvailabilityWhereInput | SeatAvailabilityWhereInput[]
     id?: BigIntFilter<"SeatAvailability"> | bigint | number
-    trainInstanceId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
-    bookingId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
-    passengerId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
     coachId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
     seatId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
     status?: EnumSeatStatusFilter<"SeatAvailability"> | $Enums.SeatStatus
-    trainInstance?: XOR<TrainInstanceNullableScalarRelationFilter, TrainInstanceWhereInput> | null
+    bookingId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
+    passengerId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
+    trainInstanceId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
     booking?: XOR<BookingNullableScalarRelationFilter, BookingWhereInput> | null
     coach?: XOR<CoachNullableScalarRelationFilter, CoachWhereInput> | null
     seat?: XOR<SeatNullableScalarRelationFilter, SeatWhereInput> | null
+    trainInstance?: XOR<TrainInstanceNullableScalarRelationFilter, TrainInstanceWhereInput> | null
   }
 
   export type SeatAvailabilityOrderByWithRelationInput = {
     id?: SortOrder
-    trainInstanceId?: SortOrderInput | SortOrder
-    bookingId?: SortOrderInput | SortOrder
-    passengerId?: SortOrderInput | SortOrder
     coachId?: SortOrderInput | SortOrder
     seatId?: SortOrderInput | SortOrder
     status?: SortOrder
-    trainInstance?: TrainInstanceOrderByWithRelationInput
+    bookingId?: SortOrderInput | SortOrder
+    passengerId?: SortOrderInput | SortOrder
+    trainInstanceId?: SortOrderInput | SortOrder
     booking?: BookingOrderByWithRelationInput
     coach?: CoachOrderByWithRelationInput
     seat?: SeatOrderByWithRelationInput
+    trainInstance?: TrainInstanceOrderByWithRelationInput
   }
 
   export type SeatAvailabilityWhereUniqueInput = Prisma.AtLeast<{
@@ -23090,25 +23096,25 @@ export namespace Prisma {
     AND?: SeatAvailabilityWhereInput | SeatAvailabilityWhereInput[]
     OR?: SeatAvailabilityWhereInput[]
     NOT?: SeatAvailabilityWhereInput | SeatAvailabilityWhereInput[]
-    trainInstanceId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
-    bookingId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
     coachId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
     seatId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
     status?: EnumSeatStatusFilter<"SeatAvailability"> | $Enums.SeatStatus
-    trainInstance?: XOR<TrainInstanceNullableScalarRelationFilter, TrainInstanceWhereInput> | null
+    bookingId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
+    trainInstanceId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
     booking?: XOR<BookingNullableScalarRelationFilter, BookingWhereInput> | null
     coach?: XOR<CoachNullableScalarRelationFilter, CoachWhereInput> | null
     seat?: XOR<SeatNullableScalarRelationFilter, SeatWhereInput> | null
+    trainInstance?: XOR<TrainInstanceNullableScalarRelationFilter, TrainInstanceWhereInput> | null
   }, "id" | "passengerId">
 
   export type SeatAvailabilityOrderByWithAggregationInput = {
     id?: SortOrder
-    trainInstanceId?: SortOrderInput | SortOrder
-    bookingId?: SortOrderInput | SortOrder
-    passengerId?: SortOrderInput | SortOrder
     coachId?: SortOrderInput | SortOrder
     seatId?: SortOrderInput | SortOrder
     status?: SortOrder
+    bookingId?: SortOrderInput | SortOrder
+    passengerId?: SortOrderInput | SortOrder
+    trainInstanceId?: SortOrderInput | SortOrder
     _count?: SeatAvailabilityCountOrderByAggregateInput
     _avg?: SeatAvailabilityAvgOrderByAggregateInput
     _max?: SeatAvailabilityMaxOrderByAggregateInput
@@ -23121,12 +23127,12 @@ export namespace Prisma {
     OR?: SeatAvailabilityScalarWhereWithAggregatesInput[]
     NOT?: SeatAvailabilityScalarWhereWithAggregatesInput | SeatAvailabilityScalarWhereWithAggregatesInput[]
     id?: BigIntWithAggregatesFilter<"SeatAvailability"> | bigint | number
-    trainInstanceId?: BigIntNullableWithAggregatesFilter<"SeatAvailability"> | bigint | number | null
-    bookingId?: BigIntNullableWithAggregatesFilter<"SeatAvailability"> | bigint | number | null
-    passengerId?: BigIntNullableWithAggregatesFilter<"SeatAvailability"> | bigint | number | null
     coachId?: BigIntNullableWithAggregatesFilter<"SeatAvailability"> | bigint | number | null
     seatId?: BigIntNullableWithAggregatesFilter<"SeatAvailability"> | bigint | number | null
     status?: EnumSeatStatusWithAggregatesFilter<"SeatAvailability"> | $Enums.SeatStatus
+    bookingId?: BigIntNullableWithAggregatesFilter<"SeatAvailability"> | bigint | number | null
+    passengerId?: BigIntNullableWithAggregatesFilter<"SeatAvailability"> | bigint | number | null
+    trainInstanceId?: BigIntNullableWithAggregatesFilter<"SeatAvailability"> | bigint | number | null
   }
 
   export type BookingWhereInput = {
@@ -23136,18 +23142,18 @@ export namespace Prisma {
     id?: BigIntFilter<"Booking"> | bigint | number
     pnr?: StringFilter<"Booking"> | string
     userId?: StringFilter<"Booking"> | string
-    journeyDate?: DateTimeNullableFilter<"Booking"> | Date | string | null
-    trainInstanceId?: BigIntNullableFilter<"Booking"> | bigint | number | null
     scheduleId?: BigIntFilter<"Booking"> | bigint | number
     fromStationId?: StringFilter<"Booking"> | string
     toStationId?: StringFilter<"Booking"> | string
     status?: EnumBookingStatusFilter<"Booking"> | $Enums.BookingStatus
-    totalFare?: FloatFilter<"Booking"> | number
     bookedAt?: DateTimeFilter<"Booking"> | Date | string
-    trainInstance?: XOR<TrainInstanceNullableScalarRelationFilter, TrainInstanceWhereInput> | null
+    journeyDate?: DateTimeNullableFilter<"Booking"> | Date | string | null
+    totalFare?: FloatFilter<"Booking"> | number
+    trainInstanceId?: BigIntNullableFilter<"Booking"> | bigint | number | null
     fromStation?: XOR<StationScalarRelationFilter, StationWhereInput>
     schedule?: XOR<TrainScheduleScalarRelationFilter, TrainScheduleWhereInput>
     toStation?: XOR<StationScalarRelationFilter, StationWhereInput>
+    trainInstance?: XOR<TrainInstanceNullableScalarRelationFilter, TrainInstanceWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     passengers?: PassengerListRelationFilter
     payment?: XOR<PaymentNullableScalarRelationFilter, PaymentWhereInput> | null
@@ -23158,18 +23164,18 @@ export namespace Prisma {
     id?: SortOrder
     pnr?: SortOrder
     userId?: SortOrder
-    journeyDate?: SortOrderInput | SortOrder
-    trainInstanceId?: SortOrderInput | SortOrder
     scheduleId?: SortOrder
     fromStationId?: SortOrder
     toStationId?: SortOrder
     status?: SortOrder
-    totalFare?: SortOrder
     bookedAt?: SortOrder
-    trainInstance?: TrainInstanceOrderByWithRelationInput
+    journeyDate?: SortOrderInput | SortOrder
+    totalFare?: SortOrder
+    trainInstanceId?: SortOrderInput | SortOrder
     fromStation?: StationOrderByWithRelationInput
     schedule?: TrainScheduleOrderByWithRelationInput
     toStation?: StationOrderByWithRelationInput
+    trainInstance?: TrainInstanceOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
     passengers?: PassengerOrderByRelationAggregateInput
     payment?: PaymentOrderByWithRelationInput
@@ -23183,18 +23189,18 @@ export namespace Prisma {
     OR?: BookingWhereInput[]
     NOT?: BookingWhereInput | BookingWhereInput[]
     userId?: StringFilter<"Booking"> | string
-    journeyDate?: DateTimeNullableFilter<"Booking"> | Date | string | null
-    trainInstanceId?: BigIntNullableFilter<"Booking"> | bigint | number | null
     scheduleId?: BigIntFilter<"Booking"> | bigint | number
     fromStationId?: StringFilter<"Booking"> | string
     toStationId?: StringFilter<"Booking"> | string
     status?: EnumBookingStatusFilter<"Booking"> | $Enums.BookingStatus
-    totalFare?: FloatFilter<"Booking"> | number
     bookedAt?: DateTimeFilter<"Booking"> | Date | string
-    trainInstance?: XOR<TrainInstanceNullableScalarRelationFilter, TrainInstanceWhereInput> | null
+    journeyDate?: DateTimeNullableFilter<"Booking"> | Date | string | null
+    totalFare?: FloatFilter<"Booking"> | number
+    trainInstanceId?: BigIntNullableFilter<"Booking"> | bigint | number | null
     fromStation?: XOR<StationScalarRelationFilter, StationWhereInput>
     schedule?: XOR<TrainScheduleScalarRelationFilter, TrainScheduleWhereInput>
     toStation?: XOR<StationScalarRelationFilter, StationWhereInput>
+    trainInstance?: XOR<TrainInstanceNullableScalarRelationFilter, TrainInstanceWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     passengers?: PassengerListRelationFilter
     payment?: XOR<PaymentNullableScalarRelationFilter, PaymentWhereInput> | null
@@ -23205,14 +23211,14 @@ export namespace Prisma {
     id?: SortOrder
     pnr?: SortOrder
     userId?: SortOrder
-    journeyDate?: SortOrderInput | SortOrder
-    trainInstanceId?: SortOrderInput | SortOrder
     scheduleId?: SortOrder
     fromStationId?: SortOrder
     toStationId?: SortOrder
     status?: SortOrder
-    totalFare?: SortOrder
     bookedAt?: SortOrder
+    journeyDate?: SortOrderInput | SortOrder
+    totalFare?: SortOrder
+    trainInstanceId?: SortOrderInput | SortOrder
     _count?: BookingCountOrderByAggregateInput
     _avg?: BookingAvgOrderByAggregateInput
     _max?: BookingMaxOrderByAggregateInput
@@ -23227,14 +23233,14 @@ export namespace Prisma {
     id?: BigIntWithAggregatesFilter<"Booking"> | bigint | number
     pnr?: StringWithAggregatesFilter<"Booking"> | string
     userId?: StringWithAggregatesFilter<"Booking"> | string
-    journeyDate?: DateTimeNullableWithAggregatesFilter<"Booking"> | Date | string | null
-    trainInstanceId?: BigIntNullableWithAggregatesFilter<"Booking"> | bigint | number | null
     scheduleId?: BigIntWithAggregatesFilter<"Booking"> | bigint | number
     fromStationId?: StringWithAggregatesFilter<"Booking"> | string
     toStationId?: StringWithAggregatesFilter<"Booking"> | string
     status?: EnumBookingStatusWithAggregatesFilter<"Booking"> | $Enums.BookingStatus
-    totalFare?: FloatWithAggregatesFilter<"Booking"> | number
     bookedAt?: DateTimeWithAggregatesFilter<"Booking"> | Date | string
+    journeyDate?: DateTimeNullableWithAggregatesFilter<"Booking"> | Date | string | null
+    totalFare?: FloatWithAggregatesFilter<"Booking"> | number
+    trainInstanceId?: BigIntNullableWithAggregatesFilter<"Booking"> | bigint | number | null
   }
 
   export type PassengerWhereInput = {
@@ -23619,7 +23625,6 @@ export namespace Prisma {
   export type UserCreateInput = {
     clerkId: string
     id?: string
-    role?: $Enums.Role
     fullName: string
     email: string
     phone: string
@@ -23637,6 +23642,7 @@ export namespace Prisma {
     walletBalance?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    role?: $Enums.Role
     bookings?: BookingCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
   }
@@ -23644,7 +23650,6 @@ export namespace Prisma {
   export type UserUncheckedCreateInput = {
     clerkId: string
     id?: string
-    role?: $Enums.Role
     fullName: string
     email: string
     phone: string
@@ -23662,6 +23667,7 @@ export namespace Prisma {
     walletBalance?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    role?: $Enums.Role
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
   }
@@ -23669,7 +23675,6 @@ export namespace Prisma {
   export type UserUpdateInput = {
     clerkId?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     fullName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
@@ -23687,6 +23692,7 @@ export namespace Prisma {
     walletBalance?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     bookings?: BookingUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
   }
@@ -23694,7 +23700,6 @@ export namespace Prisma {
   export type UserUncheckedUpdateInput = {
     clerkId?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     fullName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
@@ -23712,6 +23717,7 @@ export namespace Prisma {
     walletBalance?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -23719,7 +23725,6 @@ export namespace Prisma {
   export type UserCreateManyInput = {
     clerkId: string
     id?: string
-    role?: $Enums.Role
     fullName: string
     email: string
     phone: string
@@ -23737,12 +23742,12 @@ export namespace Prisma {
     walletBalance?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    role?: $Enums.Role
   }
 
   export type UserUpdateManyMutationInput = {
     clerkId?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     fullName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
@@ -23760,12 +23765,12 @@ export namespace Prisma {
     walletBalance?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
   }
 
   export type UserUncheckedUpdateManyInput = {
     clerkId?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     fullName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
@@ -23783,6 +23788,7 @@ export namespace Prisma {
     walletBalance?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
   }
 
   export type StationCreateInput = {
@@ -23917,8 +23923,8 @@ export namespace Prisma {
     trainNo: string
     name: string
     type: string
-    departureTime?: string | null
     arrivalTime?: string | null
+    departureTime?: string | null
     reviews?: ReviewCreateNestedManyWithoutTrainInput
     routes?: RouteCreateNestedManyWithoutTrainInput
     destinationStation: StationCreateNestedOneWithoutTrainsAsDestInput
@@ -23933,8 +23939,8 @@ export namespace Prisma {
     type: string
     sourceStationId: string
     destinationStationId: string
-    departureTime?: string | null
     arrivalTime?: string | null
+    departureTime?: string | null
     reviews?: ReviewUncheckedCreateNestedManyWithoutTrainInput
     routes?: RouteUncheckedCreateNestedManyWithoutTrainInput
     schedules?: TrainScheduleUncheckedCreateNestedManyWithoutTrainInput
@@ -23945,8 +23951,8 @@ export namespace Prisma {
     trainNo?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     reviews?: ReviewUpdateManyWithoutTrainNestedInput
     routes?: RouteUpdateManyWithoutTrainNestedInput
     destinationStation?: StationUpdateOneRequiredWithoutTrainsAsDestNestedInput
@@ -23961,8 +23967,8 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     sourceStationId?: StringFieldUpdateOperationsInput | string
     destinationStationId?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     reviews?: ReviewUncheckedUpdateManyWithoutTrainNestedInput
     routes?: RouteUncheckedUpdateManyWithoutTrainNestedInput
     schedules?: TrainScheduleUncheckedUpdateManyWithoutTrainNestedInput
@@ -23975,8 +23981,8 @@ export namespace Prisma {
     type: string
     sourceStationId: string
     destinationStationId: string
-    departureTime?: string | null
     arrivalTime?: string | null
+    departureTime?: string | null
   }
 
   export type TrainUpdateManyMutationInput = {
@@ -23984,8 +23990,8 @@ export namespace Prisma {
     trainNo?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TrainUncheckedUpdateManyInput = {
@@ -23995,8 +24001,8 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     sourceStationId?: StringFieldUpdateOperationsInput | string
     destinationStationId?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TrainScheduleCreateInput = {
@@ -24007,8 +24013,8 @@ export namespace Prisma {
     startDate: Date | string
     bookings?: BookingCreateNestedManyWithoutScheduleInput
     coaches?: CoachCreateNestedManyWithoutScheduleInput
-    trainInstances?: TrainInstanceCreateNestedManyWithoutScheduleInput
     exceptions?: ScheduleExceptionCreateNestedManyWithoutScheduleInput
+    trainInstances?: TrainInstanceCreateNestedManyWithoutScheduleInput
     train: TrainCreateNestedOneWithoutSchedulesInput
   }
 
@@ -24021,8 +24027,8 @@ export namespace Prisma {
     startDate: Date | string
     bookings?: BookingUncheckedCreateNestedManyWithoutScheduleInput
     coaches?: CoachUncheckedCreateNestedManyWithoutScheduleInput
-    trainInstances?: TrainInstanceUncheckedCreateNestedManyWithoutScheduleInput
     exceptions?: ScheduleExceptionUncheckedCreateNestedManyWithoutScheduleInput
+    trainInstances?: TrainInstanceUncheckedCreateNestedManyWithoutScheduleInput
   }
 
   export type TrainScheduleUpdateInput = {
@@ -24033,8 +24039,8 @@ export namespace Prisma {
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     bookings?: BookingUpdateManyWithoutScheduleNestedInput
     coaches?: CoachUpdateManyWithoutScheduleNestedInput
-    trainInstances?: TrainInstanceUpdateManyWithoutScheduleNestedInput
     exceptions?: ScheduleExceptionUpdateManyWithoutScheduleNestedInput
+    trainInstances?: TrainInstanceUpdateManyWithoutScheduleNestedInput
     train?: TrainUpdateOneRequiredWithoutSchedulesNestedInput
   }
 
@@ -24047,8 +24053,8 @@ export namespace Prisma {
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     bookings?: BookingUncheckedUpdateManyWithoutScheduleNestedInput
     coaches?: CoachUncheckedUpdateManyWithoutScheduleNestedInput
-    trainInstances?: TrainInstanceUncheckedUpdateManyWithoutScheduleNestedInput
     exceptions?: ScheduleExceptionUncheckedUpdateManyWithoutScheduleNestedInput
+    trainInstances?: TrainInstanceUncheckedUpdateManyWithoutScheduleNestedInput
   }
 
   export type TrainScheduleCreateManyInput = {
@@ -24253,9 +24259,9 @@ export namespace Prisma {
     bookedSeats?: number
     racSeats?: number
     wlSeats?: number
-    schedule?: TrainScheduleCreateNestedOneWithoutTrainInstancesInput
     bookings?: BookingCreateNestedManyWithoutTrainInstanceInput
     seatRecords?: SeatAvailabilityCreateNestedManyWithoutTrainInstanceInput
+    schedule?: TrainScheduleCreateNestedOneWithoutTrainInstancesInput
   }
 
   export type TrainInstanceUncheckedCreateInput = {
@@ -24281,9 +24287,9 @@ export namespace Prisma {
     bookedSeats?: IntFieldUpdateOperationsInput | number
     racSeats?: IntFieldUpdateOperationsInput | number
     wlSeats?: IntFieldUpdateOperationsInput | number
-    schedule?: TrainScheduleUpdateOneWithoutTrainInstancesNestedInput
     bookings?: BookingUpdateManyWithoutTrainInstanceNestedInput
     seatRecords?: SeatAvailabilityUpdateManyWithoutTrainInstanceNestedInput
+    schedule?: TrainScheduleUpdateOneWithoutTrainInstancesNestedInput
   }
 
   export type TrainInstanceUncheckedUpdateInput = {
@@ -24337,81 +24343,81 @@ export namespace Prisma {
 
   export type SeatAvailabilityCreateInput = {
     id?: bigint | number
-    passengerId?: bigint | number | null
     status?: $Enums.SeatStatus
-    trainInstance?: TrainInstanceCreateNestedOneWithoutSeatRecordsInput
+    passengerId?: bigint | number | null
     booking?: BookingCreateNestedOneWithoutSeatAvailabilitiesInput
     coach?: CoachCreateNestedOneWithoutSeatAvailabilitiesInput
     seat?: SeatCreateNestedOneWithoutSeatAvailabilitiesInput
+    trainInstance?: TrainInstanceCreateNestedOneWithoutSeatRecordsInput
   }
 
   export type SeatAvailabilityUncheckedCreateInput = {
     id?: bigint | number
-    trainInstanceId?: bigint | number | null
-    bookingId?: bigint | number | null
-    passengerId?: bigint | number | null
     coachId?: bigint | number | null
     seatId?: bigint | number | null
     status?: $Enums.SeatStatus
+    bookingId?: bigint | number | null
+    passengerId?: bigint | number | null
+    trainInstanceId?: bigint | number | null
   }
 
   export type SeatAvailabilityUpdateInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
-    trainInstance?: TrainInstanceUpdateOneWithoutSeatRecordsNestedInput
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     booking?: BookingUpdateOneWithoutSeatAvailabilitiesNestedInput
     coach?: CoachUpdateOneWithoutSeatAvailabilitiesNestedInput
     seat?: SeatUpdateOneWithoutSeatAvailabilitiesNestedInput
+    trainInstance?: TrainInstanceUpdateOneWithoutSeatRecordsNestedInput
   }
 
   export type SeatAvailabilityUncheckedUpdateInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     coachId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     seatId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type SeatAvailabilityCreateManyInput = {
     id?: bigint | number
-    trainInstanceId?: bigint | number | null
-    bookingId?: bigint | number | null
-    passengerId?: bigint | number | null
     coachId?: bigint | number | null
     seatId?: bigint | number | null
     status?: $Enums.SeatStatus
+    bookingId?: bigint | number | null
+    passengerId?: bigint | number | null
+    trainInstanceId?: bigint | number | null
   }
 
   export type SeatAvailabilityUpdateManyMutationInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type SeatAvailabilityUncheckedUpdateManyInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     coachId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     seatId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type BookingCreateInput = {
     id?: bigint | number
     pnr: string
-    journeyDate?: Date | string | null
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
-    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
+    journeyDate?: Date | string | null
+    totalFare?: number
     fromStation: StationCreateNestedOneWithoutFromBookingsInput
     schedule: TrainScheduleCreateNestedOneWithoutBookingsInput
     toStation: StationCreateNestedOneWithoutToBookingsInput
+    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
     user: UserCreateNestedOneWithoutBookingsInput
     passengers?: PassengerCreateNestedManyWithoutBookingInput
     payment?: PaymentCreateNestedOneWithoutBookingInput
@@ -24422,14 +24428,14 @@ export namespace Prisma {
     id?: bigint | number
     pnr: string
     userId: string
-    journeyDate?: Date | string | null
-    trainInstanceId?: bigint | number | null
     scheduleId: bigint | number
     fromStationId: string
     toStationId: string
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
+    trainInstanceId?: bigint | number | null
     passengers?: PassengerUncheckedCreateNestedManyWithoutBookingInput
     payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
     seatAvailabilities?: SeatAvailabilityUncheckedCreateNestedManyWithoutBookingInput
@@ -24438,14 +24444,14 @@ export namespace Prisma {
   export type BookingUpdateInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
     fromStation?: StationUpdateOneRequiredWithoutFromBookingsNestedInput
     schedule?: TrainScheduleUpdateOneRequiredWithoutBookingsNestedInput
     toStation?: StationUpdateOneRequiredWithoutToBookingsNestedInput
+    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
     user?: UserUpdateOneRequiredWithoutBookingsNestedInput
     passengers?: PassengerUpdateManyWithoutBookingNestedInput
     payment?: PaymentUpdateOneWithoutBookingNestedInput
@@ -24456,14 +24462,14 @@ export namespace Prisma {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     scheduleId?: BigIntFieldUpdateOperationsInput | bigint | number
     fromStationId?: StringFieldUpdateOperationsInput | string
     toStationId?: StringFieldUpdateOperationsInput | string
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     passengers?: PassengerUncheckedUpdateManyWithoutBookingNestedInput
     payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
     seatAvailabilities?: SeatAvailabilityUncheckedUpdateManyWithoutBookingNestedInput
@@ -24473,37 +24479,37 @@ export namespace Prisma {
     id?: bigint | number
     pnr: string
     userId: string
-    journeyDate?: Date | string | null
-    trainInstanceId?: bigint | number | null
     scheduleId: bigint | number
     fromStationId: string
     toStationId: string
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
+    trainInstanceId?: bigint | number | null
   }
 
   export type BookingUpdateManyMutationInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
   }
 
   export type BookingUncheckedUpdateManyInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     scheduleId?: BigIntFieldUpdateOperationsInput | bigint | number
     fromStationId?: StringFieldUpdateOperationsInput | string
     toStationId?: StringFieldUpdateOperationsInput | string
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type PassengerCreateInput = {
@@ -24917,13 +24923,6 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type EnumRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -24991,6 +24990,13 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type EnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
+  }
+
   export type BookingListRelationFilter = {
     every?: BookingWhereInput
     some?: BookingWhereInput
@@ -25019,7 +25025,6 @@ export namespace Prisma {
   export type UserCountOrderByAggregateInput = {
     clerkId?: SortOrder
     id?: SortOrder
-    role?: SortOrder
     fullName?: SortOrder
     email?: SortOrder
     phone?: SortOrder
@@ -25037,6 +25042,7 @@ export namespace Prisma {
     walletBalance?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    role?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -25046,7 +25052,6 @@ export namespace Prisma {
   export type UserMaxOrderByAggregateInput = {
     clerkId?: SortOrder
     id?: SortOrder
-    role?: SortOrder
     fullName?: SortOrder
     email?: SortOrder
     phone?: SortOrder
@@ -25064,12 +25069,12 @@ export namespace Prisma {
     walletBalance?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    role?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     clerkId?: SortOrder
     id?: SortOrder
-    role?: SortOrder
     fullName?: SortOrder
     email?: SortOrder
     phone?: SortOrder
@@ -25087,6 +25092,7 @@ export namespace Prisma {
     walletBalance?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    role?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -25109,16 +25115,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
-  }
-
-  export type EnumRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumRoleFilter<$PrismaModel>
-    _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -25209,6 +25205,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type EnumRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRoleFilter<$PrismaModel>
+    _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
   export type RouteListRelationFilter = {
@@ -25371,8 +25377,8 @@ export namespace Prisma {
     type?: SortOrder
     sourceStationId?: SortOrder
     destinationStationId?: SortOrder
-    departureTime?: SortOrder
     arrivalTime?: SortOrder
+    departureTime?: SortOrder
   }
 
   export type TrainAvgOrderByAggregateInput = {
@@ -25386,8 +25392,8 @@ export namespace Prisma {
     type?: SortOrder
     sourceStationId?: SortOrder
     destinationStationId?: SortOrder
-    departureTime?: SortOrder
     arrivalTime?: SortOrder
+    departureTime?: SortOrder
   }
 
   export type TrainMinOrderByAggregateInput = {
@@ -25397,8 +25403,8 @@ export namespace Prisma {
     type?: SortOrder
     sourceStationId?: SortOrder
     destinationStationId?: SortOrder
-    departureTime?: SortOrder
     arrivalTime?: SortOrder
+    departureTime?: SortOrder
   }
 
   export type TrainSumOrderByAggregateInput = {
@@ -25426,27 +25432,27 @@ export namespace Prisma {
     none?: CoachWhereInput
   }
 
-  export type TrainInstanceListRelationFilter = {
-    every?: TrainInstanceWhereInput
-    some?: TrainInstanceWhereInput
-    none?: TrainInstanceWhereInput
-  }
-
   export type ScheduleExceptionListRelationFilter = {
     every?: ScheduleExceptionWhereInput
     some?: ScheduleExceptionWhereInput
     none?: ScheduleExceptionWhereInput
   }
 
+  export type TrainInstanceListRelationFilter = {
+    every?: TrainInstanceWhereInput
+    some?: TrainInstanceWhereInput
+    none?: TrainInstanceWhereInput
+  }
+
   export type CoachOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
-  export type TrainInstanceOrderByRelationAggregateInput = {
+  export type ScheduleExceptionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
-  export type ScheduleExceptionOrderByRelationAggregateInput = {
+  export type TrainInstanceOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -25770,11 +25776,6 @@ export namespace Prisma {
     not?: NestedEnumSeatStatusFilter<$PrismaModel> | $Enums.SeatStatus
   }
 
-  export type TrainInstanceNullableScalarRelationFilter = {
-    is?: TrainInstanceWhereInput | null
-    isNot?: TrainInstanceWhereInput | null
-  }
-
   export type BookingNullableScalarRelationFilter = {
     is?: BookingWhereInput | null
     isNot?: BookingWhereInput | null
@@ -25790,52 +25791,57 @@ export namespace Prisma {
     isNot?: SeatWhereInput | null
   }
 
+  export type TrainInstanceNullableScalarRelationFilter = {
+    is?: TrainInstanceWhereInput | null
+    isNot?: TrainInstanceWhereInput | null
+  }
+
   export type SeatAvailabilityCountOrderByAggregateInput = {
     id?: SortOrder
-    trainInstanceId?: SortOrder
-    bookingId?: SortOrder
-    passengerId?: SortOrder
     coachId?: SortOrder
     seatId?: SortOrder
     status?: SortOrder
+    bookingId?: SortOrder
+    passengerId?: SortOrder
+    trainInstanceId?: SortOrder
   }
 
   export type SeatAvailabilityAvgOrderByAggregateInput = {
     id?: SortOrder
-    trainInstanceId?: SortOrder
-    bookingId?: SortOrder
-    passengerId?: SortOrder
     coachId?: SortOrder
     seatId?: SortOrder
+    bookingId?: SortOrder
+    passengerId?: SortOrder
+    trainInstanceId?: SortOrder
   }
 
   export type SeatAvailabilityMaxOrderByAggregateInput = {
     id?: SortOrder
-    trainInstanceId?: SortOrder
-    bookingId?: SortOrder
-    passengerId?: SortOrder
     coachId?: SortOrder
     seatId?: SortOrder
     status?: SortOrder
+    bookingId?: SortOrder
+    passengerId?: SortOrder
+    trainInstanceId?: SortOrder
   }
 
   export type SeatAvailabilityMinOrderByAggregateInput = {
     id?: SortOrder
-    trainInstanceId?: SortOrder
-    bookingId?: SortOrder
-    passengerId?: SortOrder
     coachId?: SortOrder
     seatId?: SortOrder
     status?: SortOrder
+    bookingId?: SortOrder
+    passengerId?: SortOrder
+    trainInstanceId?: SortOrder
   }
 
   export type SeatAvailabilitySumOrderByAggregateInput = {
     id?: SortOrder
-    trainInstanceId?: SortOrder
-    bookingId?: SortOrder
-    passengerId?: SortOrder
     coachId?: SortOrder
     seatId?: SortOrder
+    bookingId?: SortOrder
+    passengerId?: SortOrder
+    trainInstanceId?: SortOrder
   }
 
   export type EnumSeatStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -25869,56 +25875,56 @@ export namespace Prisma {
     id?: SortOrder
     pnr?: SortOrder
     userId?: SortOrder
-    journeyDate?: SortOrder
-    trainInstanceId?: SortOrder
     scheduleId?: SortOrder
     fromStationId?: SortOrder
     toStationId?: SortOrder
     status?: SortOrder
-    totalFare?: SortOrder
     bookedAt?: SortOrder
+    journeyDate?: SortOrder
+    totalFare?: SortOrder
+    trainInstanceId?: SortOrder
   }
 
   export type BookingAvgOrderByAggregateInput = {
     id?: SortOrder
-    trainInstanceId?: SortOrder
     scheduleId?: SortOrder
     totalFare?: SortOrder
+    trainInstanceId?: SortOrder
   }
 
   export type BookingMaxOrderByAggregateInput = {
     id?: SortOrder
     pnr?: SortOrder
     userId?: SortOrder
-    journeyDate?: SortOrder
-    trainInstanceId?: SortOrder
     scheduleId?: SortOrder
     fromStationId?: SortOrder
     toStationId?: SortOrder
     status?: SortOrder
-    totalFare?: SortOrder
     bookedAt?: SortOrder
+    journeyDate?: SortOrder
+    totalFare?: SortOrder
+    trainInstanceId?: SortOrder
   }
 
   export type BookingMinOrderByAggregateInput = {
     id?: SortOrder
     pnr?: SortOrder
     userId?: SortOrder
-    journeyDate?: SortOrder
-    trainInstanceId?: SortOrder
     scheduleId?: SortOrder
     fromStationId?: SortOrder
     toStationId?: SortOrder
     status?: SortOrder
-    totalFare?: SortOrder
     bookedAt?: SortOrder
+    journeyDate?: SortOrder
+    totalFare?: SortOrder
+    trainInstanceId?: SortOrder
   }
 
   export type BookingSumOrderByAggregateInput = {
     id?: SortOrder
-    trainInstanceId?: SortOrder
     scheduleId?: SortOrder
     totalFare?: SortOrder
+    trainInstanceId?: SortOrder
   }
 
   export type EnumBookingStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -26290,10 +26296,6 @@ export namespace Prisma {
     set?: string
   }
 
-  export type EnumRoleFieldUpdateOperationsInput = {
-    set?: $Enums.Role
-  }
-
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
   }
@@ -26324,6 +26326,10 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type EnumRoleFieldUpdateOperationsInput = {
+    set?: $Enums.Role
   }
 
   export type BookingUpdateManyWithoutUserNestedInput = {
@@ -26850,18 +26856,18 @@ export namespace Prisma {
     connect?: CoachWhereUniqueInput | CoachWhereUniqueInput[]
   }
 
-  export type TrainInstanceCreateNestedManyWithoutScheduleInput = {
-    create?: XOR<TrainInstanceCreateWithoutScheduleInput, TrainInstanceUncheckedCreateWithoutScheduleInput> | TrainInstanceCreateWithoutScheduleInput[] | TrainInstanceUncheckedCreateWithoutScheduleInput[]
-    connectOrCreate?: TrainInstanceCreateOrConnectWithoutScheduleInput | TrainInstanceCreateOrConnectWithoutScheduleInput[]
-    createMany?: TrainInstanceCreateManyScheduleInputEnvelope
-    connect?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
-  }
-
   export type ScheduleExceptionCreateNestedManyWithoutScheduleInput = {
     create?: XOR<ScheduleExceptionCreateWithoutScheduleInput, ScheduleExceptionUncheckedCreateWithoutScheduleInput> | ScheduleExceptionCreateWithoutScheduleInput[] | ScheduleExceptionUncheckedCreateWithoutScheduleInput[]
     connectOrCreate?: ScheduleExceptionCreateOrConnectWithoutScheduleInput | ScheduleExceptionCreateOrConnectWithoutScheduleInput[]
     createMany?: ScheduleExceptionCreateManyScheduleInputEnvelope
     connect?: ScheduleExceptionWhereUniqueInput | ScheduleExceptionWhereUniqueInput[]
+  }
+
+  export type TrainInstanceCreateNestedManyWithoutScheduleInput = {
+    create?: XOR<TrainInstanceCreateWithoutScheduleInput, TrainInstanceUncheckedCreateWithoutScheduleInput> | TrainInstanceCreateWithoutScheduleInput[] | TrainInstanceUncheckedCreateWithoutScheduleInput[]
+    connectOrCreate?: TrainInstanceCreateOrConnectWithoutScheduleInput | TrainInstanceCreateOrConnectWithoutScheduleInput[]
+    createMany?: TrainInstanceCreateManyScheduleInputEnvelope
+    connect?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
   }
 
   export type TrainCreateNestedOneWithoutSchedulesInput = {
@@ -26884,18 +26890,18 @@ export namespace Prisma {
     connect?: CoachWhereUniqueInput | CoachWhereUniqueInput[]
   }
 
-  export type TrainInstanceUncheckedCreateNestedManyWithoutScheduleInput = {
-    create?: XOR<TrainInstanceCreateWithoutScheduleInput, TrainInstanceUncheckedCreateWithoutScheduleInput> | TrainInstanceCreateWithoutScheduleInput[] | TrainInstanceUncheckedCreateWithoutScheduleInput[]
-    connectOrCreate?: TrainInstanceCreateOrConnectWithoutScheduleInput | TrainInstanceCreateOrConnectWithoutScheduleInput[]
-    createMany?: TrainInstanceCreateManyScheduleInputEnvelope
-    connect?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
-  }
-
   export type ScheduleExceptionUncheckedCreateNestedManyWithoutScheduleInput = {
     create?: XOR<ScheduleExceptionCreateWithoutScheduleInput, ScheduleExceptionUncheckedCreateWithoutScheduleInput> | ScheduleExceptionCreateWithoutScheduleInput[] | ScheduleExceptionUncheckedCreateWithoutScheduleInput[]
     connectOrCreate?: ScheduleExceptionCreateOrConnectWithoutScheduleInput | ScheduleExceptionCreateOrConnectWithoutScheduleInput[]
     createMany?: ScheduleExceptionCreateManyScheduleInputEnvelope
     connect?: ScheduleExceptionWhereUniqueInput | ScheduleExceptionWhereUniqueInput[]
+  }
+
+  export type TrainInstanceUncheckedCreateNestedManyWithoutScheduleInput = {
+    create?: XOR<TrainInstanceCreateWithoutScheduleInput, TrainInstanceUncheckedCreateWithoutScheduleInput> | TrainInstanceCreateWithoutScheduleInput[] | TrainInstanceUncheckedCreateWithoutScheduleInput[]
+    connectOrCreate?: TrainInstanceCreateOrConnectWithoutScheduleInput | TrainInstanceCreateOrConnectWithoutScheduleInput[]
+    createMany?: TrainInstanceCreateManyScheduleInputEnvelope
+    connect?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
   }
 
   export type EnumScheduleStatusFieldUpdateOperationsInput = {
@@ -26935,20 +26941,6 @@ export namespace Prisma {
     deleteMany?: CoachScalarWhereInput | CoachScalarWhereInput[]
   }
 
-  export type TrainInstanceUpdateManyWithoutScheduleNestedInput = {
-    create?: XOR<TrainInstanceCreateWithoutScheduleInput, TrainInstanceUncheckedCreateWithoutScheduleInput> | TrainInstanceCreateWithoutScheduleInput[] | TrainInstanceUncheckedCreateWithoutScheduleInput[]
-    connectOrCreate?: TrainInstanceCreateOrConnectWithoutScheduleInput | TrainInstanceCreateOrConnectWithoutScheduleInput[]
-    upsert?: TrainInstanceUpsertWithWhereUniqueWithoutScheduleInput | TrainInstanceUpsertWithWhereUniqueWithoutScheduleInput[]
-    createMany?: TrainInstanceCreateManyScheduleInputEnvelope
-    set?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
-    disconnect?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
-    delete?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
-    connect?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
-    update?: TrainInstanceUpdateWithWhereUniqueWithoutScheduleInput | TrainInstanceUpdateWithWhereUniqueWithoutScheduleInput[]
-    updateMany?: TrainInstanceUpdateManyWithWhereWithoutScheduleInput | TrainInstanceUpdateManyWithWhereWithoutScheduleInput[]
-    deleteMany?: TrainInstanceScalarWhereInput | TrainInstanceScalarWhereInput[]
-  }
-
   export type ScheduleExceptionUpdateManyWithoutScheduleNestedInput = {
     create?: XOR<ScheduleExceptionCreateWithoutScheduleInput, ScheduleExceptionUncheckedCreateWithoutScheduleInput> | ScheduleExceptionCreateWithoutScheduleInput[] | ScheduleExceptionUncheckedCreateWithoutScheduleInput[]
     connectOrCreate?: ScheduleExceptionCreateOrConnectWithoutScheduleInput | ScheduleExceptionCreateOrConnectWithoutScheduleInput[]
@@ -26961,6 +26953,20 @@ export namespace Prisma {
     update?: ScheduleExceptionUpdateWithWhereUniqueWithoutScheduleInput | ScheduleExceptionUpdateWithWhereUniqueWithoutScheduleInput[]
     updateMany?: ScheduleExceptionUpdateManyWithWhereWithoutScheduleInput | ScheduleExceptionUpdateManyWithWhereWithoutScheduleInput[]
     deleteMany?: ScheduleExceptionScalarWhereInput | ScheduleExceptionScalarWhereInput[]
+  }
+
+  export type TrainInstanceUpdateManyWithoutScheduleNestedInput = {
+    create?: XOR<TrainInstanceCreateWithoutScheduleInput, TrainInstanceUncheckedCreateWithoutScheduleInput> | TrainInstanceCreateWithoutScheduleInput[] | TrainInstanceUncheckedCreateWithoutScheduleInput[]
+    connectOrCreate?: TrainInstanceCreateOrConnectWithoutScheduleInput | TrainInstanceCreateOrConnectWithoutScheduleInput[]
+    upsert?: TrainInstanceUpsertWithWhereUniqueWithoutScheduleInput | TrainInstanceUpsertWithWhereUniqueWithoutScheduleInput[]
+    createMany?: TrainInstanceCreateManyScheduleInputEnvelope
+    set?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
+    disconnect?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
+    delete?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
+    connect?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
+    update?: TrainInstanceUpdateWithWhereUniqueWithoutScheduleInput | TrainInstanceUpdateWithWhereUniqueWithoutScheduleInput[]
+    updateMany?: TrainInstanceUpdateManyWithWhereWithoutScheduleInput | TrainInstanceUpdateManyWithWhereWithoutScheduleInput[]
+    deleteMany?: TrainInstanceScalarWhereInput | TrainInstanceScalarWhereInput[]
   }
 
   export type TrainUpdateOneRequiredWithoutSchedulesNestedInput = {
@@ -26999,20 +27005,6 @@ export namespace Prisma {
     deleteMany?: CoachScalarWhereInput | CoachScalarWhereInput[]
   }
 
-  export type TrainInstanceUncheckedUpdateManyWithoutScheduleNestedInput = {
-    create?: XOR<TrainInstanceCreateWithoutScheduleInput, TrainInstanceUncheckedCreateWithoutScheduleInput> | TrainInstanceCreateWithoutScheduleInput[] | TrainInstanceUncheckedCreateWithoutScheduleInput[]
-    connectOrCreate?: TrainInstanceCreateOrConnectWithoutScheduleInput | TrainInstanceCreateOrConnectWithoutScheduleInput[]
-    upsert?: TrainInstanceUpsertWithWhereUniqueWithoutScheduleInput | TrainInstanceUpsertWithWhereUniqueWithoutScheduleInput[]
-    createMany?: TrainInstanceCreateManyScheduleInputEnvelope
-    set?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
-    disconnect?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
-    delete?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
-    connect?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
-    update?: TrainInstanceUpdateWithWhereUniqueWithoutScheduleInput | TrainInstanceUpdateWithWhereUniqueWithoutScheduleInput[]
-    updateMany?: TrainInstanceUpdateManyWithWhereWithoutScheduleInput | TrainInstanceUpdateManyWithWhereWithoutScheduleInput[]
-    deleteMany?: TrainInstanceScalarWhereInput | TrainInstanceScalarWhereInput[]
-  }
-
   export type ScheduleExceptionUncheckedUpdateManyWithoutScheduleNestedInput = {
     create?: XOR<ScheduleExceptionCreateWithoutScheduleInput, ScheduleExceptionUncheckedCreateWithoutScheduleInput> | ScheduleExceptionCreateWithoutScheduleInput[] | ScheduleExceptionUncheckedCreateWithoutScheduleInput[]
     connectOrCreate?: ScheduleExceptionCreateOrConnectWithoutScheduleInput | ScheduleExceptionCreateOrConnectWithoutScheduleInput[]
@@ -27025,6 +27017,20 @@ export namespace Prisma {
     update?: ScheduleExceptionUpdateWithWhereUniqueWithoutScheduleInput | ScheduleExceptionUpdateWithWhereUniqueWithoutScheduleInput[]
     updateMany?: ScheduleExceptionUpdateManyWithWhereWithoutScheduleInput | ScheduleExceptionUpdateManyWithWhereWithoutScheduleInput[]
     deleteMany?: ScheduleExceptionScalarWhereInput | ScheduleExceptionScalarWhereInput[]
+  }
+
+  export type TrainInstanceUncheckedUpdateManyWithoutScheduleNestedInput = {
+    create?: XOR<TrainInstanceCreateWithoutScheduleInput, TrainInstanceUncheckedCreateWithoutScheduleInput> | TrainInstanceCreateWithoutScheduleInput[] | TrainInstanceUncheckedCreateWithoutScheduleInput[]
+    connectOrCreate?: TrainInstanceCreateOrConnectWithoutScheduleInput | TrainInstanceCreateOrConnectWithoutScheduleInput[]
+    upsert?: TrainInstanceUpsertWithWhereUniqueWithoutScheduleInput | TrainInstanceUpsertWithWhereUniqueWithoutScheduleInput[]
+    createMany?: TrainInstanceCreateManyScheduleInputEnvelope
+    set?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
+    disconnect?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
+    delete?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
+    connect?: TrainInstanceWhereUniqueInput | TrainInstanceWhereUniqueInput[]
+    update?: TrainInstanceUpdateWithWhereUniqueWithoutScheduleInput | TrainInstanceUpdateWithWhereUniqueWithoutScheduleInput[]
+    updateMany?: TrainInstanceUpdateManyWithWhereWithoutScheduleInput | TrainInstanceUpdateManyWithWhereWithoutScheduleInput[]
+    deleteMany?: TrainInstanceScalarWhereInput | TrainInstanceScalarWhereInput[]
   }
 
   export type TrainScheduleCreateNestedOneWithoutExceptionsInput = {
@@ -27245,12 +27251,6 @@ export namespace Prisma {
     deleteMany?: SeatAvailabilityScalarWhereInput | SeatAvailabilityScalarWhereInput[]
   }
 
-  export type TrainScheduleCreateNestedOneWithoutTrainInstancesInput = {
-    create?: XOR<TrainScheduleCreateWithoutTrainInstancesInput, TrainScheduleUncheckedCreateWithoutTrainInstancesInput>
-    connectOrCreate?: TrainScheduleCreateOrConnectWithoutTrainInstancesInput
-    connect?: TrainScheduleWhereUniqueInput
-  }
-
   export type BookingCreateNestedManyWithoutTrainInstanceInput = {
     create?: XOR<BookingCreateWithoutTrainInstanceInput, BookingUncheckedCreateWithoutTrainInstanceInput> | BookingCreateWithoutTrainInstanceInput[] | BookingUncheckedCreateWithoutTrainInstanceInput[]
     connectOrCreate?: BookingCreateOrConnectWithoutTrainInstanceInput | BookingCreateOrConnectWithoutTrainInstanceInput[]
@@ -27265,6 +27265,12 @@ export namespace Prisma {
     connect?: SeatAvailabilityWhereUniqueInput | SeatAvailabilityWhereUniqueInput[]
   }
 
+  export type TrainScheduleCreateNestedOneWithoutTrainInstancesInput = {
+    create?: XOR<TrainScheduleCreateWithoutTrainInstancesInput, TrainScheduleUncheckedCreateWithoutTrainInstancesInput>
+    connectOrCreate?: TrainScheduleCreateOrConnectWithoutTrainInstancesInput
+    connect?: TrainScheduleWhereUniqueInput
+  }
+
   export type BookingUncheckedCreateNestedManyWithoutTrainInstanceInput = {
     create?: XOR<BookingCreateWithoutTrainInstanceInput, BookingUncheckedCreateWithoutTrainInstanceInput> | BookingCreateWithoutTrainInstanceInput[] | BookingUncheckedCreateWithoutTrainInstanceInput[]
     connectOrCreate?: BookingCreateOrConnectWithoutTrainInstanceInput | BookingCreateOrConnectWithoutTrainInstanceInput[]
@@ -27277,16 +27283,6 @@ export namespace Prisma {
     connectOrCreate?: SeatAvailabilityCreateOrConnectWithoutTrainInstanceInput | SeatAvailabilityCreateOrConnectWithoutTrainInstanceInput[]
     createMany?: SeatAvailabilityCreateManyTrainInstanceInputEnvelope
     connect?: SeatAvailabilityWhereUniqueInput | SeatAvailabilityWhereUniqueInput[]
-  }
-
-  export type TrainScheduleUpdateOneWithoutTrainInstancesNestedInput = {
-    create?: XOR<TrainScheduleCreateWithoutTrainInstancesInput, TrainScheduleUncheckedCreateWithoutTrainInstancesInput>
-    connectOrCreate?: TrainScheduleCreateOrConnectWithoutTrainInstancesInput
-    upsert?: TrainScheduleUpsertWithoutTrainInstancesInput
-    disconnect?: TrainScheduleWhereInput | boolean
-    delete?: TrainScheduleWhereInput | boolean
-    connect?: TrainScheduleWhereUniqueInput
-    update?: XOR<XOR<TrainScheduleUpdateToOneWithWhereWithoutTrainInstancesInput, TrainScheduleUpdateWithoutTrainInstancesInput>, TrainScheduleUncheckedUpdateWithoutTrainInstancesInput>
   }
 
   export type BookingUpdateManyWithoutTrainInstanceNestedInput = {
@@ -27315,6 +27311,16 @@ export namespace Prisma {
     update?: SeatAvailabilityUpdateWithWhereUniqueWithoutTrainInstanceInput | SeatAvailabilityUpdateWithWhereUniqueWithoutTrainInstanceInput[]
     updateMany?: SeatAvailabilityUpdateManyWithWhereWithoutTrainInstanceInput | SeatAvailabilityUpdateManyWithWhereWithoutTrainInstanceInput[]
     deleteMany?: SeatAvailabilityScalarWhereInput | SeatAvailabilityScalarWhereInput[]
+  }
+
+  export type TrainScheduleUpdateOneWithoutTrainInstancesNestedInput = {
+    create?: XOR<TrainScheduleCreateWithoutTrainInstancesInput, TrainScheduleUncheckedCreateWithoutTrainInstancesInput>
+    connectOrCreate?: TrainScheduleCreateOrConnectWithoutTrainInstancesInput
+    upsert?: TrainScheduleUpsertWithoutTrainInstancesInput
+    disconnect?: TrainScheduleWhereInput | boolean
+    delete?: TrainScheduleWhereInput | boolean
+    connect?: TrainScheduleWhereUniqueInput
+    update?: XOR<XOR<TrainScheduleUpdateToOneWithWhereWithoutTrainInstancesInput, TrainScheduleUpdateWithoutTrainInstancesInput>, TrainScheduleUncheckedUpdateWithoutTrainInstancesInput>
   }
 
   export type NullableBigIntFieldUpdateOperationsInput = {
@@ -27353,12 +27359,6 @@ export namespace Prisma {
     deleteMany?: SeatAvailabilityScalarWhereInput | SeatAvailabilityScalarWhereInput[]
   }
 
-  export type TrainInstanceCreateNestedOneWithoutSeatRecordsInput = {
-    create?: XOR<TrainInstanceCreateWithoutSeatRecordsInput, TrainInstanceUncheckedCreateWithoutSeatRecordsInput>
-    connectOrCreate?: TrainInstanceCreateOrConnectWithoutSeatRecordsInput
-    connect?: TrainInstanceWhereUniqueInput
-  }
-
   export type BookingCreateNestedOneWithoutSeatAvailabilitiesInput = {
     create?: XOR<BookingCreateWithoutSeatAvailabilitiesInput, BookingUncheckedCreateWithoutSeatAvailabilitiesInput>
     connectOrCreate?: BookingCreateOrConnectWithoutSeatAvailabilitiesInput
@@ -27377,18 +27377,14 @@ export namespace Prisma {
     connect?: SeatWhereUniqueInput
   }
 
-  export type EnumSeatStatusFieldUpdateOperationsInput = {
-    set?: $Enums.SeatStatus
-  }
-
-  export type TrainInstanceUpdateOneWithoutSeatRecordsNestedInput = {
+  export type TrainInstanceCreateNestedOneWithoutSeatRecordsInput = {
     create?: XOR<TrainInstanceCreateWithoutSeatRecordsInput, TrainInstanceUncheckedCreateWithoutSeatRecordsInput>
     connectOrCreate?: TrainInstanceCreateOrConnectWithoutSeatRecordsInput
-    upsert?: TrainInstanceUpsertWithoutSeatRecordsInput
-    disconnect?: TrainInstanceWhereInput | boolean
-    delete?: TrainInstanceWhereInput | boolean
     connect?: TrainInstanceWhereUniqueInput
-    update?: XOR<XOR<TrainInstanceUpdateToOneWithWhereWithoutSeatRecordsInput, TrainInstanceUpdateWithoutSeatRecordsInput>, TrainInstanceUncheckedUpdateWithoutSeatRecordsInput>
+  }
+
+  export type EnumSeatStatusFieldUpdateOperationsInput = {
+    set?: $Enums.SeatStatus
   }
 
   export type BookingUpdateOneWithoutSeatAvailabilitiesNestedInput = {
@@ -27421,10 +27417,14 @@ export namespace Prisma {
     update?: XOR<XOR<SeatUpdateToOneWithWhereWithoutSeatAvailabilitiesInput, SeatUpdateWithoutSeatAvailabilitiesInput>, SeatUncheckedUpdateWithoutSeatAvailabilitiesInput>
   }
 
-  export type TrainInstanceCreateNestedOneWithoutBookingsInput = {
-    create?: XOR<TrainInstanceCreateWithoutBookingsInput, TrainInstanceUncheckedCreateWithoutBookingsInput>
-    connectOrCreate?: TrainInstanceCreateOrConnectWithoutBookingsInput
+  export type TrainInstanceUpdateOneWithoutSeatRecordsNestedInput = {
+    create?: XOR<TrainInstanceCreateWithoutSeatRecordsInput, TrainInstanceUncheckedCreateWithoutSeatRecordsInput>
+    connectOrCreate?: TrainInstanceCreateOrConnectWithoutSeatRecordsInput
+    upsert?: TrainInstanceUpsertWithoutSeatRecordsInput
+    disconnect?: TrainInstanceWhereInput | boolean
+    delete?: TrainInstanceWhereInput | boolean
     connect?: TrainInstanceWhereUniqueInput
+    update?: XOR<XOR<TrainInstanceUpdateToOneWithWhereWithoutSeatRecordsInput, TrainInstanceUpdateWithoutSeatRecordsInput>, TrainInstanceUncheckedUpdateWithoutSeatRecordsInput>
   }
 
   export type StationCreateNestedOneWithoutFromBookingsInput = {
@@ -27443,6 +27443,12 @@ export namespace Prisma {
     create?: XOR<StationCreateWithoutToBookingsInput, StationUncheckedCreateWithoutToBookingsInput>
     connectOrCreate?: StationCreateOrConnectWithoutToBookingsInput
     connect?: StationWhereUniqueInput
+  }
+
+  export type TrainInstanceCreateNestedOneWithoutBookingsInput = {
+    create?: XOR<TrainInstanceCreateWithoutBookingsInput, TrainInstanceUncheckedCreateWithoutBookingsInput>
+    connectOrCreate?: TrainInstanceCreateOrConnectWithoutBookingsInput
+    connect?: TrainInstanceWhereUniqueInput
   }
 
   export type UserCreateNestedOneWithoutBookingsInput = {
@@ -27495,16 +27501,6 @@ export namespace Prisma {
     set?: $Enums.BookingStatus
   }
 
-  export type TrainInstanceUpdateOneWithoutBookingsNestedInput = {
-    create?: XOR<TrainInstanceCreateWithoutBookingsInput, TrainInstanceUncheckedCreateWithoutBookingsInput>
-    connectOrCreate?: TrainInstanceCreateOrConnectWithoutBookingsInput
-    upsert?: TrainInstanceUpsertWithoutBookingsInput
-    disconnect?: TrainInstanceWhereInput | boolean
-    delete?: TrainInstanceWhereInput | boolean
-    connect?: TrainInstanceWhereUniqueInput
-    update?: XOR<XOR<TrainInstanceUpdateToOneWithWhereWithoutBookingsInput, TrainInstanceUpdateWithoutBookingsInput>, TrainInstanceUncheckedUpdateWithoutBookingsInput>
-  }
-
   export type StationUpdateOneRequiredWithoutFromBookingsNestedInput = {
     create?: XOR<StationCreateWithoutFromBookingsInput, StationUncheckedCreateWithoutFromBookingsInput>
     connectOrCreate?: StationCreateOrConnectWithoutFromBookingsInput
@@ -27527,6 +27523,16 @@ export namespace Prisma {
     upsert?: StationUpsertWithoutToBookingsInput
     connect?: StationWhereUniqueInput
     update?: XOR<XOR<StationUpdateToOneWithWhereWithoutToBookingsInput, StationUpdateWithoutToBookingsInput>, StationUncheckedUpdateWithoutToBookingsInput>
+  }
+
+  export type TrainInstanceUpdateOneWithoutBookingsNestedInput = {
+    create?: XOR<TrainInstanceCreateWithoutBookingsInput, TrainInstanceUncheckedCreateWithoutBookingsInput>
+    connectOrCreate?: TrainInstanceCreateOrConnectWithoutBookingsInput
+    upsert?: TrainInstanceUpsertWithoutBookingsInput
+    disconnect?: TrainInstanceWhereInput | boolean
+    delete?: TrainInstanceWhereInput | boolean
+    connect?: TrainInstanceWhereUniqueInput
+    update?: XOR<XOR<TrainInstanceUpdateToOneWithWhereWithoutBookingsInput, TrainInstanceUpdateWithoutBookingsInput>, TrainInstanceUncheckedUpdateWithoutBookingsInput>
   }
 
   export type UserUpdateOneRequiredWithoutBookingsNestedInput = {
@@ -27789,13 +27795,6 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type NestedEnumRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -27862,6 +27861,13 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type NestedEnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -27888,16 +27894,6 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
-  }
-
-  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumRoleFilter<$PrismaModel>
-    _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -27998,6 +27994,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRoleFilter<$PrismaModel>
+    _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
   export type NestedBigIntFilter<$PrismaModel = never> = {
@@ -28237,14 +28243,14 @@ export namespace Prisma {
   export type BookingCreateWithoutUserInput = {
     id?: bigint | number
     pnr: string
-    journeyDate?: Date | string | null
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
-    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
+    journeyDate?: Date | string | null
+    totalFare?: number
     fromStation: StationCreateNestedOneWithoutFromBookingsInput
     schedule: TrainScheduleCreateNestedOneWithoutBookingsInput
     toStation: StationCreateNestedOneWithoutToBookingsInput
+    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
     passengers?: PassengerCreateNestedManyWithoutBookingInput
     payment?: PaymentCreateNestedOneWithoutBookingInput
     seatAvailabilities?: SeatAvailabilityCreateNestedManyWithoutBookingInput
@@ -28253,14 +28259,14 @@ export namespace Prisma {
   export type BookingUncheckedCreateWithoutUserInput = {
     id?: bigint | number
     pnr: string
-    journeyDate?: Date | string | null
-    trainInstanceId?: bigint | number | null
     scheduleId: bigint | number
     fromStationId: string
     toStationId: string
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
+    trainInstanceId?: bigint | number | null
     passengers?: PassengerUncheckedCreateNestedManyWithoutBookingInput
     payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
     seatAvailabilities?: SeatAvailabilityUncheckedCreateNestedManyWithoutBookingInput
@@ -28331,14 +28337,14 @@ export namespace Prisma {
     id?: BigIntFilter<"Booking"> | bigint | number
     pnr?: StringFilter<"Booking"> | string
     userId?: StringFilter<"Booking"> | string
-    journeyDate?: DateTimeNullableFilter<"Booking"> | Date | string | null
-    trainInstanceId?: BigIntNullableFilter<"Booking"> | bigint | number | null
     scheduleId?: BigIntFilter<"Booking"> | bigint | number
     fromStationId?: StringFilter<"Booking"> | string
     toStationId?: StringFilter<"Booking"> | string
     status?: EnumBookingStatusFilter<"Booking"> | $Enums.BookingStatus
-    totalFare?: FloatFilter<"Booking"> | number
     bookedAt?: DateTimeFilter<"Booking"> | Date | string
+    journeyDate?: DateTimeNullableFilter<"Booking"> | Date | string | null
+    totalFare?: FloatFilter<"Booking"> | number
+    trainInstanceId?: BigIntNullableFilter<"Booking"> | bigint | number | null
   }
 
   export type ReviewUpsertWithWhereUniqueWithoutUserInput = {
@@ -28375,13 +28381,13 @@ export namespace Prisma {
   export type BookingCreateWithoutFromStationInput = {
     id?: bigint | number
     pnr: string
-    journeyDate?: Date | string | null
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
-    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
+    journeyDate?: Date | string | null
+    totalFare?: number
     schedule: TrainScheduleCreateNestedOneWithoutBookingsInput
     toStation: StationCreateNestedOneWithoutToBookingsInput
+    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
     user: UserCreateNestedOneWithoutBookingsInput
     passengers?: PassengerCreateNestedManyWithoutBookingInput
     payment?: PaymentCreateNestedOneWithoutBookingInput
@@ -28392,13 +28398,13 @@ export namespace Prisma {
     id?: bigint | number
     pnr: string
     userId: string
-    journeyDate?: Date | string | null
-    trainInstanceId?: bigint | number | null
     scheduleId: bigint | number
     toStationId: string
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
+    trainInstanceId?: bigint | number | null
     passengers?: PassengerUncheckedCreateNestedManyWithoutBookingInput
     payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
     seatAvailabilities?: SeatAvailabilityUncheckedCreateNestedManyWithoutBookingInput
@@ -28417,13 +28423,13 @@ export namespace Prisma {
   export type BookingCreateWithoutToStationInput = {
     id?: bigint | number
     pnr: string
-    journeyDate?: Date | string | null
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
-    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
+    journeyDate?: Date | string | null
+    totalFare?: number
     fromStation: StationCreateNestedOneWithoutFromBookingsInput
     schedule: TrainScheduleCreateNestedOneWithoutBookingsInput
+    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
     user: UserCreateNestedOneWithoutBookingsInput
     passengers?: PassengerCreateNestedManyWithoutBookingInput
     payment?: PaymentCreateNestedOneWithoutBookingInput
@@ -28434,13 +28440,13 @@ export namespace Prisma {
     id?: bigint | number
     pnr: string
     userId: string
-    journeyDate?: Date | string | null
-    trainInstanceId?: bigint | number | null
     scheduleId: bigint | number
     fromStationId: string
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
+    trainInstanceId?: bigint | number | null
     passengers?: PassengerUncheckedCreateNestedManyWithoutBookingInput
     payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
     seatAvailabilities?: SeatAvailabilityUncheckedCreateNestedManyWithoutBookingInput
@@ -28521,8 +28527,8 @@ export namespace Prisma {
     trainNo: string
     name: string
     type: string
-    departureTime?: string | null
     arrivalTime?: string | null
+    departureTime?: string | null
     reviews?: ReviewCreateNestedManyWithoutTrainInput
     routes?: RouteCreateNestedManyWithoutTrainInput
     sourceStation: StationCreateNestedOneWithoutTrainsAsSourceInput
@@ -28535,8 +28541,8 @@ export namespace Prisma {
     name: string
     type: string
     sourceStationId: string
-    departureTime?: string | null
     arrivalTime?: string | null
+    departureTime?: string | null
     reviews?: ReviewUncheckedCreateNestedManyWithoutTrainInput
     routes?: RouteUncheckedCreateNestedManyWithoutTrainInput
     schedules?: TrainScheduleUncheckedCreateNestedManyWithoutTrainInput
@@ -28557,8 +28563,8 @@ export namespace Prisma {
     trainNo: string
     name: string
     type: string
-    departureTime?: string | null
     arrivalTime?: string | null
+    departureTime?: string | null
     reviews?: ReviewCreateNestedManyWithoutTrainInput
     routes?: RouteCreateNestedManyWithoutTrainInput
     destinationStation: StationCreateNestedOneWithoutTrainsAsDestInput
@@ -28571,8 +28577,8 @@ export namespace Prisma {
     name: string
     type: string
     destinationStationId: string
-    departureTime?: string | null
     arrivalTime?: string | null
+    departureTime?: string | null
     reviews?: ReviewUncheckedCreateNestedManyWithoutTrainInput
     routes?: RouteUncheckedCreateNestedManyWithoutTrainInput
     schedules?: TrainScheduleUncheckedCreateNestedManyWithoutTrainInput
@@ -28691,8 +28697,8 @@ export namespace Prisma {
     type?: StringFilter<"Train"> | string
     sourceStationId?: StringFilter<"Train"> | string
     destinationStationId?: StringFilter<"Train"> | string
-    departureTime?: StringNullableFilter<"Train"> | string | null
     arrivalTime?: StringNullableFilter<"Train"> | string | null
+    departureTime?: StringNullableFilter<"Train"> | string | null
   }
 
   export type TrainUpsertWithWhereUniqueWithoutSourceStationInput = {
@@ -28741,8 +28747,8 @@ export namespace Prisma {
     trainNo: string
     name: string
     type: string
-    departureTime?: string | null
     arrivalTime?: string | null
+    departureTime?: string | null
     reviews?: ReviewCreateNestedManyWithoutTrainInput
     destinationStation: StationCreateNestedOneWithoutTrainsAsDestInput
     sourceStation: StationCreateNestedOneWithoutTrainsAsSourceInput
@@ -28756,8 +28762,8 @@ export namespace Prisma {
     type: string
     sourceStationId: string
     destinationStationId: string
-    departureTime?: string | null
     arrivalTime?: string | null
+    departureTime?: string | null
     reviews?: ReviewUncheckedCreateNestedManyWithoutTrainInput
     schedules?: TrainScheduleUncheckedCreateNestedManyWithoutTrainInput
   }
@@ -28814,8 +28820,8 @@ export namespace Prisma {
     trainNo?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     reviews?: ReviewUpdateManyWithoutTrainNestedInput
     destinationStation?: StationUpdateOneRequiredWithoutTrainsAsDestNestedInput
     sourceStation?: StationUpdateOneRequiredWithoutTrainsAsSourceNestedInput
@@ -28829,8 +28835,8 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     sourceStationId?: StringFieldUpdateOperationsInput | string
     destinationStationId?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     reviews?: ReviewUncheckedUpdateManyWithoutTrainNestedInput
     schedules?: TrainScheduleUncheckedUpdateManyWithoutTrainNestedInput
   }
@@ -28953,8 +28959,8 @@ export namespace Prisma {
     startDate: Date | string
     bookings?: BookingCreateNestedManyWithoutScheduleInput
     coaches?: CoachCreateNestedManyWithoutScheduleInput
-    trainInstances?: TrainInstanceCreateNestedManyWithoutScheduleInput
     exceptions?: ScheduleExceptionCreateNestedManyWithoutScheduleInput
+    trainInstances?: TrainInstanceCreateNestedManyWithoutScheduleInput
   }
 
   export type TrainScheduleUncheckedCreateWithoutTrainInput = {
@@ -28965,8 +28971,8 @@ export namespace Prisma {
     startDate: Date | string
     bookings?: BookingUncheckedCreateNestedManyWithoutScheduleInput
     coaches?: CoachUncheckedCreateNestedManyWithoutScheduleInput
-    trainInstances?: TrainInstanceUncheckedCreateNestedManyWithoutScheduleInput
     exceptions?: ScheduleExceptionUncheckedCreateNestedManyWithoutScheduleInput
+    trainInstances?: TrainInstanceUncheckedCreateNestedManyWithoutScheduleInput
   }
 
   export type TrainScheduleCreateOrConnectWithoutTrainInput = {
@@ -29104,13 +29110,13 @@ export namespace Prisma {
   export type BookingCreateWithoutScheduleInput = {
     id?: bigint | number
     pnr: string
-    journeyDate?: Date | string | null
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
-    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
+    journeyDate?: Date | string | null
+    totalFare?: number
     fromStation: StationCreateNestedOneWithoutFromBookingsInput
     toStation: StationCreateNestedOneWithoutToBookingsInput
+    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
     user: UserCreateNestedOneWithoutBookingsInput
     passengers?: PassengerCreateNestedManyWithoutBookingInput
     payment?: PaymentCreateNestedOneWithoutBookingInput
@@ -29121,13 +29127,13 @@ export namespace Prisma {
     id?: bigint | number
     pnr: string
     userId: string
-    journeyDate?: Date | string | null
-    trainInstanceId?: bigint | number | null
     fromStationId: string
     toStationId: string
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
+    trainInstanceId?: bigint | number | null
     passengers?: PassengerUncheckedCreateNestedManyWithoutBookingInput
     payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
     seatAvailabilities?: SeatAvailabilityUncheckedCreateNestedManyWithoutBookingInput
@@ -29171,6 +29177,28 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ScheduleExceptionCreateWithoutScheduleInput = {
+    id?: bigint | number
+    date: Date | string
+    type: $Enums.ExceptionType
+  }
+
+  export type ScheduleExceptionUncheckedCreateWithoutScheduleInput = {
+    id?: bigint | number
+    date: Date | string
+    type: $Enums.ExceptionType
+  }
+
+  export type ScheduleExceptionCreateOrConnectWithoutScheduleInput = {
+    where: ScheduleExceptionWhereUniqueInput
+    create: XOR<ScheduleExceptionCreateWithoutScheduleInput, ScheduleExceptionUncheckedCreateWithoutScheduleInput>
+  }
+
+  export type ScheduleExceptionCreateManyScheduleInputEnvelope = {
+    data: ScheduleExceptionCreateManyScheduleInput | ScheduleExceptionCreateManyScheduleInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TrainInstanceCreateWithoutScheduleInput = {
     id?: bigint | number
     journeyDate: Date | string
@@ -29207,35 +29235,13 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type ScheduleExceptionCreateWithoutScheduleInput = {
-    id?: bigint | number
-    date: Date | string
-    type: $Enums.ExceptionType
-  }
-
-  export type ScheduleExceptionUncheckedCreateWithoutScheduleInput = {
-    id?: bigint | number
-    date: Date | string
-    type: $Enums.ExceptionType
-  }
-
-  export type ScheduleExceptionCreateOrConnectWithoutScheduleInput = {
-    where: ScheduleExceptionWhereUniqueInput
-    create: XOR<ScheduleExceptionCreateWithoutScheduleInput, ScheduleExceptionUncheckedCreateWithoutScheduleInput>
-  }
-
-  export type ScheduleExceptionCreateManyScheduleInputEnvelope = {
-    data: ScheduleExceptionCreateManyScheduleInput | ScheduleExceptionCreateManyScheduleInput[]
-    skipDuplicates?: boolean
-  }
-
   export type TrainCreateWithoutSchedulesInput = {
     id?: bigint | number
     trainNo: string
     name: string
     type: string
-    departureTime?: string | null
     arrivalTime?: string | null
+    departureTime?: string | null
     reviews?: ReviewCreateNestedManyWithoutTrainInput
     routes?: RouteCreateNestedManyWithoutTrainInput
     destinationStation: StationCreateNestedOneWithoutTrainsAsDestInput
@@ -29249,8 +29255,8 @@ export namespace Prisma {
     type: string
     sourceStationId: string
     destinationStationId: string
-    departureTime?: string | null
     arrivalTime?: string | null
+    departureTime?: string | null
     reviews?: ReviewUncheckedCreateNestedManyWithoutTrainInput
     routes?: RouteUncheckedCreateNestedManyWithoutTrainInput
   }
@@ -29303,6 +29309,32 @@ export namespace Prisma {
     totalSeats?: IntFilter<"Coach"> | number
   }
 
+  export type ScheduleExceptionUpsertWithWhereUniqueWithoutScheduleInput = {
+    where: ScheduleExceptionWhereUniqueInput
+    update: XOR<ScheduleExceptionUpdateWithoutScheduleInput, ScheduleExceptionUncheckedUpdateWithoutScheduleInput>
+    create: XOR<ScheduleExceptionCreateWithoutScheduleInput, ScheduleExceptionUncheckedCreateWithoutScheduleInput>
+  }
+
+  export type ScheduleExceptionUpdateWithWhereUniqueWithoutScheduleInput = {
+    where: ScheduleExceptionWhereUniqueInput
+    data: XOR<ScheduleExceptionUpdateWithoutScheduleInput, ScheduleExceptionUncheckedUpdateWithoutScheduleInput>
+  }
+
+  export type ScheduleExceptionUpdateManyWithWhereWithoutScheduleInput = {
+    where: ScheduleExceptionScalarWhereInput
+    data: XOR<ScheduleExceptionUpdateManyMutationInput, ScheduleExceptionUncheckedUpdateManyWithoutScheduleInput>
+  }
+
+  export type ScheduleExceptionScalarWhereInput = {
+    AND?: ScheduleExceptionScalarWhereInput | ScheduleExceptionScalarWhereInput[]
+    OR?: ScheduleExceptionScalarWhereInput[]
+    NOT?: ScheduleExceptionScalarWhereInput | ScheduleExceptionScalarWhereInput[]
+    id?: BigIntFilter<"ScheduleException"> | bigint | number
+    scheduleId?: BigIntFilter<"ScheduleException"> | bigint | number
+    date?: DateTimeFilter<"ScheduleException"> | Date | string
+    type?: EnumExceptionTypeFilter<"ScheduleException"> | $Enums.ExceptionType
+  }
+
   export type TrainInstanceUpsertWithWhereUniqueWithoutScheduleInput = {
     where: TrainInstanceWhereUniqueInput
     update: XOR<TrainInstanceUpdateWithoutScheduleInput, TrainInstanceUncheckedUpdateWithoutScheduleInput>
@@ -29334,32 +29366,6 @@ export namespace Prisma {
     wlSeats?: IntFilter<"TrainInstance"> | number
   }
 
-  export type ScheduleExceptionUpsertWithWhereUniqueWithoutScheduleInput = {
-    where: ScheduleExceptionWhereUniqueInput
-    update: XOR<ScheduleExceptionUpdateWithoutScheduleInput, ScheduleExceptionUncheckedUpdateWithoutScheduleInput>
-    create: XOR<ScheduleExceptionCreateWithoutScheduleInput, ScheduleExceptionUncheckedCreateWithoutScheduleInput>
-  }
-
-  export type ScheduleExceptionUpdateWithWhereUniqueWithoutScheduleInput = {
-    where: ScheduleExceptionWhereUniqueInput
-    data: XOR<ScheduleExceptionUpdateWithoutScheduleInput, ScheduleExceptionUncheckedUpdateWithoutScheduleInput>
-  }
-
-  export type ScheduleExceptionUpdateManyWithWhereWithoutScheduleInput = {
-    where: ScheduleExceptionScalarWhereInput
-    data: XOR<ScheduleExceptionUpdateManyMutationInput, ScheduleExceptionUncheckedUpdateManyWithoutScheduleInput>
-  }
-
-  export type ScheduleExceptionScalarWhereInput = {
-    AND?: ScheduleExceptionScalarWhereInput | ScheduleExceptionScalarWhereInput[]
-    OR?: ScheduleExceptionScalarWhereInput[]
-    NOT?: ScheduleExceptionScalarWhereInput | ScheduleExceptionScalarWhereInput[]
-    id?: BigIntFilter<"ScheduleException"> | bigint | number
-    scheduleId?: BigIntFilter<"ScheduleException"> | bigint | number
-    date?: DateTimeFilter<"ScheduleException"> | Date | string
-    type?: EnumExceptionTypeFilter<"ScheduleException"> | $Enums.ExceptionType
-  }
-
   export type TrainUpsertWithoutSchedulesInput = {
     update: XOR<TrainUpdateWithoutSchedulesInput, TrainUncheckedUpdateWithoutSchedulesInput>
     create: XOR<TrainCreateWithoutSchedulesInput, TrainUncheckedCreateWithoutSchedulesInput>
@@ -29376,8 +29382,8 @@ export namespace Prisma {
     trainNo?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     reviews?: ReviewUpdateManyWithoutTrainNestedInput
     routes?: RouteUpdateManyWithoutTrainNestedInput
     destinationStation?: StationUpdateOneRequiredWithoutTrainsAsDestNestedInput
@@ -29391,8 +29397,8 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     sourceStationId?: StringFieldUpdateOperationsInput | string
     destinationStationId?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     reviews?: ReviewUncheckedUpdateManyWithoutTrainNestedInput
     routes?: RouteUncheckedUpdateManyWithoutTrainNestedInput
   }
@@ -29468,8 +29474,8 @@ export namespace Prisma {
     endDate?: Date | string | null
     startDate: Date | string
     bookings?: BookingCreateNestedManyWithoutScheduleInput
-    trainInstances?: TrainInstanceCreateNestedManyWithoutScheduleInput
     exceptions?: ScheduleExceptionCreateNestedManyWithoutScheduleInput
+    trainInstances?: TrainInstanceCreateNestedManyWithoutScheduleInput
     train: TrainCreateNestedOneWithoutSchedulesInput
   }
 
@@ -29481,8 +29487,8 @@ export namespace Prisma {
     endDate?: Date | string | null
     startDate: Date | string
     bookings?: BookingUncheckedCreateNestedManyWithoutScheduleInput
-    trainInstances?: TrainInstanceUncheckedCreateNestedManyWithoutScheduleInput
     exceptions?: ScheduleExceptionUncheckedCreateNestedManyWithoutScheduleInput
+    trainInstances?: TrainInstanceUncheckedCreateNestedManyWithoutScheduleInput
   }
 
   export type TrainScheduleCreateOrConnectWithoutCoachesInput = {
@@ -29518,20 +29524,20 @@ export namespace Prisma {
 
   export type SeatAvailabilityCreateWithoutCoachInput = {
     id?: bigint | number
-    passengerId?: bigint | number | null
     status?: $Enums.SeatStatus
-    trainInstance?: TrainInstanceCreateNestedOneWithoutSeatRecordsInput
+    passengerId?: bigint | number | null
     booking?: BookingCreateNestedOneWithoutSeatAvailabilitiesInput
     seat?: SeatCreateNestedOneWithoutSeatAvailabilitiesInput
+    trainInstance?: TrainInstanceCreateNestedOneWithoutSeatRecordsInput
   }
 
   export type SeatAvailabilityUncheckedCreateWithoutCoachInput = {
     id?: bigint | number
-    trainInstanceId?: bigint | number | null
-    bookingId?: bigint | number | null
-    passengerId?: bigint | number | null
     seatId?: bigint | number | null
     status?: $Enums.SeatStatus
+    bookingId?: bigint | number | null
+    passengerId?: bigint | number | null
+    trainInstanceId?: bigint | number | null
   }
 
   export type SeatAvailabilityCreateOrConnectWithoutCoachInput = {
@@ -29562,8 +29568,8 @@ export namespace Prisma {
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     bookings?: BookingUpdateManyWithoutScheduleNestedInput
-    trainInstances?: TrainInstanceUpdateManyWithoutScheduleNestedInput
     exceptions?: ScheduleExceptionUpdateManyWithoutScheduleNestedInput
+    trainInstances?: TrainInstanceUpdateManyWithoutScheduleNestedInput
     train?: TrainUpdateOneRequiredWithoutSchedulesNestedInput
   }
 
@@ -29575,8 +29581,8 @@ export namespace Prisma {
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     bookings?: BookingUncheckedUpdateManyWithoutScheduleNestedInput
-    trainInstances?: TrainInstanceUncheckedUpdateManyWithoutScheduleNestedInput
     exceptions?: ScheduleExceptionUncheckedUpdateManyWithoutScheduleNestedInput
+    trainInstances?: TrainInstanceUncheckedUpdateManyWithoutScheduleNestedInput
   }
 
   export type SeatUpsertWithWhereUniqueWithoutCoachInput = {
@@ -29626,12 +29632,12 @@ export namespace Prisma {
     OR?: SeatAvailabilityScalarWhereInput[]
     NOT?: SeatAvailabilityScalarWhereInput | SeatAvailabilityScalarWhereInput[]
     id?: BigIntFilter<"SeatAvailability"> | bigint | number
-    trainInstanceId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
-    bookingId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
-    passengerId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
     coachId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
     seatId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
     status?: EnumSeatStatusFilter<"SeatAvailability"> | $Enums.SeatStatus
+    bookingId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
+    passengerId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
+    trainInstanceId?: BigIntNullableFilter<"SeatAvailability"> | bigint | number | null
   }
 
   export type PassengerCreateWithoutSeatInput = {
@@ -29687,20 +29693,20 @@ export namespace Prisma {
 
   export type SeatAvailabilityCreateWithoutSeatInput = {
     id?: bigint | number
-    passengerId?: bigint | number | null
     status?: $Enums.SeatStatus
-    trainInstance?: TrainInstanceCreateNestedOneWithoutSeatRecordsInput
+    passengerId?: bigint | number | null
     booking?: BookingCreateNestedOneWithoutSeatAvailabilitiesInput
     coach?: CoachCreateNestedOneWithoutSeatAvailabilitiesInput
+    trainInstance?: TrainInstanceCreateNestedOneWithoutSeatRecordsInput
   }
 
   export type SeatAvailabilityUncheckedCreateWithoutSeatInput = {
     id?: bigint | number
-    trainInstanceId?: bigint | number | null
-    bookingId?: bigint | number | null
-    passengerId?: bigint | number | null
     coachId?: bigint | number | null
     status?: $Enums.SeatStatus
+    bookingId?: bigint | number | null
+    passengerId?: bigint | number | null
+    trainInstanceId?: bigint | number | null
   }
 
   export type SeatAvailabilityCreateOrConnectWithoutSeatInput = {
@@ -29787,6 +29793,76 @@ export namespace Prisma {
     data: XOR<SeatAvailabilityUpdateManyMutationInput, SeatAvailabilityUncheckedUpdateManyWithoutSeatInput>
   }
 
+  export type BookingCreateWithoutTrainInstanceInput = {
+    id?: bigint | number
+    pnr: string
+    status?: $Enums.BookingStatus
+    bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
+    fromStation: StationCreateNestedOneWithoutFromBookingsInput
+    schedule: TrainScheduleCreateNestedOneWithoutBookingsInput
+    toStation: StationCreateNestedOneWithoutToBookingsInput
+    user: UserCreateNestedOneWithoutBookingsInput
+    passengers?: PassengerCreateNestedManyWithoutBookingInput
+    payment?: PaymentCreateNestedOneWithoutBookingInput
+    seatAvailabilities?: SeatAvailabilityCreateNestedManyWithoutBookingInput
+  }
+
+  export type BookingUncheckedCreateWithoutTrainInstanceInput = {
+    id?: bigint | number
+    pnr: string
+    userId: string
+    scheduleId: bigint | number
+    fromStationId: string
+    toStationId: string
+    status?: $Enums.BookingStatus
+    bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
+    passengers?: PassengerUncheckedCreateNestedManyWithoutBookingInput
+    payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
+    seatAvailabilities?: SeatAvailabilityUncheckedCreateNestedManyWithoutBookingInput
+  }
+
+  export type BookingCreateOrConnectWithoutTrainInstanceInput = {
+    where: BookingWhereUniqueInput
+    create: XOR<BookingCreateWithoutTrainInstanceInput, BookingUncheckedCreateWithoutTrainInstanceInput>
+  }
+
+  export type BookingCreateManyTrainInstanceInputEnvelope = {
+    data: BookingCreateManyTrainInstanceInput | BookingCreateManyTrainInstanceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SeatAvailabilityCreateWithoutTrainInstanceInput = {
+    id?: bigint | number
+    status?: $Enums.SeatStatus
+    passengerId?: bigint | number | null
+    booking?: BookingCreateNestedOneWithoutSeatAvailabilitiesInput
+    coach?: CoachCreateNestedOneWithoutSeatAvailabilitiesInput
+    seat?: SeatCreateNestedOneWithoutSeatAvailabilitiesInput
+  }
+
+  export type SeatAvailabilityUncheckedCreateWithoutTrainInstanceInput = {
+    id?: bigint | number
+    coachId?: bigint | number | null
+    seatId?: bigint | number | null
+    status?: $Enums.SeatStatus
+    bookingId?: bigint | number | null
+    passengerId?: bigint | number | null
+  }
+
+  export type SeatAvailabilityCreateOrConnectWithoutTrainInstanceInput = {
+    where: SeatAvailabilityWhereUniqueInput
+    create: XOR<SeatAvailabilityCreateWithoutTrainInstanceInput, SeatAvailabilityUncheckedCreateWithoutTrainInstanceInput>
+  }
+
+  export type SeatAvailabilityCreateManyTrainInstanceInputEnvelope = {
+    data: SeatAvailabilityCreateManyTrainInstanceInput | SeatAvailabilityCreateManyTrainInstanceInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TrainScheduleCreateWithoutTrainInstancesInput = {
     id?: bigint | number
     status?: $Enums.ScheduleStatus
@@ -29816,74 +29892,36 @@ export namespace Prisma {
     create: XOR<TrainScheduleCreateWithoutTrainInstancesInput, TrainScheduleUncheckedCreateWithoutTrainInstancesInput>
   }
 
-  export type BookingCreateWithoutTrainInstanceInput = {
-    id?: bigint | number
-    pnr: string
-    journeyDate?: Date | string | null
-    status?: $Enums.BookingStatus
-    totalFare?: number
-    bookedAt?: Date | string
-    fromStation: StationCreateNestedOneWithoutFromBookingsInput
-    schedule: TrainScheduleCreateNestedOneWithoutBookingsInput
-    toStation: StationCreateNestedOneWithoutToBookingsInput
-    user: UserCreateNestedOneWithoutBookingsInput
-    passengers?: PassengerCreateNestedManyWithoutBookingInput
-    payment?: PaymentCreateNestedOneWithoutBookingInput
-    seatAvailabilities?: SeatAvailabilityCreateNestedManyWithoutBookingInput
-  }
-
-  export type BookingUncheckedCreateWithoutTrainInstanceInput = {
-    id?: bigint | number
-    pnr: string
-    userId: string
-    journeyDate?: Date | string | null
-    scheduleId: bigint | number
-    fromStationId: string
-    toStationId: string
-    status?: $Enums.BookingStatus
-    totalFare?: number
-    bookedAt?: Date | string
-    passengers?: PassengerUncheckedCreateNestedManyWithoutBookingInput
-    payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
-    seatAvailabilities?: SeatAvailabilityUncheckedCreateNestedManyWithoutBookingInput
-  }
-
-  export type BookingCreateOrConnectWithoutTrainInstanceInput = {
+  export type BookingUpsertWithWhereUniqueWithoutTrainInstanceInput = {
     where: BookingWhereUniqueInput
+    update: XOR<BookingUpdateWithoutTrainInstanceInput, BookingUncheckedUpdateWithoutTrainInstanceInput>
     create: XOR<BookingCreateWithoutTrainInstanceInput, BookingUncheckedCreateWithoutTrainInstanceInput>
   }
 
-  export type BookingCreateManyTrainInstanceInputEnvelope = {
-    data: BookingCreateManyTrainInstanceInput | BookingCreateManyTrainInstanceInput[]
-    skipDuplicates?: boolean
+  export type BookingUpdateWithWhereUniqueWithoutTrainInstanceInput = {
+    where: BookingWhereUniqueInput
+    data: XOR<BookingUpdateWithoutTrainInstanceInput, BookingUncheckedUpdateWithoutTrainInstanceInput>
   }
 
-  export type SeatAvailabilityCreateWithoutTrainInstanceInput = {
-    id?: bigint | number
-    passengerId?: bigint | number | null
-    status?: $Enums.SeatStatus
-    booking?: BookingCreateNestedOneWithoutSeatAvailabilitiesInput
-    coach?: CoachCreateNestedOneWithoutSeatAvailabilitiesInput
-    seat?: SeatCreateNestedOneWithoutSeatAvailabilitiesInput
+  export type BookingUpdateManyWithWhereWithoutTrainInstanceInput = {
+    where: BookingScalarWhereInput
+    data: XOR<BookingUpdateManyMutationInput, BookingUncheckedUpdateManyWithoutTrainInstanceInput>
   }
 
-  export type SeatAvailabilityUncheckedCreateWithoutTrainInstanceInput = {
-    id?: bigint | number
-    bookingId?: bigint | number | null
-    passengerId?: bigint | number | null
-    coachId?: bigint | number | null
-    seatId?: bigint | number | null
-    status?: $Enums.SeatStatus
-  }
-
-  export type SeatAvailabilityCreateOrConnectWithoutTrainInstanceInput = {
+  export type SeatAvailabilityUpsertWithWhereUniqueWithoutTrainInstanceInput = {
     where: SeatAvailabilityWhereUniqueInput
+    update: XOR<SeatAvailabilityUpdateWithoutTrainInstanceInput, SeatAvailabilityUncheckedUpdateWithoutTrainInstanceInput>
     create: XOR<SeatAvailabilityCreateWithoutTrainInstanceInput, SeatAvailabilityUncheckedCreateWithoutTrainInstanceInput>
   }
 
-  export type SeatAvailabilityCreateManyTrainInstanceInputEnvelope = {
-    data: SeatAvailabilityCreateManyTrainInstanceInput | SeatAvailabilityCreateManyTrainInstanceInput[]
-    skipDuplicates?: boolean
+  export type SeatAvailabilityUpdateWithWhereUniqueWithoutTrainInstanceInput = {
+    where: SeatAvailabilityWhereUniqueInput
+    data: XOR<SeatAvailabilityUpdateWithoutTrainInstanceInput, SeatAvailabilityUncheckedUpdateWithoutTrainInstanceInput>
+  }
+
+  export type SeatAvailabilityUpdateManyWithWhereWithoutTrainInstanceInput = {
+    where: SeatAvailabilityScalarWhereInput
+    data: XOR<SeatAvailabilityUpdateManyMutationInput, SeatAvailabilityUncheckedUpdateManyWithoutTrainInstanceInput>
   }
 
   export type TrainScheduleUpsertWithoutTrainInstancesInput = {
@@ -29921,80 +29959,17 @@ export namespace Prisma {
     exceptions?: ScheduleExceptionUncheckedUpdateManyWithoutScheduleNestedInput
   }
 
-  export type BookingUpsertWithWhereUniqueWithoutTrainInstanceInput = {
-    where: BookingWhereUniqueInput
-    update: XOR<BookingUpdateWithoutTrainInstanceInput, BookingUncheckedUpdateWithoutTrainInstanceInput>
-    create: XOR<BookingCreateWithoutTrainInstanceInput, BookingUncheckedCreateWithoutTrainInstanceInput>
-  }
-
-  export type BookingUpdateWithWhereUniqueWithoutTrainInstanceInput = {
-    where: BookingWhereUniqueInput
-    data: XOR<BookingUpdateWithoutTrainInstanceInput, BookingUncheckedUpdateWithoutTrainInstanceInput>
-  }
-
-  export type BookingUpdateManyWithWhereWithoutTrainInstanceInput = {
-    where: BookingScalarWhereInput
-    data: XOR<BookingUpdateManyMutationInput, BookingUncheckedUpdateManyWithoutTrainInstanceInput>
-  }
-
-  export type SeatAvailabilityUpsertWithWhereUniqueWithoutTrainInstanceInput = {
-    where: SeatAvailabilityWhereUniqueInput
-    update: XOR<SeatAvailabilityUpdateWithoutTrainInstanceInput, SeatAvailabilityUncheckedUpdateWithoutTrainInstanceInput>
-    create: XOR<SeatAvailabilityCreateWithoutTrainInstanceInput, SeatAvailabilityUncheckedCreateWithoutTrainInstanceInput>
-  }
-
-  export type SeatAvailabilityUpdateWithWhereUniqueWithoutTrainInstanceInput = {
-    where: SeatAvailabilityWhereUniqueInput
-    data: XOR<SeatAvailabilityUpdateWithoutTrainInstanceInput, SeatAvailabilityUncheckedUpdateWithoutTrainInstanceInput>
-  }
-
-  export type SeatAvailabilityUpdateManyWithWhereWithoutTrainInstanceInput = {
-    where: SeatAvailabilityScalarWhereInput
-    data: XOR<SeatAvailabilityUpdateManyMutationInput, SeatAvailabilityUncheckedUpdateManyWithoutTrainInstanceInput>
-  }
-
-  export type TrainInstanceCreateWithoutSeatRecordsInput = {
-    id?: bigint | number
-    journeyDate: Date | string
-    coachType: string
-    totalSeats: number
-    availableSeats?: number
-    bookedSeats?: number
-    racSeats?: number
-    wlSeats?: number
-    schedule?: TrainScheduleCreateNestedOneWithoutTrainInstancesInput
-    bookings?: BookingCreateNestedManyWithoutTrainInstanceInput
-  }
-
-  export type TrainInstanceUncheckedCreateWithoutSeatRecordsInput = {
-    id?: bigint | number
-    scheduleId?: bigint | number | null
-    journeyDate: Date | string
-    coachType: string
-    totalSeats: number
-    availableSeats?: number
-    bookedSeats?: number
-    racSeats?: number
-    wlSeats?: number
-    bookings?: BookingUncheckedCreateNestedManyWithoutTrainInstanceInput
-  }
-
-  export type TrainInstanceCreateOrConnectWithoutSeatRecordsInput = {
-    where: TrainInstanceWhereUniqueInput
-    create: XOR<TrainInstanceCreateWithoutSeatRecordsInput, TrainInstanceUncheckedCreateWithoutSeatRecordsInput>
-  }
-
   export type BookingCreateWithoutSeatAvailabilitiesInput = {
     id?: bigint | number
     pnr: string
-    journeyDate?: Date | string | null
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
-    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
+    journeyDate?: Date | string | null
+    totalFare?: number
     fromStation: StationCreateNestedOneWithoutFromBookingsInput
     schedule: TrainScheduleCreateNestedOneWithoutBookingsInput
     toStation: StationCreateNestedOneWithoutToBookingsInput
+    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
     user: UserCreateNestedOneWithoutBookingsInput
     passengers?: PassengerCreateNestedManyWithoutBookingInput
     payment?: PaymentCreateNestedOneWithoutBookingInput
@@ -30004,14 +29979,14 @@ export namespace Prisma {
     id?: bigint | number
     pnr: string
     userId: string
-    journeyDate?: Date | string | null
-    trainInstanceId?: bigint | number | null
     scheduleId: bigint | number
     fromStationId: string
     toStationId: string
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
+    trainInstanceId?: bigint | number | null
     passengers?: PassengerUncheckedCreateNestedManyWithoutBookingInput
     payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
   }
@@ -30065,41 +30040,35 @@ export namespace Prisma {
     create: XOR<SeatCreateWithoutSeatAvailabilitiesInput, SeatUncheckedCreateWithoutSeatAvailabilitiesInput>
   }
 
-  export type TrainInstanceUpsertWithoutSeatRecordsInput = {
-    update: XOR<TrainInstanceUpdateWithoutSeatRecordsInput, TrainInstanceUncheckedUpdateWithoutSeatRecordsInput>
+  export type TrainInstanceCreateWithoutSeatRecordsInput = {
+    id?: bigint | number
+    journeyDate: Date | string
+    coachType: string
+    totalSeats: number
+    availableSeats?: number
+    bookedSeats?: number
+    racSeats?: number
+    wlSeats?: number
+    bookings?: BookingCreateNestedManyWithoutTrainInstanceInput
+    schedule?: TrainScheduleCreateNestedOneWithoutTrainInstancesInput
+  }
+
+  export type TrainInstanceUncheckedCreateWithoutSeatRecordsInput = {
+    id?: bigint | number
+    scheduleId?: bigint | number | null
+    journeyDate: Date | string
+    coachType: string
+    totalSeats: number
+    availableSeats?: number
+    bookedSeats?: number
+    racSeats?: number
+    wlSeats?: number
+    bookings?: BookingUncheckedCreateNestedManyWithoutTrainInstanceInput
+  }
+
+  export type TrainInstanceCreateOrConnectWithoutSeatRecordsInput = {
+    where: TrainInstanceWhereUniqueInput
     create: XOR<TrainInstanceCreateWithoutSeatRecordsInput, TrainInstanceUncheckedCreateWithoutSeatRecordsInput>
-    where?: TrainInstanceWhereInput
-  }
-
-  export type TrainInstanceUpdateToOneWithWhereWithoutSeatRecordsInput = {
-    where?: TrainInstanceWhereInput
-    data: XOR<TrainInstanceUpdateWithoutSeatRecordsInput, TrainInstanceUncheckedUpdateWithoutSeatRecordsInput>
-  }
-
-  export type TrainInstanceUpdateWithoutSeatRecordsInput = {
-    id?: BigIntFieldUpdateOperationsInput | bigint | number
-    journeyDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    coachType?: StringFieldUpdateOperationsInput | string
-    totalSeats?: IntFieldUpdateOperationsInput | number
-    availableSeats?: IntFieldUpdateOperationsInput | number
-    bookedSeats?: IntFieldUpdateOperationsInput | number
-    racSeats?: IntFieldUpdateOperationsInput | number
-    wlSeats?: IntFieldUpdateOperationsInput | number
-    schedule?: TrainScheduleUpdateOneWithoutTrainInstancesNestedInput
-    bookings?: BookingUpdateManyWithoutTrainInstanceNestedInput
-  }
-
-  export type TrainInstanceUncheckedUpdateWithoutSeatRecordsInput = {
-    id?: BigIntFieldUpdateOperationsInput | bigint | number
-    scheduleId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    journeyDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    coachType?: StringFieldUpdateOperationsInput | string
-    totalSeats?: IntFieldUpdateOperationsInput | number
-    availableSeats?: IntFieldUpdateOperationsInput | number
-    bookedSeats?: IntFieldUpdateOperationsInput | number
-    racSeats?: IntFieldUpdateOperationsInput | number
-    wlSeats?: IntFieldUpdateOperationsInput | number
-    bookings?: BookingUncheckedUpdateManyWithoutTrainInstanceNestedInput
   }
 
   export type BookingUpsertWithoutSeatAvailabilitiesInput = {
@@ -30116,14 +30085,14 @@ export namespace Prisma {
   export type BookingUpdateWithoutSeatAvailabilitiesInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
     fromStation?: StationUpdateOneRequiredWithoutFromBookingsNestedInput
     schedule?: TrainScheduleUpdateOneRequiredWithoutBookingsNestedInput
     toStation?: StationUpdateOneRequiredWithoutToBookingsNestedInput
+    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
     user?: UserUpdateOneRequiredWithoutBookingsNestedInput
     passengers?: PassengerUpdateManyWithoutBookingNestedInput
     payment?: PaymentUpdateOneWithoutBookingNestedInput
@@ -30133,14 +30102,14 @@ export namespace Prisma {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     scheduleId?: BigIntFieldUpdateOperationsInput | bigint | number
     fromStationId?: StringFieldUpdateOperationsInput | string
     toStationId?: StringFieldUpdateOperationsInput | string
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     passengers?: PassengerUncheckedUpdateManyWithoutBookingNestedInput
     payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
   }
@@ -30201,35 +30170,41 @@ export namespace Prisma {
     passengers?: PassengerUncheckedUpdateManyWithoutSeatNestedInput
   }
 
-  export type TrainInstanceCreateWithoutBookingsInput = {
-    id?: bigint | number
-    journeyDate: Date | string
-    coachType: string
-    totalSeats: number
-    availableSeats?: number
-    bookedSeats?: number
-    racSeats?: number
-    wlSeats?: number
-    schedule?: TrainScheduleCreateNestedOneWithoutTrainInstancesInput
-    seatRecords?: SeatAvailabilityCreateNestedManyWithoutTrainInstanceInput
+  export type TrainInstanceUpsertWithoutSeatRecordsInput = {
+    update: XOR<TrainInstanceUpdateWithoutSeatRecordsInput, TrainInstanceUncheckedUpdateWithoutSeatRecordsInput>
+    create: XOR<TrainInstanceCreateWithoutSeatRecordsInput, TrainInstanceUncheckedCreateWithoutSeatRecordsInput>
+    where?: TrainInstanceWhereInput
   }
 
-  export type TrainInstanceUncheckedCreateWithoutBookingsInput = {
-    id?: bigint | number
-    scheduleId?: bigint | number | null
-    journeyDate: Date | string
-    coachType: string
-    totalSeats: number
-    availableSeats?: number
-    bookedSeats?: number
-    racSeats?: number
-    wlSeats?: number
-    seatRecords?: SeatAvailabilityUncheckedCreateNestedManyWithoutTrainInstanceInput
+  export type TrainInstanceUpdateToOneWithWhereWithoutSeatRecordsInput = {
+    where?: TrainInstanceWhereInput
+    data: XOR<TrainInstanceUpdateWithoutSeatRecordsInput, TrainInstanceUncheckedUpdateWithoutSeatRecordsInput>
   }
 
-  export type TrainInstanceCreateOrConnectWithoutBookingsInput = {
-    where: TrainInstanceWhereUniqueInput
-    create: XOR<TrainInstanceCreateWithoutBookingsInput, TrainInstanceUncheckedCreateWithoutBookingsInput>
+  export type TrainInstanceUpdateWithoutSeatRecordsInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    journeyDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    coachType?: StringFieldUpdateOperationsInput | string
+    totalSeats?: IntFieldUpdateOperationsInput | number
+    availableSeats?: IntFieldUpdateOperationsInput | number
+    bookedSeats?: IntFieldUpdateOperationsInput | number
+    racSeats?: IntFieldUpdateOperationsInput | number
+    wlSeats?: IntFieldUpdateOperationsInput | number
+    bookings?: BookingUpdateManyWithoutTrainInstanceNestedInput
+    schedule?: TrainScheduleUpdateOneWithoutTrainInstancesNestedInput
+  }
+
+  export type TrainInstanceUncheckedUpdateWithoutSeatRecordsInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    scheduleId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    journeyDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    coachType?: StringFieldUpdateOperationsInput | string
+    totalSeats?: IntFieldUpdateOperationsInput | number
+    availableSeats?: IntFieldUpdateOperationsInput | number
+    bookedSeats?: IntFieldUpdateOperationsInput | number
+    racSeats?: IntFieldUpdateOperationsInput | number
+    wlSeats?: IntFieldUpdateOperationsInput | number
+    bookings?: BookingUncheckedUpdateManyWithoutTrainInstanceNestedInput
   }
 
   export type StationCreateWithoutFromBookingsInput = {
@@ -30264,8 +30239,8 @@ export namespace Prisma {
     endDate?: Date | string | null
     startDate: Date | string
     coaches?: CoachCreateNestedManyWithoutScheduleInput
-    trainInstances?: TrainInstanceCreateNestedManyWithoutScheduleInput
     exceptions?: ScheduleExceptionCreateNestedManyWithoutScheduleInput
+    trainInstances?: TrainInstanceCreateNestedManyWithoutScheduleInput
     train: TrainCreateNestedOneWithoutSchedulesInput
   }
 
@@ -30277,8 +30252,8 @@ export namespace Prisma {
     endDate?: Date | string | null
     startDate: Date | string
     coaches?: CoachUncheckedCreateNestedManyWithoutScheduleInput
-    trainInstances?: TrainInstanceUncheckedCreateNestedManyWithoutScheduleInput
     exceptions?: ScheduleExceptionUncheckedCreateNestedManyWithoutScheduleInput
+    trainInstances?: TrainInstanceUncheckedCreateNestedManyWithoutScheduleInput
   }
 
   export type TrainScheduleCreateOrConnectWithoutBookingsInput = {
@@ -30311,10 +30286,40 @@ export namespace Prisma {
     create: XOR<StationCreateWithoutToBookingsInput, StationUncheckedCreateWithoutToBookingsInput>
   }
 
+  export type TrainInstanceCreateWithoutBookingsInput = {
+    id?: bigint | number
+    journeyDate: Date | string
+    coachType: string
+    totalSeats: number
+    availableSeats?: number
+    bookedSeats?: number
+    racSeats?: number
+    wlSeats?: number
+    seatRecords?: SeatAvailabilityCreateNestedManyWithoutTrainInstanceInput
+    schedule?: TrainScheduleCreateNestedOneWithoutTrainInstancesInput
+  }
+
+  export type TrainInstanceUncheckedCreateWithoutBookingsInput = {
+    id?: bigint | number
+    scheduleId?: bigint | number | null
+    journeyDate: Date | string
+    coachType: string
+    totalSeats: number
+    availableSeats?: number
+    bookedSeats?: number
+    racSeats?: number
+    wlSeats?: number
+    seatRecords?: SeatAvailabilityUncheckedCreateNestedManyWithoutTrainInstanceInput
+  }
+
+  export type TrainInstanceCreateOrConnectWithoutBookingsInput = {
+    where: TrainInstanceWhereUniqueInput
+    create: XOR<TrainInstanceCreateWithoutBookingsInput, TrainInstanceUncheckedCreateWithoutBookingsInput>
+  }
+
   export type UserCreateWithoutBookingsInput = {
     clerkId: string
     id?: string
-    role?: $Enums.Role
     fullName: string
     email: string
     phone: string
@@ -30332,13 +30337,13 @@ export namespace Prisma {
     walletBalance?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    role?: $Enums.Role
     reviews?: ReviewCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutBookingsInput = {
     clerkId: string
     id?: string
-    role?: $Enums.Role
     fullName: string
     email: string
     phone: string
@@ -30356,6 +30361,7 @@ export namespace Prisma {
     walletBalance?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    role?: $Enums.Role
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -30419,20 +30425,20 @@ export namespace Prisma {
 
   export type SeatAvailabilityCreateWithoutBookingInput = {
     id?: bigint | number
-    passengerId?: bigint | number | null
     status?: $Enums.SeatStatus
-    trainInstance?: TrainInstanceCreateNestedOneWithoutSeatRecordsInput
+    passengerId?: bigint | number | null
     coach?: CoachCreateNestedOneWithoutSeatAvailabilitiesInput
     seat?: SeatCreateNestedOneWithoutSeatAvailabilitiesInput
+    trainInstance?: TrainInstanceCreateNestedOneWithoutSeatRecordsInput
   }
 
   export type SeatAvailabilityUncheckedCreateWithoutBookingInput = {
     id?: bigint | number
-    trainInstanceId?: bigint | number | null
-    passengerId?: bigint | number | null
     coachId?: bigint | number | null
     seatId?: bigint | number | null
     status?: $Enums.SeatStatus
+    passengerId?: bigint | number | null
+    trainInstanceId?: bigint | number | null
   }
 
   export type SeatAvailabilityCreateOrConnectWithoutBookingInput = {
@@ -30443,43 +30449,6 @@ export namespace Prisma {
   export type SeatAvailabilityCreateManyBookingInputEnvelope = {
     data: SeatAvailabilityCreateManyBookingInput | SeatAvailabilityCreateManyBookingInput[]
     skipDuplicates?: boolean
-  }
-
-  export type TrainInstanceUpsertWithoutBookingsInput = {
-    update: XOR<TrainInstanceUpdateWithoutBookingsInput, TrainInstanceUncheckedUpdateWithoutBookingsInput>
-    create: XOR<TrainInstanceCreateWithoutBookingsInput, TrainInstanceUncheckedCreateWithoutBookingsInput>
-    where?: TrainInstanceWhereInput
-  }
-
-  export type TrainInstanceUpdateToOneWithWhereWithoutBookingsInput = {
-    where?: TrainInstanceWhereInput
-    data: XOR<TrainInstanceUpdateWithoutBookingsInput, TrainInstanceUncheckedUpdateWithoutBookingsInput>
-  }
-
-  export type TrainInstanceUpdateWithoutBookingsInput = {
-    id?: BigIntFieldUpdateOperationsInput | bigint | number
-    journeyDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    coachType?: StringFieldUpdateOperationsInput | string
-    totalSeats?: IntFieldUpdateOperationsInput | number
-    availableSeats?: IntFieldUpdateOperationsInput | number
-    bookedSeats?: IntFieldUpdateOperationsInput | number
-    racSeats?: IntFieldUpdateOperationsInput | number
-    wlSeats?: IntFieldUpdateOperationsInput | number
-    schedule?: TrainScheduleUpdateOneWithoutTrainInstancesNestedInput
-    seatRecords?: SeatAvailabilityUpdateManyWithoutTrainInstanceNestedInput
-  }
-
-  export type TrainInstanceUncheckedUpdateWithoutBookingsInput = {
-    id?: BigIntFieldUpdateOperationsInput | bigint | number
-    scheduleId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    journeyDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    coachType?: StringFieldUpdateOperationsInput | string
-    totalSeats?: IntFieldUpdateOperationsInput | number
-    availableSeats?: IntFieldUpdateOperationsInput | number
-    bookedSeats?: IntFieldUpdateOperationsInput | number
-    racSeats?: IntFieldUpdateOperationsInput | number
-    wlSeats?: IntFieldUpdateOperationsInput | number
-    seatRecords?: SeatAvailabilityUncheckedUpdateManyWithoutTrainInstanceNestedInput
   }
 
   export type StationUpsertWithoutFromBookingsInput = {
@@ -30531,8 +30500,8 @@ export namespace Prisma {
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     coaches?: CoachUpdateManyWithoutScheduleNestedInput
-    trainInstances?: TrainInstanceUpdateManyWithoutScheduleNestedInput
     exceptions?: ScheduleExceptionUpdateManyWithoutScheduleNestedInput
+    trainInstances?: TrainInstanceUpdateManyWithoutScheduleNestedInput
     train?: TrainUpdateOneRequiredWithoutSchedulesNestedInput
   }
 
@@ -30544,8 +30513,8 @@ export namespace Prisma {
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     coaches?: CoachUncheckedUpdateManyWithoutScheduleNestedInput
-    trainInstances?: TrainInstanceUncheckedUpdateManyWithoutScheduleNestedInput
     exceptions?: ScheduleExceptionUncheckedUpdateManyWithoutScheduleNestedInput
+    trainInstances?: TrainInstanceUncheckedUpdateManyWithoutScheduleNestedInput
   }
 
   export type StationUpsertWithoutToBookingsInput = {
@@ -30579,6 +30548,43 @@ export namespace Prisma {
     trainsAsSource?: TrainUncheckedUpdateManyWithoutSourceStationNestedInput
   }
 
+  export type TrainInstanceUpsertWithoutBookingsInput = {
+    update: XOR<TrainInstanceUpdateWithoutBookingsInput, TrainInstanceUncheckedUpdateWithoutBookingsInput>
+    create: XOR<TrainInstanceCreateWithoutBookingsInput, TrainInstanceUncheckedCreateWithoutBookingsInput>
+    where?: TrainInstanceWhereInput
+  }
+
+  export type TrainInstanceUpdateToOneWithWhereWithoutBookingsInput = {
+    where?: TrainInstanceWhereInput
+    data: XOR<TrainInstanceUpdateWithoutBookingsInput, TrainInstanceUncheckedUpdateWithoutBookingsInput>
+  }
+
+  export type TrainInstanceUpdateWithoutBookingsInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    journeyDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    coachType?: StringFieldUpdateOperationsInput | string
+    totalSeats?: IntFieldUpdateOperationsInput | number
+    availableSeats?: IntFieldUpdateOperationsInput | number
+    bookedSeats?: IntFieldUpdateOperationsInput | number
+    racSeats?: IntFieldUpdateOperationsInput | number
+    wlSeats?: IntFieldUpdateOperationsInput | number
+    seatRecords?: SeatAvailabilityUpdateManyWithoutTrainInstanceNestedInput
+    schedule?: TrainScheduleUpdateOneWithoutTrainInstancesNestedInput
+  }
+
+  export type TrainInstanceUncheckedUpdateWithoutBookingsInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    scheduleId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    journeyDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    coachType?: StringFieldUpdateOperationsInput | string
+    totalSeats?: IntFieldUpdateOperationsInput | number
+    availableSeats?: IntFieldUpdateOperationsInput | number
+    bookedSeats?: IntFieldUpdateOperationsInput | number
+    racSeats?: IntFieldUpdateOperationsInput | number
+    wlSeats?: IntFieldUpdateOperationsInput | number
+    seatRecords?: SeatAvailabilityUncheckedUpdateManyWithoutTrainInstanceNestedInput
+  }
+
   export type UserUpsertWithoutBookingsInput = {
     update: XOR<UserUpdateWithoutBookingsInput, UserUncheckedUpdateWithoutBookingsInput>
     create: XOR<UserCreateWithoutBookingsInput, UserUncheckedCreateWithoutBookingsInput>
@@ -30593,7 +30599,6 @@ export namespace Prisma {
   export type UserUpdateWithoutBookingsInput = {
     clerkId?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     fullName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
@@ -30611,13 +30616,13 @@ export namespace Prisma {
     walletBalance?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     reviews?: ReviewUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBookingsInput = {
     clerkId?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     fullName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
@@ -30635,6 +30640,7 @@ export namespace Prisma {
     walletBalance?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -30704,14 +30710,14 @@ export namespace Prisma {
   export type BookingCreateWithoutPassengersInput = {
     id?: bigint | number
     pnr: string
-    journeyDate?: Date | string | null
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
-    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
+    journeyDate?: Date | string | null
+    totalFare?: number
     fromStation: StationCreateNestedOneWithoutFromBookingsInput
     schedule: TrainScheduleCreateNestedOneWithoutBookingsInput
     toStation: StationCreateNestedOneWithoutToBookingsInput
+    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
     user: UserCreateNestedOneWithoutBookingsInput
     payment?: PaymentCreateNestedOneWithoutBookingInput
     seatAvailabilities?: SeatAvailabilityCreateNestedManyWithoutBookingInput
@@ -30721,14 +30727,14 @@ export namespace Prisma {
     id?: bigint | number
     pnr: string
     userId: string
-    journeyDate?: Date | string | null
-    trainInstanceId?: bigint | number | null
     scheduleId: bigint | number
     fromStationId: string
     toStationId: string
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
+    trainInstanceId?: bigint | number | null
     payment?: PaymentUncheckedCreateNestedOneWithoutBookingInput
     seatAvailabilities?: SeatAvailabilityUncheckedCreateNestedManyWithoutBookingInput
   }
@@ -30773,14 +30779,14 @@ export namespace Prisma {
   export type BookingUpdateWithoutPassengersInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
     fromStation?: StationUpdateOneRequiredWithoutFromBookingsNestedInput
     schedule?: TrainScheduleUpdateOneRequiredWithoutBookingsNestedInput
     toStation?: StationUpdateOneRequiredWithoutToBookingsNestedInput
+    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
     user?: UserUpdateOneRequiredWithoutBookingsNestedInput
     payment?: PaymentUpdateOneWithoutBookingNestedInput
     seatAvailabilities?: SeatAvailabilityUpdateManyWithoutBookingNestedInput
@@ -30790,14 +30796,14 @@ export namespace Prisma {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     scheduleId?: BigIntFieldUpdateOperationsInput | bigint | number
     fromStationId?: StringFieldUpdateOperationsInput | string
     toStationId?: StringFieldUpdateOperationsInput | string
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
     seatAvailabilities?: SeatAvailabilityUncheckedUpdateManyWithoutBookingNestedInput
   }
@@ -30832,14 +30838,14 @@ export namespace Prisma {
   export type BookingCreateWithoutPaymentInput = {
     id?: bigint | number
     pnr: string
-    journeyDate?: Date | string | null
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
-    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
+    journeyDate?: Date | string | null
+    totalFare?: number
     fromStation: StationCreateNestedOneWithoutFromBookingsInput
     schedule: TrainScheduleCreateNestedOneWithoutBookingsInput
     toStation: StationCreateNestedOneWithoutToBookingsInput
+    trainInstance?: TrainInstanceCreateNestedOneWithoutBookingsInput
     user: UserCreateNestedOneWithoutBookingsInput
     passengers?: PassengerCreateNestedManyWithoutBookingInput
     seatAvailabilities?: SeatAvailabilityCreateNestedManyWithoutBookingInput
@@ -30849,14 +30855,14 @@ export namespace Prisma {
     id?: bigint | number
     pnr: string
     userId: string
-    journeyDate?: Date | string | null
-    trainInstanceId?: bigint | number | null
     scheduleId: bigint | number
     fromStationId: string
     toStationId: string
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
+    trainInstanceId?: bigint | number | null
     passengers?: PassengerUncheckedCreateNestedManyWithoutBookingInput
     seatAvailabilities?: SeatAvailabilityUncheckedCreateNestedManyWithoutBookingInput
   }
@@ -30880,14 +30886,14 @@ export namespace Prisma {
   export type BookingUpdateWithoutPaymentInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
     fromStation?: StationUpdateOneRequiredWithoutFromBookingsNestedInput
     schedule?: TrainScheduleUpdateOneRequiredWithoutBookingsNestedInput
     toStation?: StationUpdateOneRequiredWithoutToBookingsNestedInput
+    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
     user?: UserUpdateOneRequiredWithoutBookingsNestedInput
     passengers?: PassengerUpdateManyWithoutBookingNestedInput
     seatAvailabilities?: SeatAvailabilityUpdateManyWithoutBookingNestedInput
@@ -30897,14 +30903,14 @@ export namespace Prisma {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     scheduleId?: BigIntFieldUpdateOperationsInput | bigint | number
     fromStationId?: StringFieldUpdateOperationsInput | string
     toStationId?: StringFieldUpdateOperationsInput | string
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     passengers?: PassengerUncheckedUpdateManyWithoutBookingNestedInput
     seatAvailabilities?: SeatAvailabilityUncheckedUpdateManyWithoutBookingNestedInput
   }
@@ -30939,8 +30945,8 @@ export namespace Prisma {
     trainNo: string
     name: string
     type: string
-    departureTime?: string | null
     arrivalTime?: string | null
+    departureTime?: string | null
     routes?: RouteCreateNestedManyWithoutTrainInput
     destinationStation: StationCreateNestedOneWithoutTrainsAsDestInput
     sourceStation: StationCreateNestedOneWithoutTrainsAsSourceInput
@@ -30954,8 +30960,8 @@ export namespace Prisma {
     type: string
     sourceStationId: string
     destinationStationId: string
-    departureTime?: string | null
     arrivalTime?: string | null
+    departureTime?: string | null
     routes?: RouteUncheckedCreateNestedManyWithoutTrainInput
     schedules?: TrainScheduleUncheckedCreateNestedManyWithoutTrainInput
   }
@@ -30968,7 +30974,6 @@ export namespace Prisma {
   export type UserCreateWithoutReviewsInput = {
     clerkId: string
     id?: string
-    role?: $Enums.Role
     fullName: string
     email: string
     phone: string
@@ -30986,13 +30991,13 @@ export namespace Prisma {
     walletBalance?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    role?: $Enums.Role
     bookings?: BookingCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReviewsInput = {
     clerkId: string
     id?: string
-    role?: $Enums.Role
     fullName: string
     email: string
     phone: string
@@ -31010,6 +31015,7 @@ export namespace Prisma {
     walletBalance?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    role?: $Enums.Role
     bookings?: BookingUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -31065,8 +31071,8 @@ export namespace Prisma {
     trainNo?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     routes?: RouteUpdateManyWithoutTrainNestedInput
     destinationStation?: StationUpdateOneRequiredWithoutTrainsAsDestNestedInput
     sourceStation?: StationUpdateOneRequiredWithoutTrainsAsSourceNestedInput
@@ -31080,8 +31086,8 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     sourceStationId?: StringFieldUpdateOperationsInput | string
     destinationStationId?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     routes?: RouteUncheckedUpdateManyWithoutTrainNestedInput
     schedules?: TrainScheduleUncheckedUpdateManyWithoutTrainNestedInput
   }
@@ -31100,7 +31106,6 @@ export namespace Prisma {
   export type UserUpdateWithoutReviewsInput = {
     clerkId?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     fullName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
@@ -31118,13 +31123,13 @@ export namespace Prisma {
     walletBalance?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     bookings?: BookingUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReviewsInput = {
     clerkId?: StringFieldUpdateOperationsInput | string
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     fullName?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
@@ -31142,6 +31147,7 @@ export namespace Prisma {
     walletBalance?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     bookings?: BookingUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -31279,14 +31285,14 @@ export namespace Prisma {
   export type BookingCreateManyUserInput = {
     id?: bigint | number
     pnr: string
-    journeyDate?: Date | string | null
-    trainInstanceId?: bigint | number | null
     scheduleId: bigint | number
     fromStationId: string
     toStationId: string
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
+    trainInstanceId?: bigint | number | null
   }
 
   export type ReviewCreateManyUserInput = {
@@ -31303,14 +31309,14 @@ export namespace Prisma {
   export type BookingUpdateWithoutUserInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
     fromStation?: StationUpdateOneRequiredWithoutFromBookingsNestedInput
     schedule?: TrainScheduleUpdateOneRequiredWithoutBookingsNestedInput
     toStation?: StationUpdateOneRequiredWithoutToBookingsNestedInput
+    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
     passengers?: PassengerUpdateManyWithoutBookingNestedInput
     payment?: PaymentUpdateOneWithoutBookingNestedInput
     seatAvailabilities?: SeatAvailabilityUpdateManyWithoutBookingNestedInput
@@ -31319,14 +31325,14 @@ export namespace Prisma {
   export type BookingUncheckedUpdateWithoutUserInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     scheduleId?: BigIntFieldUpdateOperationsInput | bigint | number
     fromStationId?: StringFieldUpdateOperationsInput | string
     toStationId?: StringFieldUpdateOperationsInput | string
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     passengers?: PassengerUncheckedUpdateManyWithoutBookingNestedInput
     payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
     seatAvailabilities?: SeatAvailabilityUncheckedUpdateManyWithoutBookingNestedInput
@@ -31335,14 +31341,14 @@ export namespace Prisma {
   export type BookingUncheckedUpdateManyWithoutUserInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     scheduleId?: BigIntFieldUpdateOperationsInput | bigint | number
     fromStationId?: StringFieldUpdateOperationsInput | string
     toStationId?: StringFieldUpdateOperationsInput | string
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type ReviewUpdateWithoutUserInput = {
@@ -31382,26 +31388,26 @@ export namespace Prisma {
     id?: bigint | number
     pnr: string
     userId: string
-    journeyDate?: Date | string | null
-    trainInstanceId?: bigint | number | null
     scheduleId: bigint | number
     toStationId: string
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
+    trainInstanceId?: bigint | number | null
   }
 
   export type BookingCreateManyToStationInput = {
     id?: bigint | number
     pnr: string
     userId: string
-    journeyDate?: Date | string | null
-    trainInstanceId?: bigint | number | null
     scheduleId: bigint | number
     fromStationId: string
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
+    trainInstanceId?: bigint | number | null
   }
 
   export type ReviewCreateManyStationInput = {
@@ -31430,8 +31436,8 @@ export namespace Prisma {
     name: string
     type: string
     sourceStationId: string
-    departureTime?: string | null
     arrivalTime?: string | null
+    departureTime?: string | null
   }
 
   export type TrainCreateManySourceStationInput = {
@@ -31440,20 +31446,20 @@ export namespace Prisma {
     name: string
     type: string
     destinationStationId: string
-    departureTime?: string | null
     arrivalTime?: string | null
+    departureTime?: string | null
   }
 
   export type BookingUpdateWithoutFromStationInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
     schedule?: TrainScheduleUpdateOneRequiredWithoutBookingsNestedInput
     toStation?: StationUpdateOneRequiredWithoutToBookingsNestedInput
+    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
     user?: UserUpdateOneRequiredWithoutBookingsNestedInput
     passengers?: PassengerUpdateManyWithoutBookingNestedInput
     payment?: PaymentUpdateOneWithoutBookingNestedInput
@@ -31464,13 +31470,13 @@ export namespace Prisma {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     scheduleId?: BigIntFieldUpdateOperationsInput | bigint | number
     toStationId?: StringFieldUpdateOperationsInput | string
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     passengers?: PassengerUncheckedUpdateManyWithoutBookingNestedInput
     payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
     seatAvailabilities?: SeatAvailabilityUncheckedUpdateManyWithoutBookingNestedInput
@@ -31480,25 +31486,25 @@ export namespace Prisma {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     scheduleId?: BigIntFieldUpdateOperationsInput | bigint | number
     toStationId?: StringFieldUpdateOperationsInput | string
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type BookingUpdateWithoutToStationInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
     fromStation?: StationUpdateOneRequiredWithoutFromBookingsNestedInput
     schedule?: TrainScheduleUpdateOneRequiredWithoutBookingsNestedInput
+    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
     user?: UserUpdateOneRequiredWithoutBookingsNestedInput
     passengers?: PassengerUpdateManyWithoutBookingNestedInput
     payment?: PaymentUpdateOneWithoutBookingNestedInput
@@ -31509,13 +31515,13 @@ export namespace Prisma {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     scheduleId?: BigIntFieldUpdateOperationsInput | bigint | number
     fromStationId?: StringFieldUpdateOperationsInput | string
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     passengers?: PassengerUncheckedUpdateManyWithoutBookingNestedInput
     payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
     seatAvailabilities?: SeatAvailabilityUncheckedUpdateManyWithoutBookingNestedInput
@@ -31525,13 +31531,13 @@ export namespace Prisma {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     scheduleId?: BigIntFieldUpdateOperationsInput | bigint | number
     fromStationId?: StringFieldUpdateOperationsInput | string
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type ReviewUpdateWithoutStationInput = {
@@ -31599,8 +31605,8 @@ export namespace Prisma {
     trainNo?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     reviews?: ReviewUpdateManyWithoutTrainNestedInput
     routes?: RouteUpdateManyWithoutTrainNestedInput
     sourceStation?: StationUpdateOneRequiredWithoutTrainsAsSourceNestedInput
@@ -31613,8 +31619,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     sourceStationId?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     reviews?: ReviewUncheckedUpdateManyWithoutTrainNestedInput
     routes?: RouteUncheckedUpdateManyWithoutTrainNestedInput
     schedules?: TrainScheduleUncheckedUpdateManyWithoutTrainNestedInput
@@ -31626,8 +31632,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     sourceStationId?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TrainUpdateWithoutSourceStationInput = {
@@ -31635,8 +31641,8 @@ export namespace Prisma {
     trainNo?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     reviews?: ReviewUpdateManyWithoutTrainNestedInput
     routes?: RouteUpdateManyWithoutTrainNestedInput
     destinationStation?: StationUpdateOneRequiredWithoutTrainsAsDestNestedInput
@@ -31649,8 +31655,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     destinationStationId?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     reviews?: ReviewUncheckedUpdateManyWithoutTrainNestedInput
     routes?: RouteUncheckedUpdateManyWithoutTrainNestedInput
     schedules?: TrainScheduleUncheckedUpdateManyWithoutTrainNestedInput
@@ -31662,8 +31668,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     destinationStationId?: StringFieldUpdateOperationsInput | string
-    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
     arrivalTime?: NullableStringFieldUpdateOperationsInput | string | null
+    departureTime?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ReviewCreateManyTrainInput = {
@@ -31762,8 +31768,8 @@ export namespace Prisma {
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     bookings?: BookingUpdateManyWithoutScheduleNestedInput
     coaches?: CoachUpdateManyWithoutScheduleNestedInput
-    trainInstances?: TrainInstanceUpdateManyWithoutScheduleNestedInput
     exceptions?: ScheduleExceptionUpdateManyWithoutScheduleNestedInput
+    trainInstances?: TrainInstanceUpdateManyWithoutScheduleNestedInput
   }
 
   export type TrainScheduleUncheckedUpdateWithoutTrainInput = {
@@ -31774,8 +31780,8 @@ export namespace Prisma {
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     bookings?: BookingUncheckedUpdateManyWithoutScheduleNestedInput
     coaches?: CoachUncheckedUpdateManyWithoutScheduleNestedInput
-    trainInstances?: TrainInstanceUncheckedUpdateManyWithoutScheduleNestedInput
     exceptions?: ScheduleExceptionUncheckedUpdateManyWithoutScheduleNestedInput
+    trainInstances?: TrainInstanceUncheckedUpdateManyWithoutScheduleNestedInput
   }
 
   export type TrainScheduleUncheckedUpdateManyWithoutTrainInput = {
@@ -31790,13 +31796,13 @@ export namespace Prisma {
     id?: bigint | number
     pnr: string
     userId: string
-    journeyDate?: Date | string | null
-    trainInstanceId?: bigint | number | null
     fromStationId: string
     toStationId: string
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
+    trainInstanceId?: bigint | number | null
   }
 
   export type CoachCreateManyScheduleInput = {
@@ -31804,6 +31810,12 @@ export namespace Prisma {
     coachType: string
     coachNumber: string
     totalSeats: number
+  }
+
+  export type ScheduleExceptionCreateManyScheduleInput = {
+    id?: bigint | number
+    date: Date | string
+    type: $Enums.ExceptionType
   }
 
   export type TrainInstanceCreateManyScheduleInput = {
@@ -31817,22 +31829,16 @@ export namespace Prisma {
     wlSeats?: number
   }
 
-  export type ScheduleExceptionCreateManyScheduleInput = {
-    id?: bigint | number
-    date: Date | string
-    type: $Enums.ExceptionType
-  }
-
   export type BookingUpdateWithoutScheduleInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
     fromStation?: StationUpdateOneRequiredWithoutFromBookingsNestedInput
     toStation?: StationUpdateOneRequiredWithoutToBookingsNestedInput
+    trainInstance?: TrainInstanceUpdateOneWithoutBookingsNestedInput
     user?: UserUpdateOneRequiredWithoutBookingsNestedInput
     passengers?: PassengerUpdateManyWithoutBookingNestedInput
     payment?: PaymentUpdateOneWithoutBookingNestedInput
@@ -31843,13 +31849,13 @@ export namespace Prisma {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     fromStationId?: StringFieldUpdateOperationsInput | string
     toStationId?: StringFieldUpdateOperationsInput | string
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     passengers?: PassengerUncheckedUpdateManyWithoutBookingNestedInput
     payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
     seatAvailabilities?: SeatAvailabilityUncheckedUpdateManyWithoutBookingNestedInput
@@ -31859,13 +31865,13 @@ export namespace Prisma {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     fromStationId?: StringFieldUpdateOperationsInput | string
     toStationId?: StringFieldUpdateOperationsInput | string
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type CoachUpdateWithoutScheduleInput = {
@@ -31891,6 +31897,24 @@ export namespace Prisma {
     coachType?: StringFieldUpdateOperationsInput | string
     coachNumber?: StringFieldUpdateOperationsInput | string
     totalSeats?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type ScheduleExceptionUpdateWithoutScheduleInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: EnumExceptionTypeFieldUpdateOperationsInput | $Enums.ExceptionType
+  }
+
+  export type ScheduleExceptionUncheckedUpdateWithoutScheduleInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: EnumExceptionTypeFieldUpdateOperationsInput | $Enums.ExceptionType
+  }
+
+  export type ScheduleExceptionUncheckedUpdateManyWithoutScheduleInput = {
+    id?: BigIntFieldUpdateOperationsInput | bigint | number
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: EnumExceptionTypeFieldUpdateOperationsInput | $Enums.ExceptionType
   }
 
   export type TrainInstanceUpdateWithoutScheduleInput = {
@@ -31930,24 +31954,6 @@ export namespace Prisma {
     wlSeats?: IntFieldUpdateOperationsInput | number
   }
 
-  export type ScheduleExceptionUpdateWithoutScheduleInput = {
-    id?: BigIntFieldUpdateOperationsInput | bigint | number
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: EnumExceptionTypeFieldUpdateOperationsInput | $Enums.ExceptionType
-  }
-
-  export type ScheduleExceptionUncheckedUpdateWithoutScheduleInput = {
-    id?: BigIntFieldUpdateOperationsInput | bigint | number
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: EnumExceptionTypeFieldUpdateOperationsInput | $Enums.ExceptionType
-  }
-
-  export type ScheduleExceptionUncheckedUpdateManyWithoutScheduleInput = {
-    id?: BigIntFieldUpdateOperationsInput | bigint | number
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    type?: EnumExceptionTypeFieldUpdateOperationsInput | $Enums.ExceptionType
-  }
-
   export type SeatCreateManyCoachInput = {
     id?: bigint | number
     seatNo: string
@@ -31956,11 +31962,11 @@ export namespace Prisma {
 
   export type SeatAvailabilityCreateManyCoachInput = {
     id?: bigint | number
-    trainInstanceId?: bigint | number | null
-    bookingId?: bigint | number | null
-    passengerId?: bigint | number | null
     seatId?: bigint | number | null
     status?: $Enums.SeatStatus
+    bookingId?: bigint | number | null
+    passengerId?: bigint | number | null
+    trainInstanceId?: bigint | number | null
   }
 
   export type SeatUpdateWithoutCoachInput = {
@@ -31987,29 +31993,29 @@ export namespace Prisma {
 
   export type SeatAvailabilityUpdateWithoutCoachInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
-    trainInstance?: TrainInstanceUpdateOneWithoutSeatRecordsNestedInput
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     booking?: BookingUpdateOneWithoutSeatAvailabilitiesNestedInput
     seat?: SeatUpdateOneWithoutSeatAvailabilitiesNestedInput
+    trainInstance?: TrainInstanceUpdateOneWithoutSeatRecordsNestedInput
   }
 
   export type SeatAvailabilityUncheckedUpdateWithoutCoachInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     seatId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type SeatAvailabilityUncheckedUpdateManyWithoutCoachInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     seatId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type PassengerCreateManySeatInput = {
@@ -32023,11 +32029,11 @@ export namespace Prisma {
 
   export type SeatAvailabilityCreateManySeatInput = {
     id?: bigint | number
-    trainInstanceId?: bigint | number | null
-    bookingId?: bigint | number | null
-    passengerId?: bigint | number | null
     coachId?: bigint | number | null
     status?: $Enums.SeatStatus
+    bookingId?: bigint | number | null
+    passengerId?: bigint | number | null
+    trainInstanceId?: bigint | number | null
   }
 
   export type PassengerUpdateWithoutSeatInput = {
@@ -32059,60 +32065,60 @@ export namespace Prisma {
 
   export type SeatAvailabilityUpdateWithoutSeatInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
-    trainInstance?: TrainInstanceUpdateOneWithoutSeatRecordsNestedInput
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     booking?: BookingUpdateOneWithoutSeatAvailabilitiesNestedInput
     coach?: CoachUpdateOneWithoutSeatAvailabilitiesNestedInput
+    trainInstance?: TrainInstanceUpdateOneWithoutSeatRecordsNestedInput
   }
 
   export type SeatAvailabilityUncheckedUpdateWithoutSeatInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     coachId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type SeatAvailabilityUncheckedUpdateManyWithoutSeatInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     coachId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type BookingCreateManyTrainInstanceInput = {
     id?: bigint | number
     pnr: string
     userId: string
-    journeyDate?: Date | string | null
     scheduleId: bigint | number
     fromStationId: string
     toStationId: string
     status?: $Enums.BookingStatus
-    totalFare?: number
     bookedAt?: Date | string
+    journeyDate?: Date | string | null
+    totalFare?: number
   }
 
   export type SeatAvailabilityCreateManyTrainInstanceInput = {
     id?: bigint | number
-    bookingId?: bigint | number | null
-    passengerId?: bigint | number | null
     coachId?: bigint | number | null
     seatId?: bigint | number | null
     status?: $Enums.SeatStatus
+    bookingId?: bigint | number | null
+    passengerId?: bigint | number | null
   }
 
   export type BookingUpdateWithoutTrainInstanceInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
     fromStation?: StationUpdateOneRequiredWithoutFromBookingsNestedInput
     schedule?: TrainScheduleUpdateOneRequiredWithoutBookingsNestedInput
     toStation?: StationUpdateOneRequiredWithoutToBookingsNestedInput
@@ -32126,13 +32132,13 @@ export namespace Prisma {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     scheduleId?: BigIntFieldUpdateOperationsInput | bigint | number
     fromStationId?: StringFieldUpdateOperationsInput | string
     toStationId?: StringFieldUpdateOperationsInput | string
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
     passengers?: PassengerUncheckedUpdateManyWithoutBookingNestedInput
     payment?: PaymentUncheckedUpdateOneWithoutBookingNestedInput
     seatAvailabilities?: SeatAvailabilityUncheckedUpdateManyWithoutBookingNestedInput
@@ -32142,19 +32148,19 @@ export namespace Prisma {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
     pnr?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     scheduleId?: BigIntFieldUpdateOperationsInput | bigint | number
     fromStationId?: StringFieldUpdateOperationsInput | string
     toStationId?: StringFieldUpdateOperationsInput | string
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    totalFare?: FloatFieldUpdateOperationsInput | number
     bookedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    journeyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    totalFare?: FloatFieldUpdateOperationsInput | number
   }
 
   export type SeatAvailabilityUpdateWithoutTrainInstanceInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     booking?: BookingUpdateOneWithoutSeatAvailabilitiesNestedInput
     coach?: CoachUpdateOneWithoutSeatAvailabilitiesNestedInput
     seat?: SeatUpdateOneWithoutSeatAvailabilitiesNestedInput
@@ -32162,20 +32168,20 @@ export namespace Prisma {
 
   export type SeatAvailabilityUncheckedUpdateWithoutTrainInstanceInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     coachId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     seatId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type SeatAvailabilityUncheckedUpdateManyWithoutTrainInstanceInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     coachId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     seatId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+    bookingId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type PassengerCreateManyBookingInput = {
@@ -32189,11 +32195,11 @@ export namespace Prisma {
 
   export type SeatAvailabilityCreateManyBookingInput = {
     id?: bigint | number
-    trainInstanceId?: bigint | number | null
-    passengerId?: bigint | number | null
     coachId?: bigint | number | null
     seatId?: bigint | number | null
     status?: $Enums.SeatStatus
+    passengerId?: bigint | number | null
+    trainInstanceId?: bigint | number | null
   }
 
   export type PassengerUpdateWithoutBookingInput = {
@@ -32225,29 +32231,29 @@ export namespace Prisma {
 
   export type SeatAvailabilityUpdateWithoutBookingInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
-    trainInstance?: TrainInstanceUpdateOneWithoutSeatRecordsNestedInput
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     coach?: CoachUpdateOneWithoutSeatAvailabilitiesNestedInput
     seat?: SeatUpdateOneWithoutSeatAvailabilitiesNestedInput
+    trainInstance?: TrainInstanceUpdateOneWithoutSeatRecordsNestedInput
   }
 
   export type SeatAvailabilityUncheckedUpdateWithoutBookingInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     coachId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     seatId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type SeatAvailabilityUncheckedUpdateManyWithoutBookingInput = {
     id?: BigIntFieldUpdateOperationsInput | bigint | number
-    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     coachId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     seatId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
     status?: EnumSeatStatusFieldUpdateOperationsInput | $Enums.SeatStatus
+    passengerId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+    trainInstanceId?: NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   }
 
   export type AttachmentCreateManyComplaintInput = {

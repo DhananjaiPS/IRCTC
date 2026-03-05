@@ -8,18 +8,9 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Role {
-  USER
-  ADMIN_OPS
-  ADMIN_FINANCE
-  ADMIN_SUPPORT
-  SUPER_ADMIN
-}
-
 model User {
   clerkId       String    @unique
   id            String    @id @default(uuid())
-  role          Role      @default(USER)
   fullName      String
   email         String    @unique
   phone         String    @unique
@@ -37,6 +28,7 @@ model User {
   walletBalance Float     @default(0.0)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  role          Role      @default(USER)
   bookings      Booking[]
   reviews       Review[]
 }
@@ -48,8 +40,6 @@ model Station {
   toBookings     Booking[] @relation("ToStation")
   reviews        Review[]
   routes         Route[]
-  // fromAvail      SeatAvailability[] @relation("FromStationAvail")
-  // toAvail        SeatAvailability[] @relation("ToStationAvail")
   trainsAsDest   Train[]   @relation("DestinationStation")
   trainsAsSource Train[]   @relation("SourceStation")
 }
@@ -67,20 +57,19 @@ model Route {
 }
 
 model Train {
-  id                   BigInt  @id @default(autoincrement())
-  trainNo              String  @unique
+  id                   BigInt          @id @default(autoincrement())
+  trainNo              String          @unique
   name                 String
   type                 String
   sourceStationId      String
   destinationStationId String
-  departureTime        String?
   arrivalTime          String?
-
-  reviews            Review[]
-  routes             Route[]
-  destinationStation Station         @relation("DestinationStation", fields: [destinationStationId], references: [id])
-  sourceStation      Station         @relation("SourceStation", fields: [sourceStationId], references: [id])
-  schedules          TrainSchedule[]
+  departureTime        String?
+  reviews              Review[]
+  routes               Route[]
+  destinationStation   Station         @relation("DestinationStation", fields: [destinationStationId], references: [id])
+  sourceStation        Station         @relation("SourceStation", fields: [sourceStationId], references: [id])
+  schedules            TrainSchedule[]
 }
 
 model TrainSchedule {
@@ -92,9 +81,8 @@ model TrainSchedule {
   startDate      DateTime            @db.Date
   bookings       Booking[]
   coaches        Coach[]
-  trainInstances TrainInstance[]
   exceptions     ScheduleException[]
-  // seatAvailabilities SeatAvailability[]
+  trainInstances TrainInstance[]
   train          Train               @relation(fields: [trainId], references: [id])
 }
 
@@ -127,88 +115,54 @@ model Seat {
   seatAvailabilities SeatAvailability[]
 }
 
-enum TrainBerthType {
-  LOWER
-  MIDDLE
-  UPPER
-  SIDE_LOWER
-  SIDE_UPPER
-}
-
-// model SeatAvailability {
-//   id              BigInt        @id @default(autoincrement())
-//   scheduleId      BigInt
-//   trainInstanceId BigInt?
-//   passengerId     BigInt?       @unique
-//   coachId         BigInt
-//   seatId          BigInt
-//   fromStationId   String
-//   toStationId     String
-//   status          SeatStatus    @default(AVAILABLE)
-//   bookingId       BigInt?
-//   trainInstance   TrainInstance @relation(fields: [trainInstanceId], references: [id])
-//   booking         Booking       @relation(fields: [bookingId], references: [id])
-//   coach           Coach         @relation(fields: [coachId], references: [id])
-//   fromStation     Station       @relation("FromStationAvail", fields: [fromStationId], references: [id])
-//   schedule        TrainSchedule @relation(fields: [scheduleId], references: [id])
-//   seat            Seat          @relation(fields: [seatId], references: [id])
-//   toStation       Station       @relation("ToStationAvail", fields: [toStationId], references: [id])
-// }
 model TrainInstance {
-  id          BigInt   @id @default(autoincrement())
-  scheduleId  BigInt?
-  journeyDate DateTime @db.Date
-  coachType   String // e.g., "AC1", "SL"
-
+  id             BigInt             @id @default(autoincrement())
+  scheduleId     BigInt?
+  journeyDate    DateTime           @db.Date
+  coachType      String
   totalSeats     Int
-  availableSeats Int @default(72)
-  bookedSeats    Int @default(0)
-  racSeats       Int @default(5) // Future proofing for RAC
-  wlSeats        Int @default(10) // Future proofing for Waitlist
-
-  schedule    TrainSchedule?     @relation(fields: [scheduleId], references: [id])
-  bookings    Booking[]
-  seatRecords SeatAvailability[]
+  availableSeats Int                @default(72)
+  bookedSeats    Int                @default(0)
+  racSeats       Int                @default(5)
+  wlSeats        Int                @default(10)
+  bookings       Booking[]
+  seatRecords    SeatAvailability[]
+  schedule       TrainSchedule?     @relation(fields: [scheduleId], references: [id])
 
   @@unique([scheduleId, journeyDate, coachType])
   @@index([journeyDate, coachType])
 }
 
 model SeatAvailability {
-  id              BigInt  @id @default(autoincrement())
-  trainInstanceId BigInt?
+  id              BigInt         @id @default(autoincrement())
+  coachId         BigInt?
+  seatId          BigInt?
+  status          SeatStatus     @default(BOOKED)
   bookingId       BigInt?
-  passengerId     BigInt? @unique
-
-  coachId BigInt?
-  seatId  BigInt?
-
-  status SeatStatus @default(BOOKED)
-
-  trainInstance TrainInstance? @relation(fields: [trainInstanceId], references: [id])
-  booking       Booking?       @relation(fields: [bookingId], references: [id])
-  coach         Coach?         @relation(fields: [coachId], references: [id])
-  seat          Seat?          @relation(fields: [seatId], references: [id])
+  passengerId     BigInt?        @unique
+  trainInstanceId BigInt?
+  booking         Booking?       @relation(fields: [bookingId], references: [id])
+  coach           Coach?         @relation(fields: [coachId], references: [id])
+  seat            Seat?          @relation(fields: [seatId], references: [id])
+  trainInstance   TrainInstance? @relation(fields: [trainInstanceId], references: [id])
 }
 
 model Booking {
-  id              BigInt        @id @default(autoincrement())
-  pnr             String        @unique
-  userId          String
-  journeyDate     DateTime?     @db.Date // Removed optional
-  trainInstanceId BigInt?
-  scheduleId      BigInt
-  fromStationId   String
-  toStationId     String
-  status          BookingStatus @default(BOOKED)
-  totalFare       Float         @default(0.0) // Missing in your schema!
-
-  bookedAt DateTime @default(now())
-
-  trainInstance      TrainInstance?     @relation(fields: [trainInstanceId], references: [id])
+  id                 BigInt             @id @default(autoincrement())
+  pnr                String             @unique
+  userId             String
+  scheduleId         BigInt
+  fromStationId      String
+  toStationId        String
+  status             BookingStatus      @default(BOOKED)
+  bookedAt           DateTime           @default(now())
+  journeyDate        DateTime?          @db.Date
+  totalFare          Float              @default(0.0)
+  trainInstanceId    BigInt?
   fromStation        Station            @relation("FromStation", fields: [fromStationId], references: [id])
   schedule           TrainSchedule      @relation(fields: [scheduleId], references: [id])
   toStation          Station            @relation("ToStation", fields: [toStationId], references: [id])
+  trainInstance      TrainInstance?     @relation(fields: [trainInstanceId], references: [id])
   user               User               @relation(fields: [userId], references: [id])
   passengers         Passenger[]
   payment            Payment?
@@ -217,30 +171,6 @@ model Booking {
   @@index([userId, journeyDate])
   @@index([pnr])
 }
-
-// model Booking {
-//   id                 BigInt             @id @default(autoincrement())
-//   pnr                String             @unique
-//   userId             String
-//   journeyDate        DateTime?          @db.Date
-//   trainInstanceId    BigInt?            // 🔥 Link to the Inventory Instance
-//   scheduleId         BigInt
-//   fromStationId      String
-//   toStationId        String
-//   status             BookingStatus      @default(BOOKED)
-//   bookedAt           DateTime           @default(now())
-//   fromStation        Station            @relation("FromStation", fields: [fromStationId], references: [id])
-//   schedule           TrainSchedule      @relation(fields: [scheduleId], references: [id])
-//   toStation          Station            @relation("ToStation", fields: [toStationId], references: [id])
-//   user               User               @relation(fields: [userId], references: [id])
-//   passengers         Passenger[]
-//   payment            Payment?
-//   seatAvailabilities SeatAvailability[]
-
-//   // / 🔥 Index for High Performance
-//   // This makes the "My Journeys" page load instantly even with millions of rows
-//   @@index([userId, journeyDate])
-// }
 
 model Passenger {
   id        BigInt          @id @default(autoincrement())
@@ -283,28 +213,44 @@ model Review {
 
 model Complaint {
   id            BigInt          @id @default(autoincrement())
-  userId        String? // Optional: null if guest
+  userId        String?
   fullName      String
   email         String
   phone         String
   pnr           String?
   complaintType String
   message       String
-  status        ComplaintStatus @default(PENDING) // pending, in-progress, resolved
-  attachments   Attachment[] // Relation to attachments
+  status        ComplaintStatus @default(PENDING)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
-  adminAction   String? // Optional: notes from admin
-  adminMessage  String? // Optional: message sent to user upon resolution
+  adminAction   String?
+  adminMessage  String?
+  attachments   Attachment[]
 }
 
 model Attachment {
   id          BigInt    @id @default(autoincrement())
   complaintId BigInt
   filename    String
-  data        Bytes // store file content as buffer
-  mimeType    String? // optional, e.g., "image/png", "application/pdf"
+  data        Bytes
+  mimeType    String?
   complaint   Complaint @relation(fields: [complaintId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN_OPS
+  ADMIN_FINANCE
+  ADMIN_SUPPORT
+  SUPER_ADMIN
+}
+
+enum TrainBerthType {
+  LOWER
+  MIDDLE
+  UPPER
+  SIDE_LOWER
+  SIDE_UPPER
 }
 
 enum ComplaintStatus {
@@ -328,9 +274,11 @@ enum SeatStatus {
 enum BookingStatus {
   BOOKED
   CANCELLED
+  PAYMENT_PENDING
 }
 
 enum PassengerStatus {
+  PAYMENT_PENDING
   CONFIRMED
   RAC
   WAITLISTED

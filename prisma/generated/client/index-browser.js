@@ -24,12 +24,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 7.4.1
- * Query Engine version: 55ae170b1ced7fc6ed07a15f110549408c501bb3
+ * Prisma Client JS version: 7.4.2
+ * Query Engine version: 94a226be1cf2967af2541cca5529f0f7ba866919
  */
 Prisma.prismaVersion = {
-  client: "7.4.1",
-  engine: "55ae170b1ced7fc6ed07a15f110549408c501bb3"
+  client: "7.4.2",
+  engine: "94a226be1cf2967af2541cca5529f0f7ba866919"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -123,7 +123,6 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.UserScalarFieldEnum = {
   clerkId: 'clerkId',
   id: 'id',
-  role: 'role',
   fullName: 'fullName',
   email: 'email',
   phone: 'phone',
@@ -140,7 +139,8 @@ exports.Prisma.UserScalarFieldEnum = {
   kycVerified: 'kycVerified',
   walletBalance: 'walletBalance',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  role: 'role'
 };
 
 exports.Prisma.StationScalarFieldEnum = {
@@ -165,8 +165,8 @@ exports.Prisma.TrainScalarFieldEnum = {
   type: 'type',
   sourceStationId: 'sourceStationId',
   destinationStationId: 'destinationStationId',
-  departureTime: 'departureTime',
-  arrivalTime: 'arrivalTime'
+  arrivalTime: 'arrivalTime',
+  departureTime: 'departureTime'
 };
 
 exports.Prisma.TrainScheduleScalarFieldEnum = {
@@ -214,26 +214,26 @@ exports.Prisma.TrainInstanceScalarFieldEnum = {
 
 exports.Prisma.SeatAvailabilityScalarFieldEnum = {
   id: 'id',
-  trainInstanceId: 'trainInstanceId',
-  bookingId: 'bookingId',
-  passengerId: 'passengerId',
   coachId: 'coachId',
   seatId: 'seatId',
-  status: 'status'
+  status: 'status',
+  bookingId: 'bookingId',
+  passengerId: 'passengerId',
+  trainInstanceId: 'trainInstanceId'
 };
 
 exports.Prisma.BookingScalarFieldEnum = {
   id: 'id',
   pnr: 'pnr',
   userId: 'userId',
-  journeyDate: 'journeyDate',
-  trainInstanceId: 'trainInstanceId',
   scheduleId: 'scheduleId',
   fromStationId: 'fromStationId',
   toStationId: 'toStationId',
   status: 'status',
+  bookedAt: 'bookedAt',
+  journeyDate: 'journeyDate',
   totalFare: 'totalFare',
-  bookedAt: 'bookedAt'
+  trainInstanceId: 'trainInstanceId'
 };
 
 exports.Prisma.PassengerScalarFieldEnum = {
@@ -307,14 +307,6 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-exports.Role = exports.$Enums.Role = {
-  USER: 'USER',
-  ADMIN_OPS: 'ADMIN_OPS',
-  ADMIN_FINANCE: 'ADMIN_FINANCE',
-  ADMIN_SUPPORT: 'ADMIN_SUPPORT',
-  SUPER_ADMIN: 'SUPER_ADMIN'
-};
-
 exports.Sex = exports.$Enums.Sex = {
   MALE: 'MALE',
   FEMALE: 'FEMALE',
@@ -325,6 +317,14 @@ exports.IdCard = exports.$Enums.IdCard = {
   AADHAR: 'AADHAR',
   PAN: 'PAN',
   PASSPORT: 'PASSPORT'
+};
+
+exports.Role = exports.$Enums.Role = {
+  USER: 'USER',
+  ADMIN_OPS: 'ADMIN_OPS',
+  ADMIN_FINANCE: 'ADMIN_FINANCE',
+  ADMIN_SUPPORT: 'ADMIN_SUPPORT',
+  SUPER_ADMIN: 'SUPER_ADMIN'
 };
 
 exports.ScheduleStatus = exports.$Enums.ScheduleStatus = {
@@ -354,10 +354,12 @@ exports.SeatStatus = exports.$Enums.SeatStatus = {
 
 exports.BookingStatus = exports.$Enums.BookingStatus = {
   BOOKED: 'BOOKED',
-  CANCELLED: 'CANCELLED'
+  CANCELLED: 'CANCELLED',
+  PAYMENT_PENDING: 'PAYMENT_PENDING'
 };
 
 exports.PassengerStatus = exports.$Enums.PassengerStatus = {
+  PAYMENT_PENDING: 'PAYMENT_PENDING',
   CONFIRMED: 'CONFIRMED',
   RAC: 'RAC',
   WAITLISTED: 'WAITLISTED',
